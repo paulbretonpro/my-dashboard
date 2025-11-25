@@ -1,0 +1,19 @@
+.container {  
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 154px min-content min-content ;
+    gap: 1rem;
+    grid-template-areas:
+      "today tomorrow late"
+      "last last late"
+      "last last late";
+  }
+  
+  .today { grid-area: today; }
+  
+  .tomorrow { grid-area: tomorrow; }
+  
+  .last { grid-area: last; }
+  
+  .late { grid-area: late; }
+  
