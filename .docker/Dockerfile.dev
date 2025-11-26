@@ -1,0 +1,20 @@
+# ÉTAPE 1: Environnement de Développement (Node.js)
+FROM node:20-alpine
+
+# Définir le répertoire de travail dans le conteneur.
+WORKDIR /app
+
+# Copier seulement les fichiers de gestion des dépendances
+# Cela permet de mettre en cache l'étape d'installation
+COPY package.json .
+COPY package-lock.json .
+
+# Installer les dépendances.
+# Nous ne copions PAS le code source ici, il sera monté via Docker Compose.
+RUN npm install --frozen-lockfile
+
+# Exposer le port par défaut de Next.js
+EXPOSE 3000
+
+# Commande par défaut à exécuter (sera remplacée par docker-compose)
+CMD ["npm", "run", "dev"]
