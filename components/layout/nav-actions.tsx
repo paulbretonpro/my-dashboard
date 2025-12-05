@@ -1,10 +1,10 @@
 'use client'
 
-import { Plus, Star } from 'lucide-react'
-import Link from 'next/link'
+import { Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeSelector } from './theme-selector'
 import { ColorThemeSelector } from './color-theme-selector'
+import { ModalCreateTask } from '@/components/shared/create-task/modal-create-task'
 
 export function NavActions() {
   return (
@@ -17,11 +17,7 @@ export function NavActions() {
       <ColorThemeSelector />
       <ThemeSelector />
 
-      <Link href="/new-list">
-        <Button>
-          <Plus /> New task
-        </Button>
-      </Link>
+      <ModalCreateTask />
     </div>
   )
 }
