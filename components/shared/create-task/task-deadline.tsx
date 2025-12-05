@@ -1,18 +1,14 @@
-"use client";
+'use client'
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Calendar1Icon } from "lucide-react";
+import React from 'react'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { Calendar1Icon } from 'lucide-react'
 
 export function TaskDeadline() {
-  const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [open, setOpen] = React.useState(false)
+  const [date, setDate] = React.useState<Date | undefined>(undefined)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -20,11 +16,9 @@ export function TaskDeadline() {
         <Button
           variant="ghost"
           size="sm"
-          className={`rounded-full border text-xs ${
-            !date ? "border-dashed" : ""
-          }`}
+          className={`rounded-full border text-xs ${!date ? 'border-dashed' : ''}`}
         >
-          <Calendar1Icon /> {date ? date.toLocaleDateString() : "Deadline"}
+          <Calendar1Icon /> {date ? date.toLocaleDateString() : 'Deadline'}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto overflow-hidden p-0" align="start">
@@ -33,11 +27,11 @@ export function TaskDeadline() {
           selected={date}
           captionLayout="dropdown"
           onSelect={(date) => {
-            setDate(date);
-            setOpen(false);
+            setDate(date)
+            setOpen(false)
           }}
         />
       </PopoverContent>
     </Popover>
-  );
+  )
 }

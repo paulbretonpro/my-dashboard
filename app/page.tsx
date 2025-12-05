@@ -1,7 +1,7 @@
-import { CardTaskInLate } from "./dashboard/components/CardTaskInLate";
-import { CardTaskOfTheDay } from "./dashboard/components/CardTaskOfTheDay";
-import { CardTaskTomorrow } from "./dashboard/components/CardTaskTomorrow";
-import styles from "./dashboard/css/dashboard.module.css";
+import { CardTaskInLate } from './dashboard/components/CardTaskInLate'
+import { CardTaskOfTheDay } from './dashboard/components/CardTaskOfTheDay'
+import { CardTaskTomorrow } from './dashboard/components/CardTaskTomorrow'
+import styles from './dashboard/css/dashboard.module.css'
 
 export default function Page() {
   return (
@@ -18,5 +18,5 @@ export default function Page() {
 
       <div className={styles.last}>Last task</div>
     </div>
-  );
+  )
 }

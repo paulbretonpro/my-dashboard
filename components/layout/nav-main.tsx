@@ -1,13 +1,9 @@
-"use client"
+'use client'
 
-import { type LucideIcon } from "lucide-react"
+import { type LucideIcon } from 'lucide-react'
 
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { usePathname } from "next/navigation"
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { usePathname } from 'next/navigation'
 
 export function NavMain({
   items,
@@ -18,10 +14,9 @@ export function NavMain({
     icon: LucideIcon
   }[]
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
-
-  const isActive = (url: string) => pathname === url;
+  const isActive = (url: string) => pathname === url
 
   return (
     <SidebarMenu>

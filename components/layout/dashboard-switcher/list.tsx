@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronDown, Plus } from "lucide-react";
+import { useState } from 'react'
+import { ChevronDown, Plus } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -9,22 +9,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/dropdown-menu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 
 type Dashboard = {
-  name: string;
-  logo: React.ComponentType<{ className?: string }>;
-};
+  name: string
+  logo: React.ComponentType<{ className?: string }>
+}
 
 export function DashboardSwitcher({ dashboards }: { dashboards: Dashboard[] }) {
-  const [activeDashboard, setActiveDashboard] = useState<Dashboard>(
-    dashboards[0]
-  );
+  const [activeDashboard, setActiveDashboard] = useState<Dashboard>(dashboards[0])
 
   return (
     <SidebarMenu>
@@ -35,9 +29,7 @@ export function DashboardSwitcher({ dashboards }: { dashboards: Dashboard[] }) {
               <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-5 items-center justify-center rounded-md">
                 <activeDashboard.logo className="size-3" />
               </div>
-              <span className="truncate font-medium">
-                {activeDashboard.name}
-              </span>
+              <span className="truncate font-medium">{activeDashboard.name}</span>
               <ChevronDown className="opacity-50" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -75,5 +67,5 @@ export function DashboardSwitcher({ dashboards }: { dashboards: Dashboard[] }) {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

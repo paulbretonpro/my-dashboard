@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { Moon, Sun, Monitor } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { Moon, Sun, Monitor } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 import {
   Select,
@@ -10,16 +10,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
 export function ThemeSelector() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   // Éviter les problèmes d'hydratation
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
     return (
@@ -28,7 +28,7 @@ export function ThemeSelector() {
           <SelectValue placeholder="Thème" />
         </SelectTrigger>
       </Select>
-    );
+    )
   }
 
   return (
@@ -59,5 +59,5 @@ export function ThemeSelector() {
         </SelectItem>
       </SelectContent>
     </Select>
-  );
+  )
 }

@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
 
 export function CardTaskTomorrow() {
   return (
@@ -27,5 +27,5 @@ export function CardTaskTomorrow() {
         <div className="text-3xl font-bold text-primary">12</div>
       </CardContent>
     </Card>
-  );
+  )
 }

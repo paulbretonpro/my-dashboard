@@ -4,5 +4,5 @@ export default function ListPage({ workspaceId }: { workspaceId: string }) {
       <h1>Workspace {workspaceId}</h1>
       <div>Récupération des pages du workspace</div>
     </div>
-  );
+  )
 }

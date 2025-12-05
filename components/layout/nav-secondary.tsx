@@ -1,5 +1,5 @@
-import React from "react"
-import { type LucideIcon } from "lucide-react"
+import React from 'react'
+import { type LucideIcon } from 'lucide-react'
 
 import {
   SidebarGroup,
@@ -8,8 +8,8 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { usePathname } from "next/navigation"
+} from '@/components/ui/sidebar'
+import { usePathname } from 'next/navigation'
 
 export function NavSecondary({
   items,
@@ -22,9 +22,9 @@ export function NavSecondary({
     badge?: React.ReactNode
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
-  const isActive = (url: string) => pathname === url;
+  const isActive = (url: string) => pathname === url
 
   return (
     <SidebarGroup {...props}>

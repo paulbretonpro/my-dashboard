@@ -1,5 +1,5 @@
-import ButtonBack from "@/components/shared/button-back";
-import { CreateTask } from "@/components/shared/create-task/create-task";
+import ButtonBack from '@/components/shared/button-back'
+import { CreateTask } from '@/components/shared/create-task/create-task'
 
 export default function Page() {
   return (
@@ -7,5 +7,5 @@ export default function Page() {
       <ButtonBack />
       <CreateTask />
     </div>
-  );
+  )
 }

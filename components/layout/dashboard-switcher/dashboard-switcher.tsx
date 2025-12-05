@@ -1,10 +1,5 @@
-import { Suspense, useEffect, useState } from "react";
-import {
-  BriefcaseBusiness,
-  ChevronDown,
-  LaptopMinimal,
-  Plus,
-} from "lucide-react";
+import { Suspense, useEffect, useState } from 'react'
+import { BriefcaseBusiness, ChevronDown, LaptopMinimal, Plus } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -14,35 +9,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/dropdown-menu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 
 type Dashboard = {
-  name: string;
-  logo: React.ComponentType<{ className?: string }>;
-};
+  name: string
+  logo: React.ComponentType<{ className?: string }>
+}
 
 async function getDashboards(): Promise<Dashboard[]> {
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 1500))
 
   return [
-    { name: "Dashboard Pro", logo: BriefcaseBusiness },
-    { name: "Dashboard Perso", logo: LaptopMinimal },
-  ];
+    { name: 'Dashboard Pro', logo: BriefcaseBusiness },
+    { name: 'Dashboard Perso', logo: LaptopMinimal },
+  ]
 }
 
 export function DashboardSwitcher() {
-  const [activeDashboard, setActiveDashboard] = useState<
-    Dashboard | undefined
-  >();
-  const dashboards = getDashboards();
+  const [activeDashboard, setActiveDashboard] = useState<Dashboard | undefined>()
+  const dashboards = getDashboards()
 
   if (!activeDashboard) {
-    return null;
+    return null
   }
 
   return (
@@ -55,9 +44,7 @@ export function DashboardSwitcher() {
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-5 items-center justify-center rounded-md">
                   <activeDashboard.logo className="size-3" />
                 </div>
-                <span className="truncate font-medium">
-                  {activeDashboard.name}
-                </span>
+                <span className="truncate font-medium">{activeDashboard.name}</span>
                 <ChevronDown className="opacity-50" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
@@ -96,5 +83,5 @@ export function DashboardSwitcher() {
         </SidebarMenuItem>
       </SidebarMenu>
     </Suspense>
-  );
+  )
 }

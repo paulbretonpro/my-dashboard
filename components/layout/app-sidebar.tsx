@@ -1,135 +1,122 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import {
-  AudioWaveform,
-  Calendar,
-  Command,
-  Home,
-  Inbox,
-  Search,
-  Settings2,
-} from "lucide-react";
+import * as React from 'react'
+import { AudioWaveform, Calendar, Command, Home, Inbox, Search, Settings2 } from 'lucide-react'
 
-import { NavFavorites } from "@/components/layout/nav-favorites";
-import { NavMain } from "@/components/layout/nav-main";
-import { NavSecondary } from "@/components/layout/nav-secondary";
-import { NavWorkspaces } from "@/components/layout/nav-workspaces";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import { DashboardSwitcher } from "./dashboard-switcher/dashboard-switcher";
+import { NavFavorites } from '@/components/layout/nav-favorites'
+import { NavMain } from '@/components/layout/nav-main'
+import { NavSecondary } from '@/components/layout/nav-secondary'
+import { NavWorkspaces } from '@/components/layout/nav-workspaces'
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
+import { DashboardSwitcher } from './dashboard-switcher/dashboard-switcher'
 
 // This is sample data.
 const data = {
   teams: [
     {
-      name: "Dashboard Pro",
+      name: 'Dashboard Pro',
       logo: Command,
-      plan: "Enterprise",
+      plan: 'Enterprise',
     },
     {
-      name: "Dashboard Perso",
+      name: 'Dashboard Perso',
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: 'Startup',
     },
   ],
   navMain: [
     {
-      title: "Search",
-      url: "#",
+      title: 'Search',
+      url: '#',
       icon: Search,
     },
     {
-      title: "Home",
-      url: "/",
+      title: 'Home',
+      url: '/',
       icon: Home,
     },
     {
-      title: "Catégories",
-      url: "/categories",
+      title: 'Catégories',
+      url: '/categories',
       icon: Inbox,
     },
   ],
   navSecondary: [
     {
-      title: "Calendar",
-      url: "/calendar",
+      title: 'Calendar',
+      url: '/calendar',
       icon: Calendar,
-      badge: "10",
+      badge: '10',
     },
     {
-      title: "Settings",
-      url: "/settings",
+      title: 'Settings',
+      url: '/settings',
       icon: Settings2,
     },
   ],
   favorites: [
     {
-      name: "Veille",
-      url: "#",
-      emoji: "📊",
+      name: 'Veille',
+      url: '#',
+      emoji: '📊',
     },
     {
-      name: "Nuxt 4",
-      url: "#",
-      emoji: "🍳",
+      name: 'Nuxt 4',
+      url: '#',
+      emoji: '🍳',
     },
   ],
   workspaces: [
     {
-      name: "MyCooperlHome",
-      emoji: "🏠",
+      name: 'MyCooperlHome',
+      emoji: '🏠',
       pages: [
         {
-          name: "Mes tâches",
-          url: "#",
-          emoji: "🔍",
+          name: 'Mes tâches',
+          url: '#',
+          emoji: '🔍',
         },
         {
-          name: "Mes événements",
-          url: "#",
-          emoji: "📅",
+          name: 'Mes événements',
+          url: '#',
+          emoji: '📅',
         },
       ],
     },
     {
-      name: "CAM",
-      emoji: "💼",
+      name: 'CAM',
+      emoji: '💼',
       pages: [
         {
-          name: "Mes tâches",
-          url: "#",
-          emoji: "🎯",
+          name: 'Mes tâches',
+          url: '#',
+          emoji: '🎯',
         },
         {
-          name: "Mes événements",
-          url: "#",
-          emoji: "📅",
+          name: 'Mes événements',
+          url: '#',
+          emoji: '📅',
         },
       ],
     },
     {
-      name: "Pass Annonce",
-      emoji: "📢",
+      name: 'Pass Annonce',
+      emoji: '📢',
       pages: [
         {
-          name: "tâches",
-          url: "#",
-          emoji: "🔍",
+          name: 'tâches',
+          url: '#',
+          emoji: '🔍',
         },
         {
-          name: "Mes événements",
-          url: "#",
-          emoji: "�",
+          name: 'Mes événements',
+          url: '#',
+          emoji: '�',
         },
       ],
     },
   ],
-};
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -145,5 +132,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }

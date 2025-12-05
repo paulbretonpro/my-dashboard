@@ -1,19 +1,19 @@
-import { ArrowUpIcon, PlusIcon } from "lucide-react";
+import { ArrowUpIcon, PlusIcon } from 'lucide-react'
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@/components/ui/input-group";
-import { TaskDeadline } from "./task-deadline";
-import { TaskRecal } from "./task-recal";
+} from '@/components/ui/input-group'
+import { TaskDeadline } from './task-deadline'
+import { TaskRecal } from './task-recal'
 
 export function CreateTask() {
   return (
@@ -36,5 +36,5 @@ export function CreateTask() {
         </InputGroupAddon>
       </InputGroup>
     </div>
-  );
+  )
 }
