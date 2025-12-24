@@ -1,8 +1,17 @@
-export default function ListPage({ workspaceId }: { workspaceId: string }) {
+import { IPage } from '@/utils/type'
+import PageCard from './page-card'
+
+export default function ListPage() {
+  const page: IPage = {
+    id: 1,
+    isFavorite: false,
+    name: 'Mes tâches',
+    description: 'Liste des tâches',
+  }
+
   return (
-    <div>
-      <h1>Workspace {workspaceId}</h1>
-      <div>Récupération des pages du workspace</div>
+    <div className="grid grid-cols-2 gap-4">
+      <PageCard page={page} />
     </div>
   )
 }

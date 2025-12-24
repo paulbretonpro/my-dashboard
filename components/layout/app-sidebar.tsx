@@ -1,8 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { AudioWaveform, Calendar, Command, Home, Inbox, Search, Settings2 } from 'lucide-react'
-
+import { AudioWaveform, Calendar, Command, Home, Search, Settings2 } from 'lucide-react'
 import { NavFavorites } from '@/components/layout/nav-favorites'
 import { NavMain } from '@/components/layout/nav-main'
 import { NavSecondary } from '@/components/layout/nav-secondary'
@@ -35,11 +34,6 @@ const data = {
       url: '/',
       icon: Home,
     },
-    {
-      title: 'Catégories',
-      url: '/categories',
-      icon: Inbox,
-    },
   ],
   navSecondary: [
     {
@@ -69,48 +63,51 @@ const data = {
   workspaces: [
     {
       name: 'MyCooperlHome',
+      url: 'worskpace/2',
       emoji: '🏠',
       pages: [
         {
           name: 'Mes tâches',
-          url: '#',
+          url: 'workspace/2/page/3',
           emoji: '🔍',
         },
         {
           name: 'Mes événements',
-          url: '#',
+          url: 'workspace/2/page/3',
           emoji: '📅',
         },
       ],
     },
     {
       name: 'CAM',
+      url: 'worskpace/2',
       emoji: '💼',
       pages: [
         {
           name: 'Mes tâches',
-          url: '#',
+          url: 'workspace/2/page/3',
           emoji: '🎯',
         },
         {
           name: 'Mes événements',
-          url: '#',
+          url: 'workspace/2/page/3',
           emoji: '📅',
         },
       ],
     },
     {
       name: 'Pass Annonce',
+      url: 'worskpace/2',
       emoji: '📢',
       pages: [
         {
           name: 'tâches',
-          url: '#',
+          url: 'workspace/2/page/3',
           emoji: '🔍',
         },
         {
           name: 'Mes événements',
-          url: '#',
+          url: 'workspace/2/page/3',
           emoji: '�',
         },
       ],
