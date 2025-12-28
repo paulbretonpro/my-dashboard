@@ -1,0 +1,37 @@
+{
+  "name": "my-dashboard-nuxt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.3.14",
+    "@iconify-json/lucide": "^1.2.82",
+    "@iconify-json/simple-icons": "^1.2.63",
+    "@nuxt/hints": "1.0.0-alpha.5",
+    "@nuxt/ui": "^4.3.0",
+    "@nuxthub/core": "^0.10.4",
+    "@unovis/ts": "^1.6.2",
+    "@unovis/vue": "^1.6.2",
+    "@vueuse/nuxt": "^14.1.0",
+    "date-fns": "^4.1.0",
+    "drizzle-kit": "^0.31.8",
+    "drizzle-orm": "^0.45.1",
+    "nuxt": "^4.2.2",
+    "nuxt-auth-utils": "^0.5.26",
+    "postgres": "^3.4.7",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.12.1",
+    "eslint": "^9.39.2",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.1"
+  }
+}
