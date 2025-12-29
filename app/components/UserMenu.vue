@@ -5,7 +5,7 @@ defineProps<{
   collapsed?: boolean
 }>()
 
-const { user } = useUserSession()
+const { user, clear } = useUserSession()
 const colorMode = useColorMode()
 const appConfig = useAppConfig()
 
@@ -31,10 +31,10 @@ const colors = [
 const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 
 const userLoggin = computed(() => ({
-  name: user.value.name || 'Utilisateur',
+  name: user.value?.displayName || 'Utilisateur',
   avatar: {
-    src: user.value.avatar_url || 'https://github.com/benjamincanac.png',
-    alt: user.value.name || 'Utilisateur'
+    src: user.value?.avatarUrl || 'https://github.com/benjamincanac.png',
+    alt: user.value?.displayName || 'Utilisateur'
   }
 }))
 
@@ -139,10 +139,18 @@ const items = computed<DropdownMenuItem[][]>(() => [
     {
       label: 'Log out',
       icon: 'i-lucide-log-out',
-      color: 'error'
+      color: 'error',
+      onSelect: () => {
+        handleLogout()
+      }
     }
   ]
 ])
+
+const handleLogout = async () => {
+  await clear()
+  await navigateTo('/login')
+}
 </script>
 
 <template>

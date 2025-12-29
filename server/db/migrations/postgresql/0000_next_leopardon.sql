@@ -13,11 +13,12 @@ CREATE TABLE "tasks" (
 	"is_done" boolean DEFAULT false NOT NULL,
 	"recall" timestamp with time zone NOT NULL,
 	"page_id" integer NOT NULL,
-	"user_id" uuid NOT NULL
+	"user_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
+	"provider_id" text NOT NULL,
 	"display_name" text,
 	"avatar_url" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
@@ -27,7 +28,7 @@ CREATE TABLE "workspaces" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"icon" text,
-	"user_id" uuid NOT NULL
+	"user_id" integer NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "pages" ADD CONSTRAINT "pages_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

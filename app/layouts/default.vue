@@ -67,13 +67,8 @@ const groups = computed(() => [
           popover
         />
 
-        <UNavigationMenu
-          :collapsed="collapsed"
-          :items="links[1]"
-          orientation="vertical"
-          tooltip
-          class="mt-auto"
-        />
+        <LayoutFavorites />
+        <LayoutWorkspaces />
       </template>
 
       <template #footer="{ collapsed }">

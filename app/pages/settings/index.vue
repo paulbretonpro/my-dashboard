@@ -17,10 +17,10 @@ const profileSchema = z.object({
 type ProfileSchema = z.output<typeof profileSchema>
 
 const profile = computed(() => ({
-  name: user.value.name || 'Utilisateur',
-  email: user.value.email || '',
-  username: user.value.login || '',
-  avatar: user.value.avatar_url,
+  name: user.value?.displayName || 'Utilisateur',
+  email: '',
+  username: user.value?.displayName || '',
+  avatar: user.value?.avatarUrl,
   bio: undefined
 }))
 const toast = useToast()
@@ -31,7 +31,6 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
     icon: 'i-lucide-check',
     color: 'success'
   })
-  console.log(event.data)
 }
 
 function onFileChange(e: Event) {

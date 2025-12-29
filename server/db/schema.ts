@@ -1,7 +1,8 @@
 import { boolean, integer, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
-  id: uuid('id').primaryKey(),
+  id: serial('id').primaryKey(),
+  providerId: text('provider_id').notNull(),
   displayName: text('display_name'),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
@@ -14,7 +15,7 @@ export const workspaces = pgTable('workspaces', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
   icon: text('icon'),
-  userId: uuid('user_id')
+  userId: integer('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull()
 })
@@ -44,7 +45,7 @@ export const tasks = pgTable('tasks', {
   pageId: integer('page_id')
     .references(() => pages.id, { onDelete: 'cascade' })
     .notNull(),
-  userId: uuid('user_id')
+  userId: integer('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull()
 })

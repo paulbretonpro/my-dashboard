@@ -4,18 +4,25 @@ definePageMeta({
   layout: false
 })
 
-// États pour le formulaire
-const email = ref('')
-const password = ref('')
-const error = ref<string | null>(null)
-const isLoading = ref(false)
-
-// Router et route
-const router = useRouter()
 const route = useRoute()
-const redirectTo = computed(() => {
-  const param = route.query.redirectTo as string
-  return param && param.startsWith('/') ? param : '/'
+const loading = ref(false)
+const { loggedIn } = useUserSession()
+
+watchEffect(() => {
+  if (loggedIn.value) {
+    const redirectTo = (route.query.redirectTo as string) || '/'
+    navigateTo(redirectTo)
+  }
+})
+
+const handleLogin = () => {
+  loading.value = true
+
+  navigateTo('/api/auth/github', { external: true })
+}
+
+onUnmounted(() => {
+  loading.value = false
 })
 </script>
 
@@ -78,71 +85,21 @@ const redirectTo = computed(() => {
             </div>
           </div>
         </template>
-
-        <form class="space-y-4">
-          <!-- Email -->
-          <div class="space-y-2">
-            <UInput
-              id="email"
-              type="email"
-              placeholder="vous@example.com"
-              v-model="email"
-              required
-              icon="i-lucide-mail"
-              size="lg"
-              class="w-full"
-            />
-          </div>
-
-          <!-- Password -->
-          <div class="space-y-2">
-            <UInput
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              v-model="password"
-              required
-              icon="i-lucide-lock"
-              size="lg"
-              class="w-full"
-            />
-          </div>
-
-          <!-- Error -->
-          <div v-if="error" class="rounded-lg border p-2 text-sm text-error font-medium">
-            {{ error }}
-          </div>
-
-          <UButton type="submit" block class="w-full" :disabled="isLoading">
-            <template v-if="isLoading">
-              <div class="flex items-center justify-center gap-2">
-                <USpinner />
-                Connexion...
-              </div>
-            </template>
-            <template v-else> Se connecter </template>
-          </UButton>
-
-          <UButton
-            to="/api/auth/github"
-            icon="i-simple-icons-github"
-            label="Login with GitHub"
-            color="neutral"
-            size="xs"
-            external
-          />
-        </form>
+        <UButton
+          block
+          color="neutral"
+          icon="i-simple-icons-github"
+          label="Login with GitHub"
+          size="lg"
+          :loading
+          @click="handleLogin"
+        />
 
         <template #footer>
           <div class="text-sm text-muted-foreground">
             <div class="text-xs">
               Besoin d'un compte ?
-              <NuxtLink
-                :to="`/signup${route.query.redirectTo ? `?redirectTo=${encodeURIComponent(route.query.redirectTo as string)}` : ''}`"
-                class="text-primary hover:underline"
-              >
-                Créer un compte
-              </NuxtLink>
+              <NuxtLink class="text-primary hover:underline"> Créer un compte </NuxtLink>
               .
             </div>
           </div>
