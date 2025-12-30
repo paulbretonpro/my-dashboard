@@ -34,7 +34,7 @@ const items = computed<NavigationMenuItem[]>(() => {
   base.push(
     ...pages.value.map((page) => ({
       label: page.name,
-      to: `/favorites/${page.id}`
+      to: `/pages/${page.id}`
     }))
   )
 

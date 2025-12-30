@@ -14,6 +14,14 @@ const links = [
       onSelect: () => {
         open.value = false
       }
+    },
+    {
+      label: "Aujourd'hui",
+      icon: 'i-lucide-calendar-days',
+      to: '/today',
+      onSelect: () => {
+        open.value = false
+      }
     }
   ]
 ] satisfies NavigationMenuItem[][]
@@ -67,8 +75,7 @@ const groups = computed(() => [
           popover
         />
 
-        <LayoutFavorites />
-        <LayoutWorkspaces />
+        <LayoutPageMenu />
       </template>
 
       <template #footer="{ collapsed }">

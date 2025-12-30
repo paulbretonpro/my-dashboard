@@ -1,11 +1,13 @@
 <script setup async lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import type { Workspace } from 'hub:db:schema'
 
-const { data: workspaces, status } = await useLazyFetch<Workspace[]>('/api/workspaces', {
-  server: false,
-  default: () => []
-})
+// const { data: workspaces, status } = await useLazyFetch<WorkspaceWithPages[]>('/api/workspaces', {
+//   server: false,
+//   default: () => []
+// })
+
+const workspaces = ref([])
+const status = ref('success')
 
 const items = computed<NavigationMenuItem[]>(() => {
   const base: NavigationMenuItem[] = [
@@ -34,7 +36,11 @@ const items = computed<NavigationMenuItem[]>(() => {
   base.push(
     ...workspaces.value.map((workspace) => ({
       label: workspace.name,
-      to: `/workspaces/${workspace.id}`
+      to: `/pages/${workspace.id}`,
+      children: workspace.pages.map((page) => ({
+        label: page.name,
+        to: `/pages/${page.id}`
+      }))
     }))
   )
 

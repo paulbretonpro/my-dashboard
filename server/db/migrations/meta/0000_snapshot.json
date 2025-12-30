@@ -1,5 +1,5 @@
 {
-  "id": "f00e7f0a-1347-4455-a749-1c6d42b0560b",
+  "id": "c09029f3-4e63-406d-830b-d6f07e8c16de",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -20,6 +20,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "icon": {
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "is_favorite": {
           "name": "is_favorite",
           "type": "boolean",
@@ -27,14 +33,14 @@
           "notNull": true,
           "default": false
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "workspace_id": {
-          "name": "workspace_id",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -42,12 +48,25 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "pages_workspace_id_workspaces_id_fk": {
-          "name": "pages_workspace_id_workspaces_id_fk",
+        "pages_parent_id_pages_id_fk": {
+          "name": "pages_parent_id_pages_id_fk",
           "tableFrom": "pages",
-          "tableTo": "workspaces",
+          "tableTo": "pages",
           "columnsFrom": [
-            "workspace_id"
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "pages_user_id_users_id_fk": {
+          "name": "pages_user_id_users_id_fk",
+          "tableFrom": "pages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -183,57 +202,6 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.workspaces": {
-      "name": "workspaces",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "icon": {
-          "name": "icon",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "workspaces_user_id_users_id_fk": {
-          "name": "workspaces_user_id_users_id_fk",
-          "tableFrom": "workspaces",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

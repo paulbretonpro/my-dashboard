@@ -1,13 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/ui',
-    '@vueuse/nuxt',
-    '@nuxt/hints',
-    '@nuxthub/core',
-    'nuxt-auth-utils'
-  ],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@vueuse/nuxt', '@nuxt/hints', 'nuxt-auth-utils'],
 
   devtools: {
     enabled: true
@@ -32,7 +25,7 @@ export default defineNuxtConfig({
     }
   },
 
-  hub: {
-    db: 'postgresql'
+  imports: {
+    dirs: ['server/db', 'shared/types']
   }
 })

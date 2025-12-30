@@ -1,8 +1,15 @@
-import { db, schema } from 'hub:db'
-import { eq } from 'drizzle-orm'
+import { db } from '~~/server/db'
+import { and, eq, isNull } from 'drizzle-orm'
+import { pages } from '~~/server/db/schema'
 
 export default eventHandler(async (event) => {
-  const pages = await db.select().from(schema.pages).where(eq(schema.pages.isFavorite, true))
+  const { user } = await requireUserSession(event)
 
-  return pages
+  const response = await db.query.pages.findMany({
+    where: and(eq(pages.userId, user.id), isNull(pages.parentId)),
+    orderBy: pages.name,
+    with: { children: true }
+  })
+
+  return response
 })
