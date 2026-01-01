@@ -6,6 +6,20 @@ definePageMeta({
 const { user } = useUserSession()
 const { isNotificationsSlideoverOpen } = useDashboard()
 
+const { data: dashboard } = useLazyFetch('/api/dashboard', {
+  key: 'dashboard'
+})
+
+const staticsInLateTasks = computed(() => ({
+  title: 'En retard',
+  count: dashboard.value?.inLateTasks ?? 0
+}))
+
+const staticsTodayTasks = computed(() => ({
+  title: 'Aujourd’hui',
+  count: dashboard.value?.todayTasks ?? 0
+}))
+
 const items = [
   [
     {
@@ -64,8 +78,14 @@ const items = [
         </UPageCard>
 
         <div class="grid grid-cols-2 gap-8">
-          <DashboardCardInLate />
-          <DashboardCardToday />
+          <DashboardCardStatistic
+            :title="staticsInLateTasks.title"
+            :count="staticsInLateTasks.count"
+          />
+          <DashboardCardStatistic
+            :title="staticsTodayTasks.title"
+            :count="staticsTodayTasks.count"
+          />
         </div>
 
         <DashboardTable />

@@ -8,6 +8,13 @@
       "when": 1767089327195,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1767271305193,
+      "tag": "0001_alter_table_task",
+      "breakpoints": true
     }
   ]
 }

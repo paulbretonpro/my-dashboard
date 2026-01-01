@@ -2,12 +2,17 @@
 import type { SelectItem } from '@nuxt/ui'
 import { AppFetchKeysEnum } from '~~/shared/types'
 
-const newTask = ref({
-  content: undefined,
+const emit = defineEmits(['new-task-added'])
+
+const defaultNewTask: NewTask = {
+  content: '',
   deadline: undefined,
   recall: undefined,
   pageId: undefined
-})
+}
+
+const newTask = ref<NewTask>({ ...defaultNewTask })
+const loading = ref(false)
 
 const { data } = useNuxtData<PageWithChildren[]>(AppFetchKeysEnum.PAGES)
 
@@ -34,6 +39,24 @@ const pages = computed<SelectItem[]>(() => {
     })
     .flat()
 })
+
+const handleSubmit = async () => {
+  loading.value = true
+  try {
+    await $fetch('/api/tasks', {
+      method: 'POST',
+      body: newTask.value
+    })
+
+    emit('new-task-added')
+
+    newTask.value = { ...defaultNewTask }
+  } catch (error) {
+    console.error('Erreur lors de la création de la tâche :', error)
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -41,10 +64,9 @@ const pages = computed<SelectItem[]>(() => {
     v-model="newTask.content"
     :rows="2"
     placeholder="Ajouter votre tâche..."
-    class="shadow-lg"
+    class="shadow-lg ring-2"
+    @submit="handleSubmit"
   >
-    <UChatPromptSubmit icon="i-lucide-send" color="neutral" />
-
     <template #footer>
       <div class="flex gap-2">
         <UButton
@@ -52,7 +74,7 @@ const pages = computed<SelectItem[]>(() => {
           color="neutral"
           size="xs"
           icon="i-lucide-calendar-days"
-          :ui="{ base: 'border border-dashed border-accented' }"
+          :ui="{ base: 'border border-dashed border-accented text-dimmed' }"
         >
           Deadline
         </UButton>
@@ -61,22 +83,28 @@ const pages = computed<SelectItem[]>(() => {
           color="neutral"
           size="xs"
           icon="i-lucide-bell-ring"
-          :ui="{ base: 'border border-dashed border-accented' }"
+          :ui="{ base: 'border border-dashed border-accented text-dimmed' }"
         >
           Recall
         </UButton>
         <USelect
           v-if="pages.length"
           v-model="newTask.pageId"
+          :items="pages"
+          :class="{ 'border border-dashed border-accented': newTask.pageId === undefined }"
           placeholder="Page"
           size="xs"
-          :ui="{ base: 'border border-dashed border-accented' }"
-          variant="ghost"
-          :items="pages"
-          class="w-32"
           value-key="id"
-        ></USelect>
+          :variant="newTask.pageId === undefined ? 'ghost' : 'outline'"
+          class="w-32"
+        />
       </div>
+
+      <UChatPromptSubmit
+        icon="i-lucide-plus"
+        :disabled="newTask.content.trim().length === 0"
+        :loading
+      />
     </template>
   </UChatPrompt>
 </template>

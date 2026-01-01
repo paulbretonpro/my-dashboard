@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-const route = useRoute()
+const { tasks, updateSearch } = useTasks({
+  immediate: false,
+  perPage: 10
+})
 
 const open = ref(false)
 
@@ -22,38 +25,27 @@ const links = [
       onSelect: () => {
         open.value = false
       }
-    },
-    {
-      label: 'Tâches',
-      icon: 'i-lucide-check-square',
-      to: '/tasks',
-      onSelect: () => {
-        open.value = false
-      }
     }
   ]
 ] satisfies NavigationMenuItem[][]
 
 const groups = computed(() => [
   {
+    id: 'tasks',
+    label: 'Tâches',
+    items: tasks.value.map((task) => ({
+      label: task.content,
+      icon: 'i-lucide-check-square',
+      to: `/tasks/${task.id}`,
+      onSelect: () => {
+        open.value = false
+      }
+    }))
+  },
+  {
     id: 'links',
     label: 'Go to',
     items: links.flat()
-  },
-  {
-    id: 'code',
-    label: 'Code',
-    items: [
-      {
-        id: 'source',
-        label: 'View page source',
-        icon: 'i-simple-icons-github',
-        to: `https://github.com/nuxt-ui-templates/dashboard/blob/main/app/pages${
-          route.path === '/' ? '/index' : route.path
-        }.vue`,
-        target: '_blank'
-      }
-    ]
   }
 ])
 </script>
@@ -69,29 +61,27 @@ const groups = computed(() => [
       :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
       <template #header="{ collapsed }">
-        <TeamsMenu :collapsed="collapsed" />
+        <TeamsMenu :collapsed />
       </template>
 
       <template #default="{ collapsed }">
-        <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" />
+        <UDashboardSearchButton :collapsed class="bg-transparent ring-default" />
 
-        <UNavigationMenu
-          :collapsed="collapsed"
-          :items="links[0]"
-          orientation="vertical"
-          tooltip
-          popover
-        />
+        <UNavigationMenu :collapsed :items="links[0]" orientation="vertical" tooltip popover />
 
         <LayoutPageMenu />
       </template>
 
       <template #footer="{ collapsed }">
-        <UserMenu :collapsed="collapsed" />
+        <UserMenu :collapsed />
       </template>
     </UDashboardSidebar>
 
-    <UDashboardSearch :groups="groups" />
+    <UDashboardSearch
+      placeholder="Rechercher une page ou une tâche"
+      :groups
+      @update:search-term="updateSearch"
+    />
 
     <slot />
 

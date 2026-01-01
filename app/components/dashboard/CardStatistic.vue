@@ -1,10 +1,13 @@
 <script setup lang="ts">
-const inLateTasks = ref(2)
+defineProps<{
+  title: string
+  count: number
+}>()
 </script>
 
 <template>
-  <UPageCard variant="subtle" title="En retard" orientation="horizontal">
-    <div class="text-3xl font-semibold text-center">{{ inLateTasks }}</div>
+  <UPageCard variant="subtle" :title orientation="horizontal">
+    <div class="text-3xl font-semibold text-center">{{ count }}</div>
 
     <template #footer>
       <UButton variant="ghost" size="xs" trailing-icon="i-lucide-arrow-right">Voir toutes</UButton>

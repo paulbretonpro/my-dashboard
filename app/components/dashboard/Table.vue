@@ -2,7 +2,9 @@
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 
-const data = ref<Task[]>([])
+const { tasks, status } = useTasks({ sortBy: 'createdAt', descending: true })
+
+const data = computed(() => tasks.value || [])
 const columns: TableColumn<Task>[] = [
   {
     header: 'Tâche',
@@ -12,9 +14,10 @@ const columns: TableColumn<Task>[] = [
     header: 'Statut',
     accessorKey: 'isDone',
     cell: ({ row }) =>
-      h(resolveComponent('UiBadge'), {
-        variant: row.original.isDone ? 'success' : 'warning',
-        label: row.original.isDone ? 'Terminée' : 'En cours'
+      h(resolveComponent('UBadge'), {
+        color: row.original.isDone ? 'success' : 'warning',
+        variant: 'soft',
+        label: row.original.isDone ? 'Terminée' : 'À faire'
       })
   },
   {
@@ -22,10 +25,33 @@ const columns: TableColumn<Task>[] = [
     accessorKey: 'deadline',
     cell: ({ row }) =>
       row.original.deadline ? new Date(row.original.deadline).toLocaleDateString() : 'Aucune'
+  },
+  {
+    header: 'Créée le',
+    accessorKey: 'createdAt',
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString()
+  },
+  {
+    header: 'Actions',
+    cell: ({ row }) =>
+      h(
+        resolveComponent('NuxtLink'),
+        {
+          label: 'Voir',
+          to: `/tasks/${row.original.id}`
+        },
+        () =>
+          h(resolveComponent('UButton'), {
+            size: 'sm',
+            variant: 'ghost',
+            color: 'neutral',
+            icon: 'i-lucide-move-right'
+          })
+      )
   }
 ]
 </script>
 
 <template>
-  <UiTableBorderLess :data :columns />
+  <UiTableBorderLess :data :columns :loading="isLoading(status)" />
 </template>

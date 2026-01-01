@@ -21,14 +21,13 @@ export const pages = pgTable('pages', {
 
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
-  deadline: timestamp('deadline', { withTimezone: true }).notNull(),
   content: text('content').notNull(),
-  isDone: boolean('is_done').default(false).notNull(),
-  recall: timestamp('recall', { withTimezone: true }).notNull(),
-  pageId: integer('page_id')
-    .references(() => pages.id, { onDelete: 'cascade' })
-    .notNull(),
+  deadline: timestamp('deadline', { withTimezone: true }),
+  isDone: boolean('is_done').default(false),
+  recall: timestamp('recall', { withTimezone: true }),
+  pageId: integer('page_id').references(() => pages.id, { onDelete: 'cascade' }),
   userId: integer('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
-    .notNull()
+    .notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })

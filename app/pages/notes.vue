@@ -15,28 +15,15 @@ definePageMeta({
     </template>
 
     <template #body>
-      <div class="flex flex-col gap-4 sm:gap-6 lg:gap-10 w-full lg:max-w-2xl mx-auto">
+      <div class="flex flex-col gap-4 w-full lg:max-w-2xl mx-auto">
         <UPageCard
-          title="Page du jour"
-          description="Gérer toutes les tâches créées aujourd'hui."
+          title="Bloc notes"
+          description="Gérer toutes vos tâches."
           variant="naked"
           orientation="horizontal"
-          class="mb-4"
         />
 
-        <UiInputTask />
-
-        <UiTask
-          :task="{
-            id: 1,
-            content: 'Exemple de tâche 1',
-            isDone: false,
-            deadline: new Date(),
-            recall: new Date(),
-            userId: 1,
-            pageId: 1
-          }"
-        />
+        <NotesTabs class="mb-4" />
       </div>
     </template>
   </UDashboardPanel>
