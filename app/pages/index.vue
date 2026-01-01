@@ -1,34 +1,23 @@
 <script setup lang="ts">
-import { sub } from 'date-fns'
-import type { DropdownMenuItem } from '@nuxt/ui'
-import type { Period, Range } from '~/types'
-
 definePageMeta({
   middleware: 'auth'
 })
 
+const { user } = useUserSession()
 const { isNotificationsSlideoverOpen } = useDashboard()
 
 const items = [
   [
     {
-      label: 'New mail',
-      icon: 'i-lucide-send',
-      to: '/inbox'
+      label: 'Ajouter une tâche',
+      icon: 'i-lucide-check-square'
     },
     {
-      label: 'New customer',
-      icon: 'i-lucide-user-plus',
-      to: '/customers'
+      label: 'Ajouter une page',
+      icon: 'i-lucide-file-plus'
     }
   ]
-] satisfies DropdownMenuItem[][]
-
-const range = shallowRef<Range>({
-  start: sub(new Date(), { days: 14 }),
-  end: new Date()
-})
-const period = ref<Period>('daily')
+]
 </script>
 
 <template>
@@ -60,6 +49,27 @@ const period = ref<Period>('daily')
       </UDashboardNavbar>
     </template>
 
-    <template #body> Dashboard Utilisateur </template>
+    <template #body>
+      <div class="flex flex-col gap-4 sm:gap-6 lg:gap-10 w-full lg:max-w-4xl mx-auto">
+        <UPageCard
+          :title="`Bonjour, ${user?.displayName}`"
+          description="Bienvenue sur votre dashboard. Vous pouvez commencer à organiser votre travail dès maintenant."
+          variant="naked"
+        >
+          <template #title>
+            <div class="text-base text-pretty font-semibold text-highlighted">
+              Bonjour, <span class="text-primary font-bold">{{ user?.displayName }}</span>
+            </div>
+          </template>
+        </UPageCard>
+
+        <div class="grid grid-cols-2 gap-8">
+          <DashboardCardInLate />
+          <DashboardCardToday />
+        </div>
+
+        <DashboardTable />
+      </div>
+    </template>
   </UDashboardPanel>
 </template>

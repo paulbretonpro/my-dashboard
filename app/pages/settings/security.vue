@@ -2,6 +2,10 @@
 import * as z from 'zod'
 import type { FormError } from '@nuxt/ui'
 
+definePageMeta({
+  middleware: 'auth'
+})
+
 const passwordSchema = z.object({
   current: z.string().min(8, 'Must be at least 8 characters'),
   new: z.string().min(8, 'Must be at least 8 characters')
@@ -45,12 +49,7 @@ const validate = (state: Partial<PasswordSchema>): FormError[] => {
       </UFormField>
 
       <UFormField name="new">
-        <UInput
-          v-model="password.new"
-          type="password"
-          placeholder="New password"
-          class="w-full"
-        />
+        <UInput v-model="password.new" type="password" placeholder="New password" class="w-full" />
       </UFormField>
 
       <UButton label="Update" class="w-fit" type="submit" />

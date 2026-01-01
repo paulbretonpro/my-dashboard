@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import type { PageWithChildren } from '~~/shared/types'
+import { AppFetchKeysEnum } from '~~/shared/types'
 
 const { data: pages, status } = await useLazyFetch<PageWithChildren[]>('/api/pages', {
+  key: AppFetchKeysEnum.PAGES,
   server: false,
   default: () => []
 })
@@ -34,7 +35,7 @@ const buildMenuItems = (label: string, pagesGroup: PageWithChildren[]): Navigati
       label: page.name,
       to: page.parentId === null ? `/pages/${page.id}` : undefined,
       children:
-        page.children?.map((child) => ({
+        page.children?.map((child: Page) => ({
           label: child.name,
           to: `/pages/${child.id}`
         })) || []

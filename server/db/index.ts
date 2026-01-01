@@ -4,11 +4,6 @@ import * as schema from './schema'
 import * as relations from './relations'
 
 let connectionString = process.env.SUPABASE_URL!
-// if (host.includes('postgres:postgres@supabase_db_')) {
-//   const url = URL.parse(host)!
-//   url.hostname = url.hostname.split('_')[1]
-//   connectionString = url.href
-// }
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
 const client = postgres(connectionString, { prepare: false })

@@ -9,3 +9,7 @@ export type NewPage = typeof pages.$inferInsert
 
 export type Task = typeof tasks.$inferSelect
 export type NewTask = typeof tasks.$inferInsert
+
+export enum AppFetchKeysEnum {
+  PAGES = 'pages'
+}

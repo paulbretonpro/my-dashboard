@@ -16,9 +16,17 @@ const links = [
       }
     },
     {
-      label: "Aujourd'hui",
-      icon: 'i-lucide-calendar-days',
-      to: '/today',
+      label: 'Bloc notes',
+      icon: 'i-lucide-list',
+      to: '/notes',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
+      label: 'Tâches',
+      icon: 'i-lucide-check-square',
+      to: '/tasks',
       onSelect: () => {
         open.value = false
       }
