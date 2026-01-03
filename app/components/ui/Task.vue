@@ -1,14 +1,34 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   task: TaskWithPage
 }>()
+
+const emit = defineEmits(['update'])
+
+const handleTaskIsDoneChange = async (isDone: boolean | 'intermediate') => {
+  if (isDone === 'intermediate') return
+
+  try {
+    await $fetch(`/api/tasks/${props.task.id}`, {
+      method: 'PUT',
+      body: { isDone }
+    })
+    emit('update', { ...props.task, isDone })
+  } catch (error) {
+    console.error('Failed to update task status:', error)
+  }
+}
 </script>
 
 <template>
   <div
     class="p-4 border border-default rounded-lg hover:shadow-sm transition-shadow flex items-center gap-4"
   >
-    <UCheckbox v-model="task.isDone" size="xl" />
+    <UCheckbox
+      :model-value="props.task.isDone"
+      size="xl"
+      @update:model-value="handleTaskIsDoneChange"
+    />
 
     <div class="flex flex-col gap-2 w-full justify-center">
       <div class="text-base text-pretty text-highlighted font-medium">{{ task.content }}</div>

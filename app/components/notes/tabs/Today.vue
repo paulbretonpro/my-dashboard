@@ -15,7 +15,7 @@ const displayPagination = computed(() => total.value > DEFAULT_PER_PAGE)
   <div class="space-y-4">
     <UiInputTask @new-task-added="refresh" />
 
-    <NotesListTask :tasks="tasks" :loading="pending || isLoading(status)" />
+    <NotesListTask :tasks="tasks" :loading="pending || isLoading(status)" @update="refresh" />
 
     <UPagination
       v-if="displayPagination"

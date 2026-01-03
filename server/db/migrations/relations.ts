@@ -1,14 +1,18 @@
 import { relations } from "drizzle-orm/relations";
-import { users, pages, workspaces, tasks } from "./schema";
+import { pages, users, tasks } from "./schema";
 
 export const pagesRelations = relations(pages, ({one, many}) => ({
+	page: one(pages, {
+		fields: [pages.parentId],
+		references: [pages.id],
+		relationName: "pages_parentId_pages_id"
+	}),
+	pages: many(pages, {
+		relationName: "pages_parentId_pages_id"
+	}),
 	user: one(users, {
 		fields: [pages.userId],
 		references: [users.id]
-	}),
-	workspace: one(workspaces, {
-		fields: [pages.workspaceId],
-		references: [workspaces.id]
 	}),
 	tasks: many(tasks),
 }));
@@ -16,15 +20,6 @@ export const pagesRelations = relations(pages, ({one, many}) => ({
 export const usersRelations = relations(users, ({many}) => ({
 	pages: many(pages),
 	tasks: many(tasks),
-	workspaces: many(workspaces),
-}));
-
-export const workspacesRelations = relations(workspaces, ({one, many}) => ({
-	pages: many(pages),
-	user: one(users, {
-		fields: [workspaces.userId],
-		references: [users.id]
-	}),
 }));
 
 export const tasksRelations = relations(tasks, ({one}) => ({

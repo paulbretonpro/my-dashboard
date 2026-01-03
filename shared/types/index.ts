@@ -19,17 +19,18 @@ export enum AppFetchKeysEnum {
 export type TaskFilters = {
   createdAt?: string | Date
   createdBefore?: string | Date
-  pageId?: number
   deadline?: string | Date
-  sortBy?: 'createdAt' | 'deadline'
+  deadlineFilter?: 'no-deadline' | 'overdue' | 'today' | 'this-week' | 'this-month'
   descending?: boolean
-  status?: 'all' | 'true' | 'false'
   page?: number
+  pageId?: number
   perPage?: number
   search?: string
+  sortBy?: 'created_at' | 'deadline'
+  status?: 'all' | 'true' | 'false'
 }
 
 export type TaskListResponse = {
-  data: Task[]
+  data: TaskWithPage[]
   total: number
 }

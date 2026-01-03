@@ -8,6 +8,11 @@ export default defineAppConfig({
       slots: {
         base: 'hover:cursor-pointer'
       }
+    },
+    checkbox: {
+      slots: {
+        base: 'hover:cursor-pointer'
+      }
     }
   }
 })

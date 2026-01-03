@@ -2,6 +2,10 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { AppFetchKeysEnum } from '~~/shared/types'
 
+defineProps<{
+  collapsed?: boolean
+}>()
+
 const { data: pages, status } = await useLazyFetch<PageWithChildren[]>('/api/pages', {
   key: AppFetchKeysEnum.PAGES,
   server: false,
@@ -50,5 +54,5 @@ const itemsOthers = computed(() => buildMenuItems('Pages', otherPages.value))
 </script>
 
 <template>
-  <UNavigationMenu :items="[...itemsFavorites, ...itemsOthers]" orientation="vertical" />
+  <UNavigationMenu :collapsed :items="[...itemsFavorites, ...itemsOthers]" orientation="vertical" />
 </template>

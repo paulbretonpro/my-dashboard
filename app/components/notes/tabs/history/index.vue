@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { today } from '@/utils/date'
 
-const { tasks, status, pending, filters, total, updateSearch } = useTasks({
+const { tasks, status, pending, filters, total, refresh, updateSearch } = useTasks({
   createdBefore: today.toString()
 })
-
-const statusOptions = [
-  { label: 'Tous', value: 'all' },
-  { label: 'Terminer', value: 'true' },
-  { label: 'À faire', value: 'false' }
-]
 
 const hasTasks = computed(() => total.value > 0)
 </script>
@@ -23,10 +17,13 @@ const hasTasks = computed(() => total.value > 0)
         icon="i-lucide-search"
         @update:modelValue="updateSearch"
       />
-      <USelect v-model="filters.status" placeholder="Status" :items="statusOptions" class="w-32" />
+
+      <NotesTabsHistoryFiltersSelectStatus v-model="filters.status" />
+
+      <NotesTabsHistoryFiltersModal v-model="filters" />
     </div>
 
-    <NotesListTask :tasks="tasks" :loading="pending || isLoading(status)" />
+    <NotesListTask :tasks="tasks" :loading="pending || isLoading(status)" @update="refresh" />
 
     <UPagination
       v-if="hasTasks"

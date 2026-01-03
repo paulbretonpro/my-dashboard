@@ -15,42 +15,30 @@ export default function (options?: TaskFilters & { immediate?: boolean }) {
     createdAt: options?.createdAt,
     createdBefore: options?.createdBefore,
     deadline: options?.deadline,
-    descending: options?.descending || false,
-    page: options?.page || 1,
+    descending: options?.descending ?? false,
     pageId: options?.pageId,
-    perPage: options?.perPage || 5,
     search: options?.search,
-    sortBy: options?.sortBy || tasksTable.createdAt.name,
-    status: options?.status || 'all'
+    sortBy: options?.sortBy ?? tasksTable.createdAt.name,
+    status: options?.status ?? 'all'
   })
 
-  const queryParams = computed(() => {
-    const {
-      createdAt,
-      createdBefore,
-      deadline,
-      descending,
-      page,
-      pageId,
-      perPage,
-      search,
-      sortBy,
-      status
-    } = filters.value
-
-    return {
-      created_at: normalizeDate(createdAt),
-      created_before: normalizeDate(createdBefore),
-      deadline: normalizeDate(deadline),
-      descending: typeof descending === 'boolean' ? String(descending) : undefined,
-      is_done: status === 'all' ? undefined : status,
-      page_id: pageId ?? undefined,
-      page,
-      per_page: perPage,
-      search,
-      sort_by: sortBy
-    }
+  const pagination = ref({
+    page: options?.page || 1,
+    perPage: options?.perPage || 10
   })
+
+  const queryParams = computed<TaskFilters>(() => ({
+    createdAt: normalizeDate(filters.value.createdAt),
+    createdBefore: normalizeDate(filters.value.createdBefore),
+    deadline: normalizeDate(filters.value.deadline),
+    descending: filters.value.descending,
+    page: filters.value.page,
+    pageId: filters.value.pageId,
+    perPage: filters.value.perPage,
+    search: filters.value.search?.trim() || undefined,
+    sortBy: filters.value.sortBy,
+    status: filters.value.status === 'all' ? undefined : filters.value.status
+  }))
 
   const {
     data: tasksResponse,
@@ -64,10 +52,11 @@ export default function (options?: TaskFilters & { immediate?: boolean }) {
     {
       default: () => ({ data: [], total: 0 }),
       watch: [queryParams],
-      server: false,
-      immediate
+      server: false
     }
   )
+
+  watch(filters, () => (filters.value.page = 1), { deep: true })
 
   const tasks = computed(() => tasksResponse.value?.data || [])
   const total = computed(() => tasksResponse.value?.total || 0)
