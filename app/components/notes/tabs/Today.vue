@@ -3,7 +3,7 @@ import { today } from '@/utils/date'
 
 const DEFAULT_PER_PAGE = 100
 
-const { tasks, status, pending, refresh, filters, total } = useTasks({
+const { tasks, loading, refresh, filters, total } = useTasks({
   createdAt: today.toString(),
   perPage: DEFAULT_PER_PAGE
 })
@@ -15,7 +15,7 @@ const displayPagination = computed(() => total.value > DEFAULT_PER_PAGE)
   <div class="space-y-4">
     <UiInputTask @new-task-added="refresh" />
 
-    <NotesListTask :tasks="tasks" :loading="pending || isLoading(status)" />
+    <NotesListTask :tasks :loading @update="refresh" />
 
     <UPagination
       v-if="displayPagination"

@@ -1,34 +1,20 @@
-import { and, eq, gte, lt } from 'drizzle-orm'
 import { db } from '~~/server/db'
 import { tasks } from '~~/server/db/schema'
+import { getTodayRange, inLateTasksFilter, todayTasksFilter, userFilter } from './filters'
+import { and } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const now = new Date()
-  const startOfToday = new Date(now)
-  startOfToday.setHours(0, 0, 0, 0)
-  const endOfToday = new Date(now)
-  endOfToday.setHours(23, 59, 59, 999)
+  const { startOfToday, endOfToday } = getTodayRange()
 
-  const inLateTasksQuery = db
-    .select()
-    .from(tasks)
-    .where(
-      and(eq(tasks.userId, user.id), eq(tasks.isDone, false), lt(tasks.deadline, startOfToday))
-    )
+  const filtersInLateTasks = [userFilter(user.id), inLateTasksFilter(startOfToday)]
+  const whereInLateTasks = filtersInLateTasks.length ? and(...filtersInLateTasks) : undefined
+  const inLateTasksQuery = db.select().from(tasks).where(whereInLateTasks)
 
-  const todayTasksQuery = db
-    .select()
-    .from(tasks)
-    .where(
-      and(
-        eq(tasks.userId, user.id),
-        eq(tasks.isDone, false),
-        gte(tasks.deadline, startOfToday),
-        lt(tasks.deadline, endOfToday)
-      )
-    )
+  const filtersTodayTasks = [userFilter(user.id), todayTasksFilter(startOfToday, endOfToday)]
+  const whereTodayTasks = filtersTodayTasks.length ? and(...filtersTodayTasks) : undefined
+  const todayTasksQuery = db.select().from(tasks).where(whereTodayTasks)
 
   const [inLateTasks, todayTasks] = await Promise.all([inLateTasksQuery, todayTasksQuery])
 

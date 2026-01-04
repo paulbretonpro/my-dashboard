@@ -69,15 +69,7 @@ const handleSubmit = async () => {
   >
     <template #footer>
       <div class="flex gap-2">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="xs"
-          icon="i-lucide-calendar-days"
-          :ui="{ base: 'border border-dashed border-accented text-dimmed' }"
-        >
-          Deadline
-        </UButton>
+        <UiInputTaskDatepicker v-model="newTask.deadline" />
         <UButton
           variant="ghost"
           color="neutral"

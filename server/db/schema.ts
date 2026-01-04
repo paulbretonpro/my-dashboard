@@ -22,6 +22,7 @@ export const pages = pgTable('pages', {
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
   content: text('content').notNull(),
+  additionalNotes: text('additional_notes'),
   deadline: timestamp('deadline', { withTimezone: true }),
   isDone: boolean('is_done').default(false),
   recall: timestamp('recall', { withTimezone: true }),

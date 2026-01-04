@@ -11,7 +11,7 @@ useHead({
   ],
   link: [{ rel: 'icon', href: '/favicon.ico' }],
   htmlAttrs: {
-    lang: 'en'
+    lang: 'fr'
   }
 })
 
@@ -34,7 +34,24 @@ useSeoMeta({
     <NuxtLoadingIndicator />
 
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtErrorBoundary>
+        <NuxtPage />
+
+        <template #error="{ error }">
+          <div class="w-full">
+            <UError
+              :error="{
+                statusMessage: 'Oups....',
+                message: error.message ?? 'Une erreur s\'est produite au chargement de cette page.'
+              }"
+              :clear="{
+                label: 'Retour à la page d\'accueil',
+                icon: 'i-lucide-arrow-left'
+              }"
+            />
+          </div>
+        </template>
+      </NuxtErrorBoundary>
     </NuxtLayout>
   </UApp>
 </template>

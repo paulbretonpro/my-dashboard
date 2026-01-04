@@ -7,7 +7,7 @@ const items = ref<TabsItem[]>([
     slot: 'today'
   },
   {
-    label: 'historique',
+    label: 'Historique',
     slot: 'history'
   }
 ])

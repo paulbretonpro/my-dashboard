@@ -69,7 +69,7 @@ const groups = computed(() => [
 
         <UNavigationMenu :collapsed :items="links[0]" orientation="vertical" tooltip popover />
 
-        <LayoutPageMenu />
+        <LayoutPageMenu :collapsed />
       </template>
 
       <template #footer="{ collapsed }">
