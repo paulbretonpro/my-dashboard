@@ -98,7 +98,7 @@ export const createdAtFilters = (query: TaskFilters): SQL[] => {
 
   const createdAt = parseDate(query.createdAt)
   if (createdAt) {
-    filters.push(eq(tasks.createdAt, createdAt))
+    filters.push(gte(tasks.createdAt, createdAt))
   }
 
   const createdBefore = parseDate(query.createdBefore)

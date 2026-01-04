@@ -7,8 +7,8 @@ export type Page = typeof pages.$inferSelect
 export type PageWithChildren = Page & { children: Page[] }
 export type NewPage = typeof pages.$inferInsert
 
-export type Task = typeof tasks.$inferSelect
-export type TaskWithPage = typeof tasks.$inferSelect & { page?: Page }
+export type Task = Omit<typeof tasks.$inferSelect, 'isDone'> & { isDone: boolean }
+export type TaskWithPage = Task & { page?: Page }
 export type NewTask = Omit<typeof tasks.$inferInsert, 'userId'>
 
 export enum AppFetchKeysEnum {
@@ -26,8 +26,15 @@ export type TaskFilters = {
   pageId?: number
   perPage?: number
   search?: string
-  sortBy?: 'created_at' | 'deadline'
+  sortBy?: TaskSortByEnum
   status?: 'all' | 'true' | 'false'
+}
+
+export enum TaskSortByEnum {
+  DEADLINE = 'deadline',
+  IS_DONE = 'is_done',
+  RECALL = 'recall',
+  CREATED_AT = 'created_at'
 }
 
 export type TaskListResponse = {

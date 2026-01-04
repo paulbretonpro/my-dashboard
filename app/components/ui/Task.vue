@@ -5,18 +5,13 @@ const props = defineProps<{
 
 const emit = defineEmits(['update'])
 
+const { updateIsDone } = useUpdateTask(props.task)
+
 const handleTaskIsDoneChange = async (isDone: boolean | 'intermediate') => {
   if (isDone === 'intermediate') return
 
-  try {
-    await $fetch(`/api/tasks/${props.task.id}`, {
-      method: 'PUT',
-      body: { isDone }
-    })
-    emit('update', { ...props.task, isDone })
-  } catch (error) {
-    console.error('Failed to update task status:', error)
-  }
+  await updateIsDone(isDone)
+  emit('update')
 }
 </script>
 

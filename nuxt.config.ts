@@ -33,6 +33,6 @@ export default defineNuxtConfig({
   },
 
   imports: {
-    dirs: ['server/db', 'shared/types']
+    dirs: ['server/**', 'shared/**/**', 'composables/**']
   }
 })

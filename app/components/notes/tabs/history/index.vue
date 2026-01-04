@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { today } from '@/utils/date'
-
-const { tasks, status, pending, filters, total, refresh, updateSearch } = useTasks({
-  createdBefore: today.toString()
-})
+const { tasks, loading, pagination, filters, total, refresh, updateSearch } = useTasks()
 
 const hasTasks = computed(() => total.value > 0)
 </script>
@@ -23,14 +19,14 @@ const hasTasks = computed(() => total.value > 0)
       <NotesTabsHistoryFiltersModal v-model="filters" />
     </div>
 
-    <NotesListTask :tasks="tasks" :loading="pending || isLoading(status)" @update="refresh" />
+    <NotesListTask :tasks :loading @update="refresh" />
 
     <UPagination
       v-if="hasTasks"
-      v-model:page="filters.page"
+      v-model:page="pagination.page"
       active-variant="outline"
       show-edges
-      :items-per-page="filters.perPage"
+      :items-per-page="pagination.perPage"
       :show-controls="false"
       :sibling-count="1"
       :total

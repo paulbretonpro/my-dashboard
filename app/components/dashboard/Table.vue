@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
+import { TaskSortByEnum } from '~~/shared/types'
 
-const { tasks, status } = useTasks({ sortBy: 'createdAt', descending: true })
+const { tasks, loading } = useTasks({ sortBy: TaskSortByEnum.CREATED_AT, descending: true })
 
 const data = computed(() => tasks.value || [])
 const columns: TableColumn<Task>[] = [
@@ -15,7 +16,7 @@ const columns: TableColumn<Task>[] = [
     accessorKey: 'isDone',
     cell: ({ row }) =>
       h(resolveComponent('UBadge'), {
-        color: row.original.isDone ? 'success' : 'warning',
+        color: row.original.isDone ? 'success' : 'info',
         variant: 'soft',
         label: row.original.isDone ? 'Terminée' : 'À faire'
       })
@@ -53,5 +54,5 @@ const columns: TableColumn<Task>[] = [
 </script>
 
 <template>
-  <UiTableBorderLess :data :columns :loading="isLoading(status)" />
+  <UiTableBorderLess :data :columns :loading />
 </template>
