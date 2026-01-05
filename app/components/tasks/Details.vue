@@ -5,6 +5,10 @@ const props = defineProps<{
   task: TaskWithPage
 }>()
 
+const emit = defineEmits<{
+  'update:task': [value: TaskWithPage]
+}>()
+
 const currentTask = ref<TaskWithPage>({ ...props.task })
 const additionnalNotesHasChange = ref<boolean>(false)
 
@@ -46,15 +50,40 @@ const handleUpdateIsDone = async (value: boolean | 'indeterminate') => {
 
   try {
     currentTask.value.isDone = value
-    await updateIsDone(value)
+    const response = await updateIsDone(value)
+    if (response) {
+      emit('update:task', response)
+    }
   } catch {
     currentTask.value.isDone = props.task.isDone
   }
 }
 
 const handleUpdateAdditionalNotes = async (value: string) => {
+  currentTask.value.additionalNotes = value
+
   try {
-    await updateAdditionnalNotes(value)
+    const response = await updateAdditionnalNotes(value)
+
+    if (response) {
+      emit('update:task', response)
+    }
+  } catch {
+    currentTask.value.additionalNotes = props.task.additionalNotes
+  } finally {
+    additionnalNotesHasChange.value = false
+  }
+}
+
+const handleClearAdditionalNotes = async () => {
+  currentTask.value.additionalNotes = ''
+
+  try {
+    const response = await updateAdditionnalNotes()
+
+    if (response) {
+      emit('update:task', response)
+    }
   } catch {
     currentTask.value.additionalNotes = props.task.additionalNotes
   } finally {
@@ -141,7 +170,7 @@ defineExpose({
             variant="ghost"
             color="error"
             class="h-fit"
-            @click="handleUpdateAdditionalNotes('')"
+            @click="handleClearAdditionalNotes"
           />
         </template>
       </div>

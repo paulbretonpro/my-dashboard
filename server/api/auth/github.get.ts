@@ -5,7 +5,11 @@ export default defineOAuthGitHubEventHandler({
       return sendRedirect(event, '/login')
     }
 
-    await setUserSession(event, { user })
+    await setUserSession(event, {
+      ...user,
+      refreshedAt: new Date().toISOString()
+    })
+
     return sendRedirect(event, '/')
   }
 })

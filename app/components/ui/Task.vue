@@ -18,6 +18,7 @@ const handleTaskIsDoneChange = async (isDone: boolean | 'intermediate') => {
 <template>
   <div
     class="p-4 border border-default rounded-lg hover:shadow-sm transition-shadow flex items-center gap-4"
+    :class="{ 'opacity-50': task.isDone }"
   >
     <UCheckbox
       :model-value="props.task.isDone"

@@ -18,12 +18,21 @@ const errorLoading = ref<boolean>(false)
 
 const taskId = computed(() => Number(route.params.id))
 const taskDetailIsLoading = computed<boolean>(
-  () => errorLoading.value || (taskDetailRef.value?.loading ?? false)
+  () =>
+    errorLoading.value ||
+    pending.value ||
+    isLoading(status.value) ||
+    (taskDetailRef.value?.loading ?? false)
 )
 const taskDetailError = computed(() => taskDetailRef.value?.error || errorOnDelete.value)
 const errorOnTaskId = computed(() => error.value || taskDetailError.value)
 
-const { data: task, error } = useLazyAsyncData<Task>(
+const {
+  data: task,
+  error,
+  status,
+  pending
+} = useLazyAsyncData<Task>(
   computed(() => `task-${taskId.value}`),
   () => $fetch(`/api/tasks/${taskId.value}`),
   { server: false }
@@ -87,7 +96,15 @@ const handleResetError = () => {
           "
         />
 
-        <TasksDetails v-if="task" ref="taskDetailRef" :task />
+        <TasksDetails v-if="task" ref="taskDetailRef" v-model:task="task" />
+
+        <UEmpty
+          v-else
+          icon="i-lucide-square-check"
+          title="Chargement..."
+          description="Si le chargement est trop long, tu as le temps pour un café "
+        >
+        </UEmpty>
       </div>
     </template>
   </UDashboardPanel>

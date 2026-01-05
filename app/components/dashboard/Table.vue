@@ -9,7 +9,12 @@ const data = computed(() => tasks.value || [])
 const columns: TableColumn<Task>[] = [
   {
     header: 'Tâche',
-    accessorKey: 'content'
+    accessorKey: 'content',
+    meta: {
+      class: {
+        td: 'max-w-80 whitespace-break-spaces'
+      }
+    }
   },
   {
     header: 'Statut',

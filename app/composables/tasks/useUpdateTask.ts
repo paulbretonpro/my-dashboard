@@ -7,10 +7,12 @@ export default function useUpdateTask(task: Task) {
 
     try {
       loading.value = true
-      await $fetch(`/api/tasks/${task.id}`, {
+      const taskUpdated = await $fetch<TaskWithPage>(`/api/tasks/${task.id}`, {
         method: 'PUT',
         body: { isDone }
       })
+
+      return taskUpdated
     } catch (err) {
       console.error('Failed to update task status:', err)
 
@@ -21,15 +23,17 @@ export default function useUpdateTask(task: Task) {
     }
   }
 
-  const updateAdditionnalNotes = async (additionalNotes: string) => {
+  const updateAdditionnalNotes = async (additionalNotes?: string) => {
     if (!task) return
 
     try {
       loading.value = true
-      await $fetch(`/api/tasks/${task.id}`, {
+      const taskUpdated = await $fetch<TaskWithPage>(`/api/tasks/${task.id}`, {
         method: 'PUT',
-        body: { additionalNotes }
+        body: { additionalNotes: additionalNotes || '' }
       })
+
+      return taskUpdated
     } catch (err) {
       console.error('Failed to update task status:', err)
 

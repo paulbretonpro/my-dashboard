@@ -23,8 +23,13 @@ export default defineEventHandler(async (event) => {
 
   const updatePayload = buildTaskUpdatePayload(body)
 
-  return await db
+  await db
     .update(tasks)
     .set(updatePayload)
     .where(and(eq(tasks.id, id), eq(tasks.userId, user.id)))
+
+  return await db.query.tasks.findFirst({
+    where: and(eq(tasks.userId, user.id), eq(tasks.id, id)),
+    with: { page: true }
+  })
 })
