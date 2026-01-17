@@ -2,11 +2,7 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
-definePageMeta({
-  middleware: 'auth'
-})
-
-const { user } = useUserSession()
+const user = useSupabaseUser()
 
 const fileRef = ref<HTMLInputElement>()
 

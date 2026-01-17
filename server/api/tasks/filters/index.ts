@@ -109,4 +109,4 @@ export const createdAtFilters = (query: TaskFilters): SQL[] => {
   return filters
 }
 
-export const userFilter = (userId: number): SQL => eq(tasks.userId, userId)
+export const userFilter = (userId: string): SQL => eq(tasks.userId, userId)

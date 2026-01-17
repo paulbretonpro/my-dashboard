@@ -5,7 +5,7 @@ defineProps<{
   collapsed?: boolean
 }>()
 
-const { user, clear } = useUserSession()
+const user = useSupabaseUser()
 const colorMode = useColorMode()
 const appConfig = useAppConfig()
 
@@ -148,7 +148,6 @@ const items = computed<DropdownMenuItem[][]>(() => [
 ])
 
 const handleLogout = async () => {
-  await clear()
   await navigateTo('/login')
 }
 </script>

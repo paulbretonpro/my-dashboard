@@ -3,7 +3,7 @@ import { tasks } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<NewTask>(event)
-  const { user } = await requireUserSession(event)
+  const user = await requireUserAuth(event)
 
   const newTask: NewTask = {
     ...body
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     .insert(tasks)
     .values({
       ...newTask,
-      userId: user.id
+      userId: user.sub
     })
     .returning()
 

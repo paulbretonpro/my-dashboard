@@ -4,7 +4,7 @@ import { tasks } from '~~/server/db/schema'
 import { buildTaskUpdatePayload, type TaskUpdateBody } from './updatePayload'
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
+  const user = await requireUserAuth(event)
   const id = Number(getRouterParam(event, 'id'))
   const body = await readBody<TaskUpdateBody>(event)
 
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const task = await db.query.tasks.findFirst({
-    where: and(eq(tasks.userId, user.id), eq(tasks.id, id)),
+    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id)),
     with: { page: true }
   })
 
@@ -26,10 +26,10 @@ export default defineEventHandler(async (event) => {
   await db
     .update(tasks)
     .set(updatePayload)
-    .where(and(eq(tasks.id, id), eq(tasks.userId, user.id)))
+    .where(and(eq(tasks.id, id), eq(tasks.userId, user.sub)))
 
   return await db.query.tasks.findFirst({
-    where: and(eq(tasks.userId, user.id), eq(tasks.id, id)),
+    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id)),
     with: { page: true }
   })
 })

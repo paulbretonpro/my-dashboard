@@ -3,7 +3,7 @@ import postgres from 'postgres'
 import * as schema from './schema'
 import * as relations from './relations'
 
-let connectionString = process.env.SUPABASE_URL!
+let connectionString = process.env.DATABASE_URL!
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
 const client = postgres(connectionString, { prepare: false })

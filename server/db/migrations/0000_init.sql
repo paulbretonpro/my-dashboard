@@ -4,25 +4,27 @@ CREATE TABLE "pages" (
 	"icon" text,
 	"is_favorite" boolean DEFAULT false NOT NULL,
 	"parent_id" integer,
-	"user_id" integer NOT NULL
+	"user_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "tasks" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"deadline" timestamp with time zone NOT NULL,
 	"content" text NOT NULL,
-	"is_done" boolean DEFAULT false NOT NULL,
-	"recall" timestamp with time zone NOT NULL,
-	"page_id" integer NOT NULL,
-	"user_id" integer NOT NULL
+	"additional_notes" text,
+	"deadline" timestamp with time zone,
+	"is_done" boolean DEFAULT false,
+	"recall" timestamp with time zone,
+	"page_id" integer,
+	"user_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"provider_id" text NOT NULL,
-	"display_name" text,
+	"id" uuid PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"name" text,
 	"avatar_url" text,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 ALTER TABLE "pages" ADD CONSTRAINT "pages_parent_id_pages_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

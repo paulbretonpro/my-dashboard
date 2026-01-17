@@ -5,6 +5,7 @@ export default defineConfig({
   out: './server/db/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.SUPABASE_URL!
+    url: process.env.DATABASE_URL!,
+    key: process.env.SUPABASE_PUBLISHABLE_KEY!
   }
 })

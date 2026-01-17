@@ -1,13 +1,10 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: 'auth'
-})
-
-const { user } = useUserSession()
+const user = useSupabaseUser()
 const { isNotificationsSlideoverOpen } = useDashboard()
 
 const { data: dashboard } = useLazyFetch('/api/dashboard', {
-  key: 'dashboard'
+  key: 'dashboard',
+  headers: useRequestHeaders(['cookie'])
 })
 
 const staticsInLateTasks = computed(() => ({

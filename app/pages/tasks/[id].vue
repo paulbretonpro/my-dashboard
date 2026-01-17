@@ -1,10 +1,6 @@
 <script lang="ts" setup>
 import type { Task } from '~~/shared/types'
 
-definePageMeta({
-  middleware: 'auth'
-})
-
 const taskDetailRef = useTemplateRef<{
   loading?: boolean
   error?: unknown

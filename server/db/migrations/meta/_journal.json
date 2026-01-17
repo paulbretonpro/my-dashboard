@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1767089327195,
+      "when": 1768647741239,
       "tag": "0000_init",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1767271305193,
-      "tag": "0001_alter_table_task",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1767298656430,
-      "tag": "0002_alter_table_task_add_column_additional_note",
       "breakpoints": true
     }
   ]

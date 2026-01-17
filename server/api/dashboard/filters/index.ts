@@ -11,14 +11,10 @@ export const getTodayRange = (now: Date = new Date()) => {
   return { startOfToday, endOfToday }
 }
 
-export const userFilter = (userId: number) => eq(tasks.userId, userId)
+export const userFilter = (userId: string) => eq(tasks.userId, userId)
 
 export const inLateTasksFilter = (startOfToday: Date) =>
   and(eq(tasks.isDone, false), lt(tasks.deadline, startOfToday))
 
 export const todayTasksFilter = (startOfToday: Date, endOfToday: Date) =>
-  and(
-    eq(tasks.isDone, false),
-    gte(tasks.deadline, startOfToday),
-    lt(tasks.deadline, endOfToday)
-  )
+  and(eq(tasks.isDone, false), gte(tasks.deadline, startOfToday), lt(tasks.deadline, endOfToday))

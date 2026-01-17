@@ -1,11 +1,11 @@
-import { boolean, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  providerId: text('provider_id').notNull(),
-  displayName: text('display_name'),
+  id: uuid('id').primaryKey(),
+  email: text('email').notNull(),
+  name: text('name'),
   avatarUrl: text('avatar_url'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+  createdAt: timestamp('created_at').defaultNow()
 })
 
 export const pages = pgTable('pages', {
@@ -14,7 +14,7 @@ export const pages = pgTable('pages', {
   icon: text('icon'),
   isFavorite: boolean('is_favorite').default(false).notNull(),
   parentId: integer('parent_id').references(() => pages.id, { onDelete: 'cascade' }),
-  userId: integer('user_id')
+  userId: uuid('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull()
 })
@@ -27,7 +27,7 @@ export const tasks = pgTable('tasks', {
   isDone: boolean('is_done').default(false),
   recall: timestamp('recall', { withTimezone: true }),
   pageId: integer('page_id').references(() => pages.id, { onDelete: 'cascade' }),
-  userId: integer('user_id')
+  userId: uuid('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()

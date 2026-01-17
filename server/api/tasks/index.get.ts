@@ -15,11 +15,11 @@ import {
 import { getPagination } from '~~/server/utils/filters'
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
+  const user = await requireUserAuth(event)
   const query = validateQuery(event, taskFiltersSchema)
 
   const filters = [
-    userFilter(user.id),
+    userFilter(user.sub),
     deadlineFilter(query.deadline),
     deadlineRangeFilter(query.deadlineFilter),
     statusFilter(query.status),

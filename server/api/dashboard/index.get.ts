@@ -4,15 +4,15 @@ import { getTodayRange, inLateTasksFilter, todayTasksFilter, userFilter } from '
 import { and } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
+  const user = await requireUserAuth(event)
 
   const { startOfToday, endOfToday } = getTodayRange()
 
-  const filtersInLateTasks = [userFilter(user.id), inLateTasksFilter(startOfToday)]
+  const filtersInLateTasks = [userFilter(user.sub), inLateTasksFilter(startOfToday)]
   const whereInLateTasks = filtersInLateTasks.length ? and(...filtersInLateTasks) : undefined
   const inLateTasksQuery = db.select().from(tasks).where(whereInLateTasks)
 
-  const filtersTodayTasks = [userFilter(user.id), todayTasksFilter(startOfToday, endOfToday)]
+  const filtersTodayTasks = [userFilter(user.sub), todayTasksFilter(startOfToday, endOfToday)]
   const whereTodayTasks = filtersTodayTasks.length ? and(...filtersTodayTasks) : undefined
   const todayTasksQuery = db.select().from(tasks).where(whereTodayTasks)
 

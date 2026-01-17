@@ -1,9 +1,3 @@
-<script setup lang="ts">
-definePageMeta({
-  middleware: 'auth'
-})
-</script>
-
 <template>
   <UDashboardPanel :ui="{ body: 'lg:py-12' }">
     <template #header>

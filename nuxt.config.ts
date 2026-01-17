@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@vueuse/nuxt',
     '@nuxt/hints',
-    'nuxt-auth-utils'
+    '@nuxtjs/supabase'
   ],
 
   devtools: {
@@ -34,5 +34,13 @@ export default defineNuxtConfig({
 
   imports: {
     dirs: ['server/**', 'shared/**/**', 'composables/**']
+  },
+
+  supabase: {
+    redirect: true,
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm'
+    }
   }
 })

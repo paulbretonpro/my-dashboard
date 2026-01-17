@@ -17,8 +17,6 @@ const proxy = computed<CalendarDateTime | undefined>({
     return modelValue.value ? parseDateTime(modelValue.value) : undefined
   },
   set: (date: CalendarDateTime | undefined) => {
-    console.log(date.toString())
-
     modelValue.value = date ? date.toString() : undefined
   }
 })

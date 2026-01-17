@@ -3,7 +3,7 @@ import { db } from '~~/server/db'
 import { tasks } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
+  const user = await requireUserAuth(event)
   const id = Number(getRouterParam(event, 'id'))
 
   if (!Number.isFinite(id) || id <= 0) {
@@ -11,14 +11,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const task = await db.query.tasks.findFirst({
-    where: and(eq(tasks.userId, user.id), eq(tasks.id, id))
+    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id))
   })
 
   if (!task) {
     throw createError({ statusCode: 404, statusMessage: 'Task not found' })
   }
 
-  await db.delete(tasks).where(and(eq(tasks.id, id), eq(tasks.userId, user.id)))
+  await db.delete(tasks).where(and(eq(tasks.id, id), eq(tasks.userId, user.sub)))
 
   return { success: true }
 })

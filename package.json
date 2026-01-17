@@ -19,7 +19,7 @@
     "@internationalized/date": "^3.10.1",
     "@nuxt/hints": "1.0.0-alpha.5",
     "@nuxt/ui": "^4.3.0",
-    "@supabase/supabase-js": "^2.89.0",
+    "@nuxtjs/supabase": "^2.0.3",
     "@unovis/ts": "^1.6.2",
     "@unovis/vue": "^1.6.2",
     "@vueuse/nuxt": "^14.1.0",
@@ -27,13 +27,12 @@
     "drizzle-orm": "^0.45.1",
     "drizzle-seed": "^0.3.1",
     "nuxt": "^4.2.2",
-    "nuxt-auth-utils": "^0.5.26",
     "postgres": "^3.4.7",
     "zod": "^4.2.1"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.12.1",
-    "drizzle-kit": "^0.31.8",
+    "drizzle-kit": "^0.18.1",
     "eslint": "^9.39.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
