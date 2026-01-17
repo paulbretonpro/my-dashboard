@@ -6,5 +6,9 @@ import * as relations from './relations'
 let connectionString = process.env.DATABASE_URL!
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
-const client = postgres(connectionString, { prepare: false })
+const client = postgres(connectionString, {
+  ssl: 'require',
+  prepare: false,
+  max: 1
+})
 export const db = drizzle(client, { schema: { ...schema, ...relations } })
