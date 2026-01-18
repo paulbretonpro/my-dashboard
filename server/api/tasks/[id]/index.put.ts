@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
 import { tasks } from '~~/server/db/schema'
-import { buildTaskUpdatePayload, type TaskUpdateBody } from './updatePayload'
+import { buildTaskUpdatePayload, TaskUpdateBody } from './services/update-service'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)

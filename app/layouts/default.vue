@@ -27,16 +27,24 @@ const links = [
       }
     },
     {
-      label: 'Jira',
-      icon: 'i-lucide-clipboard-check',
-      onSelect: () => {
-        open.value = false
-      }
-    },
-    {
       label: 'Veille',
       icon: 'i-lucide-eye',
-      to: '/watch'
+      children: [
+        {
+          label: 'Articles',
+          to: '/watch/articles',
+          onSelect: () => {
+            open.value = false
+          }
+        },
+        {
+          label: 'Sources',
+          to: '/watch/sources',
+          onSelect: () => {
+            open.value = false
+          }
+        }
+      ]
     }
   ]
 ] satisfies NavigationMenuItem[][]

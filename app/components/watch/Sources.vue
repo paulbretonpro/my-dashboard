@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import type { Pagination, RssSource } from '~~/shared/types'
+import type { RssSource } from '~~/shared/types'
 
-const pagination = defineModel<Pagination>('pagination', { required: true })
+const pagination = ref({
+  page: 1,
+  perPage: 10
+})
 
-defineProps<{
-  loading: boolean
-  sources: RssSource[]
-  total: number
-}>()
+const { data, status } = await useLazyFetch<PaginatedResponse<RssSource>>('/api/rss', {
+  query: {
+    page: pagination.value.page,
+    perPage: pagination.value.perPage
+  }
+})
+
+const sources = computed(() => data.value?.data || [])
+const total = computed(() => data.value?.total || 0)
+
+const loading = computed(() => isLoading(status.value))
 
 const columns = ref<TableColumn<RssSource>[]>([
   {
@@ -17,7 +26,12 @@ const columns = ref<TableColumn<RssSource>[]>([
   },
   {
     header: 'Lien',
-    accessorKey: 'url'
+    accessorKey: 'url',
+    meta: {
+      class: {
+        td: 'max-w-80 whitespace-break-spaces'
+      }
+    }
   },
   {
     header: 'Actif',

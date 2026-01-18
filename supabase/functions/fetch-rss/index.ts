@@ -51,10 +51,14 @@ serve(async () => {
       for (const item of items) {
         const title = item.title ?? item['title']?.['#text']
         const link = item.link?.['@_href'] ?? item.link ?? item.id ?? null
-        const published = item.pubDate ?? item.published ?? item.updated ?? null
+        const published = item.pubDate ?? item.published ?? item.updated ?? lastBuildDate ?? null
         const summary = item.description ?? item.summary ?? item.content ?? null
 
-        if (!title || !link) continue
+        const publishedAtIsBeforeOneYearAgo = published
+          ? new Date(published) < new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+          : false
+
+        if (!title || !link || publishedAtIsBeforeOneYearAgo) continue
 
         const { error: insertError } = await supabase
           .from('articles')
