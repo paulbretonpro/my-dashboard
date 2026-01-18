@@ -1,9 +1,11 @@
 import { relations } from 'drizzle-orm'
-import { users, tasks, pages } from './schema'
+import { users, tasks, pages, rssSources, articles } from './schema'
 
 export const usersRelations = relations(users, ({ many }) => ({
   pages: many(pages),
-  tasks: many(tasks)
+  tasks: many(tasks),
+  rssSources: many(rssSources),
+  articles: many(articles)
 }))
 
 export const pagesRelations = relations(pages, ({ one, many }) => ({
@@ -25,6 +27,25 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
   }),
   user: one(users, {
     fields: [tasks.userId],
+    references: [users.id]
+  })
+}))
+
+export const rssSourcesRelations = relations(rssSources, ({ one, many }) => ({
+  user: one(users, {
+    fields: [rssSources.userId],
+    references: [users.id]
+  }),
+  articles: many(articles)
+}))
+
+export const articlesRelations = relations(articles, ({ one }) => ({
+  source: one(rssSources, {
+    fields: [articles.sourceId],
+    references: [rssSources.id]
+  }),
+  user: one(users, {
+    fields: [articles.userId],
     references: [users.id]
   })
 }))

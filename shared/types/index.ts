@@ -1,4 +1,4 @@
-import { users, tasks, pages } from '~~/server/db/schema'
+import { users, tasks, pages, rssSources } from '~~/server/db/schema'
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -10,6 +10,8 @@ export type NewPage = typeof pages.$inferInsert
 export type Task = Omit<typeof tasks.$inferSelect, 'isDone'> & { isDone: boolean }
 export type TaskWithPage = Task & { page?: Page }
 export type NewTask = Omit<typeof tasks.$inferInsert, 'userId'>
+
+export type RssSource = typeof rssSources.$inferSelect
 
 export enum AppFetchKeysEnum {
   PAGES = 'pages',
@@ -39,5 +41,15 @@ export enum TaskSortByEnum {
 
 export type TaskListResponse = {
   data: TaskWithPage[]
+  total: number
+}
+
+export type Pagination = {
+  page: number
+  perPage: number
+}
+
+export type PaginatedResponse<T> = {
+  data: T[]
   total: number
 }

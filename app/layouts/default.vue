@@ -25,6 +25,18 @@ const links = [
       onSelect: () => {
         open.value = false
       }
+    },
+    {
+      label: 'Jira',
+      icon: 'i-lucide-clipboard-check',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
+      label: 'Veille',
+      icon: 'i-lucide-eye',
+      to: '/watch'
     }
   ]
 ] satisfies NavigationMenuItem[][]

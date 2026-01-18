@@ -32,3 +32,34 @@ export const tasks = pgTable('tasks', {
     .notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })
+
+export const rssSources = pgTable('rss_sources', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  url: text('url').notNull().unique(),
+  description: text('description'),
+  isActive: boolean('is_active').default(true).notNull(),
+  lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+})
+
+export const articles = pgTable('articles', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull().unique(),
+  link: text('link').notNull(),
+  summary: text('summary'),
+  content: text('content'),
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+  sourceId: integer('source_id')
+    .references(() => rssSources.id, { onDelete: 'cascade' })
+    .notNull(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  isRead: boolean('is_read').default(false).notNull(),
+  isFavorite: boolean('is_favorite').default(false).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+})
