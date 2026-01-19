@@ -6,7 +6,7 @@ const pagination = ref({
   perPage: 10
 })
 
-const loading = ref(false)
+const loading = ref(true)
 const total = ref(0)
 const posts = ref<ArticlesWithSource[]>([])
 
@@ -33,17 +33,26 @@ onMounted(handleFetch)
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 mb-6">
-    <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
-  </div>
-  <UPagination
-    v-model:page="pagination.page"
-    active-variant="outline"
-    show-edges
-    :items-per-page="pagination.perPage"
-    :show-controls="false"
-    :sibling-count="1"
-    :total
-    :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+  <UEmpty
+    v-if="loading"
+    icon="i-lucide-file-text"
+    title="Chargement..."
+    description="Si le chargement est trop long, tu as le temps pour un café "
   />
+
+  <template v-else>
+    <div class="flex flex-col gap-6 mb-6">
+      <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
+    </div>
+    <UPagination
+      v-model:page="pagination.page"
+      active-variant="outline"
+      show-edges
+      :items-per-page="pagination.perPage"
+      :show-controls="false"
+      :sibling-count="1"
+      :total
+      :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+    />
+  </template>
 </template>
