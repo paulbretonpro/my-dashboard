@@ -9,6 +9,10 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase'
   ],
 
+  app: {
+    keepalive: true
+  },
+
   devtools: {
     enabled: true
   },
