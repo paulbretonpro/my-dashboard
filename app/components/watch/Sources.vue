@@ -7,7 +7,7 @@ const pagination = ref({
   perPage: 10
 })
 
-const { data, status } = await useLazyFetch<PaginatedResponse<RssSource>>('/api/rss', {
+const { data, status, refresh } = useLazyFetch<PaginatedResponse<RssSource>>('/api/rss', {
   query: {
     page: pagination.value.page,
     perPage: pagination.value.perPage
@@ -52,18 +52,24 @@ const columns = ref<TableColumn<RssSource>[]>([
         : 'Jamais'
   }
 ])
+
+defineExpose({
+  refresh
+})
 </script>
 
 <template>
-  <UiTableBorderLess :data="sources" :columns :loading />
-  <UPagination
-    v-model:page="pagination.page"
-    active-variant="outline"
-    show-edges
-    :items-per-page="pagination.perPage"
-    :show-controls="false"
-    :sibling-count="1"
-    :total
-    :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
-  />
+  <div>
+    <UiTableBorderLess :data="sources" :columns :loading />
+    <UPagination
+      v-model:page="pagination.page"
+      active-variant="outline"
+      show-edges
+      :items-per-page="pagination.perPage"
+      :show-controls="false"
+      :sibling-count="1"
+      :total
+      :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+    />
+  </div>
 </template>

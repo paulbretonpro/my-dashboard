@@ -1,4 +1,4 @@
-import { articles } from '~~/server/db/schema'
+import { userArticles } from '~~/server/db/schema'
 
 export type ArticleUpdateBody = {
   read?: boolean
@@ -7,7 +7,7 @@ export type ArticleUpdateBody = {
 export function buildArticleUpdatePayload(body: ArticleUpdateBody) {
   const { read } = body
 
-  const updatePayload: Partial<typeof articles.$inferInsert> = {}
+  const updatePayload: Partial<typeof userArticles.$inferInsert> = {}
 
   if (read !== undefined) {
     if (typeof read !== 'boolean') {

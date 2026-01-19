@@ -40,9 +40,6 @@ export const rssSources = pgTable('rss_sources', {
   description: text('description'),
   isActive: boolean('is_active').default(true).notNull(),
   lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }),
-  userId: uuid('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })
 
@@ -56,10 +53,25 @@ export const articles = pgTable('articles', {
   sourceId: integer('source_id')
     .references(() => rssSources.id, { onDelete: 'cascade' })
     .notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+})
+
+export const userSources = pgTable('user_sources', {
   userId: uuid('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
+  rssSourceId: integer('rss_source_id')
+    .references(() => rssSources.id, { onDelete: 'cascade' })
+    .notNull()
+})
+
+export const userArticles = pgTable('user_articles', {
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  articleId: integer('article_id')
+    .references(() => articles.id, { onDelete: 'cascade' })
+    .notNull(),
   isRead: boolean('is_read').default(false).notNull(),
-  isFavorite: boolean('is_favorite').default(false).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+  isFavorite: boolean('is_favorite').default(false).notNull()
 })

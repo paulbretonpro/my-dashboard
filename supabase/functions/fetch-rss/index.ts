@@ -51,7 +51,7 @@ serve(async () => {
       for (const item of items) {
         const title = item.title ?? item['title']?.['#text']
         const link = item.link?.['@_href'] ?? item.link ?? item.id ?? null
-        const published = item.pubDate ?? item.published ?? item.updated ?? lastBuildDate ?? null
+        const published = item.pubDate ?? item.published ?? item.updated ?? null
         const summary = item.description ?? item.summary ?? item.content ?? null
 
         const publishedAtIsBeforeOneYearAgo = published
@@ -69,7 +69,6 @@ serve(async () => {
               summary: summary?.toString() ?? null,
               published_at: published ? new Date(published) : null,
               source_id: source.id,
-              user_id: source.user_id
             },
             { onConflict: 'title' } // title doit être unique
           )

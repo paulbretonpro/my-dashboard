@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
-import { articles } from '~~/server/db/schema'
+import { userArticles } from '~~/server/db/schema'
 import { ArticleUpdateBody, buildArticleUpdatePayload } from './services/update-service'
 
 export default defineEventHandler(async (event) => {
@@ -12,19 +12,24 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid article id' })
   }
 
-  const article = await db.query.articles.findFirst({
-    where: and(eq(articles.userId, user.sub), eq(articles.id, id)),
+  const article = await db.query.userArticles.findFirst({
+    where: and(eq(userArticles.userId, user.sub), eq(userArticles.articleId, id)),
   })
-
-  if (!article) {
-    throw createError({ statusCode: 404, statusMessage: 'Article not found' })
-  }
 
   const updatePayload = buildArticleUpdatePayload(body)
 
+  if (!article) {
+    await db.insert(userArticles).values({
+      userId: user.sub,
+      articleId: id,
+      ...updatePayload,
+    })
+  }
+
+
   await db
-    .update(articles)
+    .update(userArticles)
     .set(updatePayload)
-    .where(and(eq(articles.id, id), eq(articles.userId, user.sub))) 
+    .where(and(eq(userArticles.articleId, id), eq(userArticles.userId, user.sub))) 
     
 })

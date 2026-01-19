@@ -1,3 +1,11 @@
+<script setup lang="ts">
+const sourcesRef = ref()
+
+const handleRefresh = () => {
+  sourcesRef.value?.refresh()
+}
+</script>
+
 <template>
   <UDashboardPanel :ui="{ body: 'lg:py-12' }">
     <template #header>
@@ -17,11 +25,11 @@
           orientation="horizontal"
         >
           <template #default>
-            <UButton icon="i-lucide-plus" class="w-fit ml-auto">Ajouter</UButton>
+            <WatchSubscribe @close="handleRefresh" />
           </template>
         </UPageCard>
 
-        <WatchSources />
+        <WatchSources ref="sourcesRef" />
       </div>
     </template>
   </UDashboardPanel>
