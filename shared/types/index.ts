@@ -21,6 +21,14 @@ export enum AppFetchKeysEnum {
   TASKS = 'tasks'
 }
 
+export interface RssFieldMapping {
+  title?: string
+  link?: string
+  published?: string
+  summary?: string
+  content?: string
+}
+
 export type TaskFilters = {
   createdAt?: string | Date
   createdBefore?: string | Date

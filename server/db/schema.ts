@@ -1,4 +1,5 @@
-import { boolean, integer, pgTable, primaryKey, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, integer, jsonb, pgTable, primaryKey, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { RssFieldMapping } from '~~/shared/types'
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey(),
@@ -37,10 +38,12 @@ export const rssSources = pgTable('rss_sources', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
   url: text('url').notNull().unique(),
+  siteUrl: text('site_url'),
   description: text('description'),
   isActive: boolean('is_active').default(true).notNull(),
   lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  fieldMapping: jsonb('field_mapping').$type<RssFieldMapping>()
 })
 
 export const articles = pgTable('articles', {

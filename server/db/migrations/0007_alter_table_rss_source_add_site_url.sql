@@ -1,0 +1,1 @@
+ALTER TABLE "rss_sources" ADD COLUMN "site_url" text;
