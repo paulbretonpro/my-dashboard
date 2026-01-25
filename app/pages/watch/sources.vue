@@ -1,8 +1,24 @@
 <script setup lang="ts">
+import type { TabsItem } from '@nuxt/ui'
+
 const { setLayout } = useLayoutStore()
+
 setLayout({
   title: 'Sources RSS'
 })
+
+const items = [
+  {
+    label: 'Mes sources',
+    icon: 'i-lucide-user',
+    slot: 'my-sources' as const
+  },
+  {
+    label: 'Explorer',
+    icon: 'i-lucide-search',
+    slot: 'explore' as const
+  }
+] satisfies TabsItem[]
 
 const sourcesRef = ref()
 
@@ -20,10 +36,20 @@ const handleRefresh = () => {
       orientation="horizontal"
     >
       <template #default>
-        <WatchSubscribe @close="handleRefresh" />
+        <div class="space-x-4 ml-auto">
+          <WatchSourcesAdd />
+        </div>
       </template>
     </UPageCard>
 
-    <WatchSources ref="sourcesRef" />
+    <UTabs :items variant="link" :ui="{ trigger: 'grow' }" class="gap-4 w-full">
+      <template #my-sources>
+        <WatchSources ref="sourcesRef" />
+      </template>
+
+      <template #explore>
+        <WatchSourcesExplore />
+      </template>
+    </UTabs>
   </div>
 </template>
