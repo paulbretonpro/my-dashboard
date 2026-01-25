@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { Task } from '~~/shared/types'
 
+const { setLayout, setLayoutLoading } = useLayoutStore()
+
 const taskDetailRef = useTemplateRef<{
   loading?: boolean
   error?: unknown
@@ -52,56 +54,47 @@ const handleResetError = () => {
   errorOnDelete.value = undefined
   taskDetailRef.value?.resetError && taskDetailRef.value.resetError()
 }
+
+watch(taskDetailIsLoading, (newVal) => {
+  setLayoutLoading(newVal)
+})
+
+watch(task, () => {
+  setLayout({
+    title: task.value ? task.value.content : 'Détails de la tâche',
+    actions: () =>
+      h(resolveComponent('UButton'), {
+        label: 'Supprimer',
+        icon: 'i-lucide-trash-2',
+        color: 'error',
+        variant: 'subtle',
+        onClick: onDelete
+      })
+  })
+})
 </script>
 
 <template>
-  <UDashboardPanel id="task-detail">
-    <template #header>
-      <UDashboardNavbar
-        :title="`${task?.content || 'Tâche'}`"
-        description="Détails et actions rapides"
-      >
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
+  <div class="w-full max-w-3xl mx-auto space-y-6">
+    <UAlert
+      v-if="errorOnTaskId"
+      icon="i-lucide-circle-alert"
+      color="error"
+      variant="soft"
+      title="Impossible de charger la tâche"
+      close
+      @update:open="handleResetError"
+      :description="errorOnTaskId?.data?.statusMessage || errorOnTaskId?.message || errorOnTaskId"
+    />
 
-        <template #right v-if="!error">
-          <div class="flex items-center gap-2">
-            <UButton v-if="taskDetailIsLoading" loading variant="ghost">Chargement...</UButton>
+    <TasksDetails v-if="task" ref="taskDetailRef" v-model:task="task" />
 
-            <UButton icon="i-lucide-trash-2" color="error" variant="subtle" @click="onDelete">
-              Supprimer
-            </UButton>
-          </div>
-        </template>
-      </UDashboardNavbar>
-    </template>
-
-    <template #body>
-      <div class="w-full max-w-3xl mx-auto space-y-6">
-        <UAlert
-          v-if="errorOnTaskId"
-          icon="i-lucide-circle-alert"
-          color="error"
-          variant="soft"
-          title="Impossible de charger la tâche"
-          close
-          @update:open="handleResetError"
-          :description="
-            errorOnTaskId?.data?.statusMessage || errorOnTaskId?.message || errorOnTaskId
-          "
-        />
-
-        <TasksDetails v-if="task" ref="taskDetailRef" v-model:task="task" />
-
-        <UEmpty
-          v-else
-          icon="i-lucide-square-check"
-          title="Chargement..."
-          description="Si le chargement est trop long, tu as le temps pour un café "
-        >
-        </UEmpty>
-      </div>
-    </template>
-  </UDashboardPanel>
+    <UEmpty
+      v-else
+      icon="i-lucide-square-check"
+      title="Chargement..."
+      description="Si le chargement est trop long, tu as le temps pour un café "
+    >
+    </UEmpty>
+  </div>
 </template>

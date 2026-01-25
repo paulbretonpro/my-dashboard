@@ -7,12 +7,9 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/hints',
     '@nuxtjs/supabase',
-    '@nuxt/content'
+    '@nuxt/content',
+    '@pinia/nuxt'
   ],
-
-  app: {
-    keepalive: true
-  },
 
   devtools: {
     enabled: true

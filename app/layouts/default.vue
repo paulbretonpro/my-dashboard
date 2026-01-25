@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
+const { title, isLoading, actions } = storeToRefs(useLayoutStore())
+
 const { tasks, updateSearch } = useTasks({
   immediate: false,
   perPage: 10
@@ -103,7 +105,27 @@ const groups = computed(() => [
       @update:search-term="updateSearch"
     />
 
-    <slot />
+    <UDashboardPanel :ui="{ body: 'lg:py-12' }">
+      <template #header>
+        <UDashboardNavbar :title>
+          <template #leading>
+            <UDashboardSidebarCollapse />
+          </template>
+
+          <template #right>
+            <UButton v-if="isLoading" loading variant="ghost" color="neutral" size="md">
+              Chargement...
+            </UButton>
+
+            <component v-if="actions" :is="actions" />
+          </template>
+        </UDashboardNavbar>
+      </template>
+
+      <template #body>
+        <slot />
+      </template>
+    </UDashboardPanel>
 
     <NotificationsSlideover />
   </UDashboardGroup>

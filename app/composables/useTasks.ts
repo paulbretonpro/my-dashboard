@@ -74,12 +74,23 @@ export default function (options?: TaskFilters & { immediate?: boolean }) {
     await runRequest(fetchParams.value)
   }
 
-  const refresh = async () => {
+  const refresh = async (task?: TaskWithPage) => {
+    // On refresh uniquement la tache mise à jour
+    if (task) {
+      const index = tasks.value.findIndex(t => t.id === task.id)
+      if (index !== -1) {
+        tasks.value[index] = task
+      }
+      return
+    }
+
+    // Sinon on relance la dernière requête
     if (lastRequest.value) {
       await runRequest(lastRequest.value)
       return
     }
 
+    // Ou on lance une nouvelle requête
     await getTasks()
   }
 

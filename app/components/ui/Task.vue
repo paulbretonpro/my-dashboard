@@ -11,7 +11,7 @@ const handleTaskIsDoneChange = async (isDone: boolean | 'intermediate') => {
   if (isDone === 'intermediate') return
 
   await updateIsDone(isDone)
-  emit('update')
+  emit('update', { ...props.task, isDone })
 }
 </script>
 

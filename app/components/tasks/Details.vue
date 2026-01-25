@@ -9,6 +9,8 @@ const emit = defineEmits<{
   'update:task': [value: TaskWithPage]
 }>()
 
+const { setLayoutLoading } = useLayoutStore()
+
 const currentTask = ref<TaskWithPage>({ ...props.task })
 const additionnalNotesHasChange = ref<boolean>(false)
 
@@ -48,6 +50,7 @@ const meta = computed(() => [
 const handleUpdateIsDone = async (value: boolean | 'indeterminate') => {
   if (value === 'indeterminate') return
 
+  setLayoutLoading(true)
   try {
     currentTask.value.isDone = value
     const response = await updateIsDone(value)
@@ -56,12 +59,15 @@ const handleUpdateIsDone = async (value: boolean | 'indeterminate') => {
     }
   } catch {
     currentTask.value.isDone = props.task.isDone
+  } finally {
+    setLayoutLoading(false)
   }
 }
 
 const handleUpdateAdditionalNotes = async (value: string) => {
   currentTask.value.additionalNotes = value
 
+  setLayoutLoading(true)
   try {
     const response = await updateAdditionnalNotes(value)
 
@@ -72,12 +78,14 @@ const handleUpdateAdditionalNotes = async (value: string) => {
     currentTask.value.additionalNotes = props.task.additionalNotes
   } finally {
     additionnalNotesHasChange.value = false
+    setLayoutLoading(false)
   }
 }
 
 const handleClearAdditionalNotes = async () => {
   currentTask.value.additionalNotes = ''
 
+  setLayoutLoading(true)
   try {
     const response = await updateAdditionnalNotes()
 
@@ -88,6 +96,7 @@ const handleClearAdditionalNotes = async () => {
     currentTask.value.additionalNotes = props.task.additionalNotes
   } finally {
     additionnalNotesHasChange.value = false
+    setLayoutLoading(false)
   }
 }
 
