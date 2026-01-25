@@ -16,37 +16,37 @@ hero:
       to: https://github.com/paulbreton/my-dashboard
       target: _blank
 section:
-  title: '[Révolutionnez]{.text-primary} votre expérience de codage'
-  description: Transform your development workflow with AI-powered insights and personalized productivity optimization.
+  title: '[Révolutionnez]{.text-primary} votre expérience de veille'
+  description: My Dashboard est une application, conçue pour les développeurs, qui centralise votre veille technologique et améliore votre productivité grâce à des fonctionnalités intelligentes.
   images:
     mobile: '/images/home/macbook-mobile.svg'
     desktop: '/images/home/macbook.svg'
   features:
-    - title: Optimize your focus time
-      description: Let AI identify your peak coding hours and adapt to your natural rhythm. Focus on what matters most - writing great code, while our system optimizes your productivity patterns.
+    - title: Organise ton temps
+      description: Ajoute des tâches, définis des rappels et suis tes progrès. Reste organisé et maximise ta productivité avec une gestion du temps simplifiée.
       class: border-l border-primary pl-4
-    - title: Track your best coding hours
-      description: Track when you code best with smart analytics. Get actionable insights to tackle challenging tasks during your peak performance hours.
+    - title: Ajoute des sources rss
+      description: Intègre facilement tes flux RSS préférés pour rester à jour avec les dernières actualités et articles de développement.
       class: border-l border-default pt-4 pl-4
-    - title: Improve workflow efficiency
-      description: Automate your workflow optimization from code snippets to focus management. Ship better code faster with a streamlined development process.
+    - title: Résumé intelligent
+      description: L'application utilise l'IA pour générer des résumés concis des articles longs, te permettant de saisir rapidement les points clés sans perdre de temps.
       class: border-l border-default pt-4 pl-4
 steps:
-  title: Start coding smarter in [3 steps]{.text-primary}
-  description: Transform your development workflow with our AI-powered assistant.
+  title: My [Dashboard]{.text-primary}
+  description: Dévelloper en Nuxt 4, tailwindcss et supabase pour le stockage des données.
   items:
-    - title: Connect Your IDE
-      description: Seamlessly integrate with VS Code, JetBrains, or your preferred editor. Get started in under 2 minutes with zero configuration needed.
+    - title: Nuxt 4
+      description: Le framework de choix pour construire des applications Vue.js performantes et évolutives.
       image:
-        light: '/images/home/connect.svg'
-        dark: '/images/home/connect.svg'
-    - title: Track & Analyze
-      description: Our AI silently monitors your coding patterns to identify your peak productivity hours and potential workflow bottlenecks.
+        light: '/images/home/nuxt.svg'
+        dark: '/images/home/nuxt.svg'
+    - title: Nuxt Ui
+      description: Une bibliothèque de composants UI moderne et réactive conçue spécifiquement pour Nuxt.js, offrant une intégration transparente et une expérience utilisateur exceptionnelle.
       image:
-        light: '/images/home/optimize.svg'
-        dark: '/images/home/optimize.svg'
-    - title: Optimize & Code Smarter
-      description: Receive personalized recommendations to enhance your coding efficiency. Watch your productivity soar with data-driven insights.
+        light: '/images/home/nuxt-ui.svg'
+        dark: '/images/home/nuxt-ui.svg'
+    - title: Supabase
+      description: Une plateforme backend open-source qui fournit une base de données, une authentification et un stockage en temps réel, facilitant le développement d'applications modernes.
       image:
         light: '/images/home/track.svg'
         dark: '/images/home/track.svg'

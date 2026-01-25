@@ -20,19 +20,19 @@
           class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
         >
           <UIcon name="i-lucide-shield-check" class="h-4 w-4" />
-          Sécurité Github activée
+          Sécurité Supabase activée
         </div>
         <h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
           Accédez à votre espace
         </h1>
         <p class="text-muted-foreground text-lg">
           Connectez-vous pour retrouver vos tableaux, vos tâches et vos rappels. La session est
-          gérée par Github pour sécuriser vos données.
+          gérée par Supabase pour sécuriser vos données.
         </p>
         <div class="grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
           <UCard>
             <p class="font-medium text-foreground">Authentification sécurisée</p>
-            <p>Vos informations de connexion sont protégées par Github.</p>
+            <p>Vos informations de connexion sont protégées par Supabase.</p>
           </UCard>
 
           <UCard>
