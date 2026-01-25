@@ -40,7 +40,7 @@ const onDelete = async () => {
 
   try {
     await $fetch(`/api/tasks/${taskId.value}`, { method: 'DELETE' })
-    navigateTo('/')
+    navigateTo('/dashboard')
   } catch (err) {
     errorOnDelete.value = err
   } finally {

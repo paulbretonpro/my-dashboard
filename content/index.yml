@@ -1,0 +1,64 @@
+title: Organise ta veille technologique
+description: Suivez les dernières nouvelles, articles et tutoriels dans le domaine du développement logiciel, le tout en un seul endroit pratique.
+hero:
+  links:
+    - label: Démarrer
+      icon: i-lucide-arrow-right
+      trailing: true
+      color: primary
+      to: /dashboard
+      size: xl
+    - label: GitHub
+      icon: i-simple-icons-github
+      size: xl
+      color: neutral
+      variant: outline
+      to: https://github.com/paulbreton/my-dashboard
+      target: _blank
+section:
+  title: '[Révolutionnez]{.text-primary} votre expérience de codage'
+  description: Transform your development workflow with AI-powered insights and personalized productivity optimization.
+  images:
+    mobile: '/images/home/macbook-mobile.svg'
+    desktop: '/images/home/macbook.svg'
+  features:
+    - title: Optimize your focus time
+      description: Let AI identify your peak coding hours and adapt to your natural rhythm. Focus on what matters most - writing great code, while our system optimizes your productivity patterns.
+      class: border-l border-primary pl-4
+    - title: Track your best coding hours
+      description: Track when you code best with smart analytics. Get actionable insights to tackle challenging tasks during your peak performance hours.
+      class: border-l border-default pt-4 pl-4
+    - title: Improve workflow efficiency
+      description: Automate your workflow optimization from code snippets to focus management. Ship better code faster with a streamlined development process.
+      class: border-l border-default pt-4 pl-4
+steps:
+  title: Start coding smarter in [3 steps]{.text-primary}
+  description: Transform your development workflow with our AI-powered assistant.
+  items:
+    - title: Connect Your IDE
+      description: Seamlessly integrate with VS Code, JetBrains, or your preferred editor. Get started in under 2 minutes with zero configuration needed.
+      image:
+        light: '/images/home/connect.svg'
+        dark: '/images/home/connect.svg'
+    - title: Track & Analyze
+      description: Our AI silently monitors your coding patterns to identify your peak productivity hours and potential workflow bottlenecks.
+      image:
+        light: '/images/home/optimize.svg'
+        dark: '/images/home/optimize.svg'
+    - title: Optimize & Code Smarter
+      description: Receive personalized recommendations to enhance your coding efficiency. Watch your productivity soar with data-driven insights.
+      image:
+        light: '/images/home/track.svg'
+        dark: '/images/home/track.svg'
+cta:
+  title: Si tu es prêt à rejoindre la révolution
+  description: Commencez votre voyage vers une productivité de codage inégalée aujourd'hui avec notre plateforme alimentée par l'IA.
+  links:
+    - label: Se connecter
+      to: '/login'
+      icon: i-lucide-lock-open
+    - label: GitHub
+      to: 'https://github.com/nuxt-ui-templates/landing'
+      target: _blank
+      variant: subtle
+      icon: i-simple-icons-github

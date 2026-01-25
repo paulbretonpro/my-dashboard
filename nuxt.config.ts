@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@vueuse/nuxt',
     '@nuxt/hints',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@nuxt/content'
   ],
 
   app: {
@@ -22,7 +23,10 @@ export default defineNuxtConfig({
   routeRules: {
     '/api/**': {
       cors: true
-    }
+    },
+    '/': { prerender: true },
+    '/login': { prerender: true },
+    '/dashboard': { ssr: false }
   },
 
   compatibilityDate: '2024-07-11',
@@ -44,7 +48,8 @@ export default defineNuxtConfig({
     redirect: true,
     redirectOptions: {
       login: '/login',
-      callback: '/confirm'
-    }
+      callback: '/confirm',
+      exclude: ['/']
+    },
   }
 })

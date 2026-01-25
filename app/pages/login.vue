@@ -62,7 +62,7 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
   if (error) {
     toast.add({ title: 'Error', description: error.message, color: 'error' })
   } else {
-    navigateTo('/')
+    navigateTo('/dashboard')
   }
 
   loading.value = false

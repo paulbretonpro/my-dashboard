@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, primaryKey, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey(),
@@ -45,8 +45,8 @@ export const rssSources = pgTable('rss_sources', {
 
 export const articles = pgTable('articles', {
   id: serial('id').primaryKey(),
-  title: text('title').notNull().unique(),
-  link: text('link').notNull(),
+  title: text('title').notNull(),
+  link: text('link').notNull().unique(),
   summary: text('summary'),
   content: text('content'),
   publishedAt: timestamp('published_at', { withTimezone: true }),
@@ -56,22 +56,34 @@ export const articles = pgTable('articles', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })
 
-export const userSources = pgTable('user_sources', {
-  userId: uuid('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
-  rssSourceId: integer('rss_source_id')
-    .references(() => rssSources.id, { onDelete: 'cascade' })
-    .notNull()
-})
+export const userSources = pgTable(
+  'user_sources',
+  {
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    rssSourceId: integer('rss_source_id')
+      .references(() => rssSources.id, { onDelete: 'cascade' })
+      .notNull()
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.rssSourceId] })
+  })
+)
 
-export const userArticles = pgTable('user_articles', {
-  userId: uuid('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
-  articleId: integer('article_id')
-    .references(() => articles.id, { onDelete: 'cascade' })
-    .notNull(),
-  isRead: boolean('is_read').default(false).notNull(),
-  isFavorite: boolean('is_favorite').default(false).notNull()
-})
+export const userArticles = pgTable(
+  'user_articles',
+  {
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    articleId: integer('article_id')
+      .references(() => articles.id, { onDelete: 'cascade' })
+      .notNull(),
+    isRead: boolean('is_read').default(false).notNull(),
+    isFavorite: boolean('is_favorite').default(false).notNull()
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.articleId] })
+  })
+)

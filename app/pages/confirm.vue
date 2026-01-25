@@ -12,7 +12,7 @@ watchEffect(async () => {
   } = await supabase.auth.getSession()
 
   if (session) {
-    router.push('/')
+    router.push('/dashboard')
   }
 })
 </script>
