@@ -12,7 +12,9 @@ setLayout({
       description="Tous les articles issus de vos sources RSS."
       variant="naked"
       orientation="horizontal"
-    />
+    >
+      <WatchArticlesFilters class="ml-auto" />
+    </UPageCard>
 
     <WatchArticles />
   </div>
