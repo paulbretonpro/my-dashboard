@@ -1,12 +1,92 @@
-import { eq, SQL } from 'drizzle-orm'
-import { articles } from '~~/server/db/schema'
+import { and, eq, exists, gte, inArray, isNotNull, not, SQL } from 'drizzle-orm'
+import { articles, userArticles, userSources } from '~~/server/db/schema'
 import { z } from 'zod'
+import { db } from '~~/server/db'
+import { isValidDate, parseBoolean, parseDate } from '~~/server/utils/filters'
 
 
 export const articlesFiltersSchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   perPage: z.coerce.number().int().positive().optional(),
-  search: z.string().trim().min(1).optional(),
+  period: z.enum(['24h', '7d', '30d']).optional(),
+  read: z.enum(['all', 'read', 'unread']).optional(),
+  new: z.coerce.boolean().optional(),
+  sources: z.preprocess(
+    (value) => {
+      if (Array.isArray(value)) return value
+      if (typeof value === 'string' && value.trim()) {
+        return value.split(',')
+      }
+      return undefined
+    },
+    z.array(z.coerce.number().int().positive()).optional()
+  )
 })
 
-export const userFilter = (userId: string): SQL => eq(articles.userId, userId)
+export const userFilter = (userId: string): SQL =>
+  exists(
+    db
+      .select({ one: userSources.userId })
+      .from(userSources)
+      .where(
+        and(
+          eq(userSources.userId, userId),
+          eq(userSources.rssSourceId, articles.sourceId)
+        )
+      )
+  )
+
+const periodToDate = (period?: string): Date | undefined => {
+  if (!period) return
+
+  const now = new Date()
+  switch (period) {
+    case '24h':
+      return new Date(now.getTime() - 24 * 60 * 60 * 1000)
+    case '7d':
+      return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    case '30d':
+      return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  }
+}
+
+export const periodFilter = (period?: string): SQL | undefined => {
+  const since = periodToDate(period)
+  if (!since) return
+  return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, since))
+}
+
+export const sourcesFilter = (sources?: number[]): SQL | undefined => {
+  if (!sources?.length) return
+  return inArray(articles.sourceId, sources)
+}
+
+export const readFilter = (userId: string, value?: string): SQL | undefined => {
+  if (!value || value === 'all') return
+
+  const readExists = exists(
+    db
+      .select({ one: userArticles.articleId })
+      .from(userArticles)
+      .where(
+        and(
+          eq(userArticles.userId, userId),
+          eq(userArticles.articleId, articles.id),
+          eq(userArticles.isRead, true)
+        )
+      )
+  )
+
+  if (value === 'read') return readExists
+  if (value === 'unread') return not(readExists)
+}
+
+export const newFilter = (value?: unknown, lastSignInAt?: string | Date | null): SQL | undefined => {
+  const isNew = typeof value === 'boolean' ? value : parseBoolean(value)
+  if (!isNew) return
+
+  const lastLogin = parseDate(lastSignInAt ?? undefined)
+  if (!lastLogin || !isValidDate(lastLogin)) return
+
+  return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, lastLogin))
+}

@@ -10,14 +10,31 @@ const loading = ref(true)
 const total = ref(0)
 const posts = ref<ArticlesWithSource[]>([])
 
+const route = useRoute()
+const router = useRouter()
+
+const syncPaginationFromRoute = () => {
+  const page = Number(route.query.page) || 1
+  const perPage = Number(route.query.perPage) || 10
+
+  if (pagination.value.page !== page) pagination.value.page = page
+  if (pagination.value.perPage !== perPage) pagination.value.perPage = perPage
+}
+
+const buildFetchQuery = () => ({
+  page: pagination.value.page,
+  perPage: pagination.value.perPage,
+  period: route.query.period,
+  read: route.query.read,
+  new: route.query.new,
+  sources: route.query.sources
+})
+
 const handleFetch = async () => {
   loading.value = true
   try {
     const data = await $fetch<PaginatedResponse<ArticlesWithSource>>('/api/articles', {
-      query: {
-        page: pagination.value.page,
-        perPage: pagination.value.perPage
-      }
+      query: buildFetchQuery()
     })
 
     posts.value = data.data
@@ -27,9 +44,37 @@ const handleFetch = async () => {
   }
 }
 
-watch(pagination, handleFetch, { deep: true })
+watch(
+  () => route.query,
+  () => {
+    syncPaginationFromRoute()
+    handleFetch()
+  },
+  { deep: true }
+)
 
-onMounted(handleFetch)
+watch(
+  pagination,
+  () => {
+    const nextQuery = {
+      ...route.query,
+      page: pagination.value.page,
+      perPage: pagination.value.perPage
+    }
+
+    const pageMatches = String(route.query.page || 1) === String(nextQuery.page)
+    const perPageMatches = String(route.query.perPage || 10) === String(nextQuery.perPage)
+    if (pageMatches && perPageMatches) return
+
+    router.replace({ query: nextQuery })
+  },
+  { deep: true }
+)
+
+onMounted(() => {
+  syncPaginationFromRoute()
+  handleFetch()
+})
 </script>
 
 <template>
