@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.2.4'
-serve(async () => {
+serve(async (req) => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -16,7 +16,6 @@ serve(async () => {
     title: 'title',
     link: 'link',
     published: 'pubDate',
-    summary: 'description'
   }
 
   const parser = new XMLParser({
@@ -66,7 +65,6 @@ serve(async () => {
         const title = getByPath(item, mapping.title)
         const link = getByPath(item, mapping.link)
         const published = getByPath(item, mapping.published)
-        const summary = getByPath(item, mapping.summary)
 
         if (!title || !link) continue
 
@@ -83,7 +81,6 @@ serve(async () => {
             {
               title: title.toString(),
               link: link.toString(),
-              summary: summary?.toString() ?? null,
               published_at: published ? new Date(published) : null,
               source_id: source.id
             },

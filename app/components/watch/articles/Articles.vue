@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import type { ArticlesFilters } from '~~/server/api/articles/filters'
 import type { ArticlesWithSource } from '~~/shared/types'
+
+const props = defineProps<{
+  filters: ArticlesFilters
+}>()
 
 const pagination = ref({
   page: 1,
@@ -10,24 +15,10 @@ const loading = ref(true)
 const total = ref(0)
 const posts = ref<ArticlesWithSource[]>([])
 
-const route = useRoute()
-const router = useRouter()
-
-const syncPaginationFromRoute = () => {
-  const page = Number(route.query.page) || 1
-  const perPage = Number(route.query.perPage) || 10
-
-  if (pagination.value.page !== page) pagination.value.page = page
-  if (pagination.value.perPage !== perPage) pagination.value.perPage = perPage
-}
-
 const buildFetchQuery = () => ({
   page: pagination.value.page,
   perPage: pagination.value.perPage,
-  period: route.query.period,
-  read: route.query.read,
-  new: route.query.new,
-  sources: route.query.sources
+  ...props.filters
 })
 
 const handleFetch = async () => {
@@ -44,37 +35,19 @@ const handleFetch = async () => {
   }
 }
 
-watch(
-  () => route.query,
-  () => {
-    syncPaginationFromRoute()
-    handleFetch()
-  },
-  { deep: true }
-)
-
-watch(
-  pagination,
-  () => {
-    const nextQuery = {
-      ...route.query,
-      page: pagination.value.page,
-      perPage: pagination.value.perPage
-    }
-
-    const pageMatches = String(route.query.page || 1) === String(nextQuery.page)
-    const perPageMatches = String(route.query.perPage || 10) === String(nextQuery.perPage)
-    if (pageMatches && perPageMatches) return
-
-    router.replace({ query: nextQuery })
-  },
-  { deep: true }
-)
-
-onMounted(() => {
-  syncPaginationFromRoute()
+const handleUpdatePagination = (newPage: number) => {
+  pagination.value.page = newPage
   handleFetch()
-})
+}
+
+const refresh = () => {
+  pagination.value.page = 1
+  handleFetch()
+}
+
+onMounted(handleFetch)
+
+defineExpose({ refresh })
 </script>
 
 <template>
@@ -91,7 +64,7 @@ onMounted(() => {
         <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
       </div>
       <UPagination
-        v-model:page="pagination.page"
+        :page="pagination.page"
         active-variant="outline"
         show-edges
         :items-per-page="pagination.perPage"
@@ -99,6 +72,7 @@ onMounted(() => {
         :sibling-count="1"
         :total
         :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+        @update:page="handleUpdatePagination"
       />
     </template>
   </div>

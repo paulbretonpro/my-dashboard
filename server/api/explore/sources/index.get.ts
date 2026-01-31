@@ -27,14 +27,12 @@ export default defineEventHandler(async (event) => {
       },
     },
   })
-
-  console.log(data);
   
   const sources = data.map((source) => ({
     ...source,
     isSubscribed: source.userSources.length > 0,
     userSources: undefined, // optionnel : nettoyer la réponse
-  }))
+  })).filter((source) => !source.isSubscribed)
 
   return {
     data: sources,

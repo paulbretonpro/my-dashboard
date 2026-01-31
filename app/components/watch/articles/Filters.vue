@@ -1,14 +1,22 @@
 <script setup lang="ts">
+import type { ArticlesFilters } from '~~/server/api/articles/filters'
+
 const { data, pending } = useLazyFetch<PaginatedResponse<RssSource>>('/api/rss')
 
-const route = useRoute()
-const router = useRouter()
+const props = defineProps<{
+  modelValue: ArticlesFilters
+}>()
 
-const filters = ref({
-  period: '7d',
-  read: 'all' as 'all' | 'read' | 'unread',
-  new: false,
-  sources: [0] as number[]
+const emit = defineEmits<{
+  'apply-filters': [void]
+  'update:filters': [value: ArticlesFilters]
+}>()
+
+const filters = computed({
+  get: () => props.modelValue,
+  set: (value: ArticlesFilters) => {
+    emit('update:filters', value)
+  }
 })
 
 const sources = computed(() => data.value?.data || [])
@@ -19,16 +27,16 @@ const periodOptions = [
   { label: 'Dernier mois', value: '30d' }
 ]
 
-const isAllSources = computed(() => filters.value.sources.includes(0))
+const isAllSources = computed(() => filters.value.sources?.length === 0)
 
 const toggleAllSources = (value: boolean | 'indeterminate') => {
   if (value === 'indeterminate') return
-  filters.value.sources = value ? [0] : []
+  filters.value.sources = []
 }
 
 const toggleSource = (value: boolean | 'indeterminate', sourceId: number) => {
   if (value === 'indeterminate') return
-  const current = new Set(filters.value.sources.filter((id) => id !== 0))
+  const current = new Set(filters.value.sources?.filter((id) => id !== 0))
   if (value) {
     current.add(sourceId)
   } else {
@@ -37,51 +45,10 @@ const toggleSource = (value: boolean | 'indeterminate', sourceId: number) => {
   filters.value.sources = current.size ? Array.from(current) : []
 }
 
-const syncFromRoute = () => {
-  const period = typeof route.query.period === 'string' ? route.query.period : '7d'
-  const read = typeof route.query.read === 'string' ? route.query.read : 'all'
-  const isNew = route.query.new === 'true' || route.query.new === '1'
-  const sourcesQuery = route.query.sources
-
-  const sourcesValue: number[] = []
-  if (Array.isArray(sourcesQuery)) {
-    for (const value of sourcesQuery) {
-      const parsed = Number(value)
-      if (Number.isFinite(parsed) && parsed > 0) sourcesValue.push(parsed)
-    }
-  } else if (typeof sourcesQuery === 'string') {
-    for (const value of sourcesQuery.split(',')) {
-      const parsed = Number(value)
-      if (Number.isFinite(parsed) && parsed > 0) sourcesValue.push(parsed)
-    }
-  }
-
-  filters.value.period = period === '24h' || period === '7d' || period === '30d' ? period : '7d'
-  filters.value.read = read === 'read' || read === 'unread' ? read : 'all'
-  filters.value.new = isNew
-  filters.value.sources = sourcesValue.length ? sourcesValue : [0]
-}
-
-const buildQuery = () => {
-  const sourcesIds = filters.value.sources.filter((id) => id > 0)
-
-  return {
-    ...route.query,
-    page: 1,
-    period: filters.value.period,
-    read: filters.value.read === 'all' ? undefined : filters.value.read,
-    new: filters.value.new ? '1' : undefined,
-    sources: sourcesIds.length ? sourcesIds.join(',') : undefined
-  }
-}
-
 const applyFilters = () => {
-  router.replace({ query: buildQuery() })
+  emit('apply-filters')
   open.value = false
 }
-
-onMounted(syncFromRoute)
-watch(() => route.query, syncFromRoute, { deep: true })
 </script>
 
 <template>

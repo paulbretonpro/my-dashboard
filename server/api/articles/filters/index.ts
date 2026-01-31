@@ -4,24 +4,16 @@ import { z } from 'zod'
 import { db } from '~~/server/db'
 import { isValidDate, parseBoolean, parseDate } from '~~/server/utils/filters'
 
-
 export const articlesFiltersSchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   perPage: z.coerce.number().int().positive().optional(),
   period: z.enum(['24h', '7d', '30d']).optional(),
   read: z.enum(['all', 'read', 'unread']).optional(),
   new: z.coerce.boolean().optional(),
-  sources: z.preprocess(
-    (value) => {
-      if (Array.isArray(value)) return value
-      if (typeof value === 'string' && value.trim()) {
-        return value.split(',')
-      }
-      return undefined
-    },
-    z.array(z.coerce.number().int().positive()).optional()
-  )
+  sources: z.array(z.coerce.number().int().positive()).optional()
 })
+
+export type ArticlesFilters = z.infer<typeof articlesFiltersSchema>
 
 export const userFilter = (userId: string): SQL =>
   exists(
