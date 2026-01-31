@@ -1,9 +1,22 @@
 <script setup lang="ts">
+import type { ArticlesFilters } from '~~/server/api/articles/filters'
+
 const { data, pending } = useLazyFetch<PaginatedResponse<RssSource>>('/api/rss')
 
-const filters = ref({
-  period: '7d',
-  sources: [0] as number[]
+const props = defineProps<{
+  modelValue: ArticlesFilters
+}>()
+
+const emit = defineEmits<{
+  'apply-filters': [void]
+  'update:filters': [value: ArticlesFilters]
+}>()
+
+const filters = computed({
+  get: () => props.modelValue,
+  set: (value: ArticlesFilters) => {
+    emit('update:filters', value)
+  }
 })
 
 const sources = computed(() => data.value?.data || [])
@@ -13,6 +26,29 @@ const periodOptions = [
   { label: 'Dernière semaine', value: '7d' },
   { label: 'Dernier mois', value: '30d' }
 ]
+
+const isAllSources = computed(() => filters.value.sources?.length === 0)
+
+const toggleAllSources = (value: boolean | 'indeterminate') => {
+  if (value === 'indeterminate') return
+  filters.value.sources = []
+}
+
+const toggleSource = (value: boolean | 'indeterminate', sourceId: number) => {
+  if (value === 'indeterminate') return
+  const current = new Set(filters.value.sources?.filter((id) => id !== 0))
+  if (value) {
+    current.add(sourceId)
+  } else {
+    current.delete(sourceId)
+  }
+  filters.value.sources = current.size ? Array.from(current) : []
+}
+
+const applyFilters = () => {
+  emit('apply-filters')
+  open.value = false
+}
 </script>
 
 <template>
@@ -41,9 +77,24 @@ const periodOptions = [
         />
 
         <UFieldGroup class="mb-6">
-          <UButton color="neutral" variant="subtle" label="Tous" />
-          <UButton color="neutral" variant="outline" label="Non lu(s)" />
-          <UButton color="neutral" variant="outline" label="lu(s)" />
+          <UButton
+            color="neutral"
+            :variant="filters.read === 'all' ? 'subtle' : 'outline'"
+            label="Tous"
+            @click="filters.read = 'all'"
+          />
+          <UButton
+            color="neutral"
+            :variant="filters.read === 'unread' ? 'subtle' : 'outline'"
+            label="Non lu(s)"
+            @click="filters.read = 'unread'"
+          />
+          <UButton
+            color="neutral"
+            :variant="filters.read === 'read' ? 'subtle' : 'outline'"
+            label="lu(s)"
+            @click="filters.read = 'read'"
+          />
         </UFieldGroup>
 
         <UCheckbox
@@ -51,6 +102,7 @@ const periodOptions = [
           description="Publié depuis la dernière connexion"
           size="xl"
           class="mb-6"
+          v-model="filters.new"
         />
 
         <div class="text-neutral-500 font-medium text-sm mb-1">Source(s)</div>
@@ -58,15 +110,17 @@ const periodOptions = [
           <UCheckbox
             label="Toutes"
             size="xl"
-            :model-value="filters.sources.includes(0)"
+            :model-value="isAllSources"
             class="mb-4"
+            @update:model-value="toggleAllSources"
           />
           <UCheckbox
             v-for="source in sources"
             :key="source.id"
             :label="source.name"
             size="xl"
-            :value="source.id"
+            :model-value="filters.sources.includes(source.id)"
+            @update:model-value="(value) => toggleSource(value, source.id)"
           />
         </div>
       </div>
@@ -74,7 +128,7 @@ const periodOptions = [
 
     <template #footer="{ close }">
       <UButton block size="lg" label="Annuler" color="neutral" variant="outline" @click="close" />
-      <UButton block size="lg" label="Appliquer" color="neutral" />
+      <UButton block size="lg" label="Appliquer" color="neutral" @click="applyFilters" />
     </template>
   </USlideover>
 </template>

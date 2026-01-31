@@ -57,6 +57,27 @@
       "when": 1769360686902,
       "tag": "0007_alter_table_rss_source_add_site_url",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1769870803627,
+      "tag": "0008_alter_table_rss_source_remove_summary",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1769870969414,
+      "tag": "0009_alter_table_rss_source_remove_summary",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1769871244560,
+      "tag": "0010_alter_table_rss_source_remove_content",
+      "breakpoints": true
     }
   ]
 }

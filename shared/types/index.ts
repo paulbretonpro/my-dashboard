@@ -12,6 +12,7 @@ export type TaskWithPage = Task & { page?: Page }
 export type NewTask = Omit<typeof tasks.$inferInsert, 'userId'>
 
 export type RssSource = typeof rssSources.$inferSelect
+export type NewRssSource = typeof rssSources.$inferInsert
 
 export type Articles = typeof articles.$inferSelect
 export type ArticlesWithSource = typeof articles.$inferSelect & { source: RssSource }
@@ -25,8 +26,6 @@ export interface RssFieldMapping {
   title?: string
   link?: string
   published?: string
-  summary?: string
-  content?: string
 }
 
 export type TaskFilters = {

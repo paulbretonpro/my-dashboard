@@ -3,7 +3,6 @@ import { rssSources, userSources } from '~~/server/db/schema'
 import { z } from 'zod'
 import { db } from '~~/server/db'
 
-
 export const rssSourceFiltersSchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   perPage: z.coerce.number().int().positive().optional(),

@@ -2,39 +2,45 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
+const open = ref(false)
+
 const toast = useToast()
 const formRef = useTemplateRef('formRef')
 
+const loading = ref(false)
+
 const schema = z.object({
-  link: z.string().optional(),
   name: z.string(),
-  publishedAt: z.string().optional(),
-  siteUrl: z.url('Invalid URL'),
-  summary: z.string().optional(),
-  title: z.string().optional(),
   url: z.url('Invalid URL')
 })
 
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({
-  publishedAt: undefined,
-  summary: undefined,
-  title: undefined,
-  link: undefined,
   name: undefined,
-  url: undefined,
-  siteUrl: undefined
+  url: undefined
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  // TODO: implement API call
+  loading.value = true
+  try {
+    await $fetch('/api/rss', {
+      method: 'POST',
+      body: event.data
+    })
+    toast.add({ title: 'Source RSS ajoutée avec succès', color: 'success' })
+    open.value = false
+  } catch (error) {
+    toast.add({ title: "Erreur lors de l'ajout de la source RSS", color: 'error' })
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
 <template>
-  <UModal title="Ajouter une source RSS">
-    <UButton icon="i-lucide-plus" class="w-fit ml-auto"> Ajouter </UButton>
+  <UModal title="Ajouter une source RSS" v-model:open="open">
+    <UButton icon="i-lucide-plus" class="w-fit ml-auto" @click="open = true"> Ajouter </UButton>
 
     <template #body>
       <UForm ref="formRef" :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
@@ -45,45 +51,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <UFormField label="Url" name="url">
           <UInput v-model="state.url" class="w-full" />
         </UFormField>
-
-        <div>Mapping (optional)</div>
-        <div class="mx-6 space-y-2">
-          <UFormField name="title">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="self-center">Title</div>
-              <UIcon name="i-lucide-move-right" class="self-center justify-self-center" />
-              <UInput v-model="state.title" class="w-full" />
-            </div>
-          </UFormField>
-          <UFormField name="summary">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="self-center">Summary</div>
-              <UIcon name="i-lucide-move-right" class="self-center justify-self-center" />
-              <UInput v-model="state.summary" class="w-full" />
-            </div>
-          </UFormField>
-          <UFormField name="link">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="self-center">Link</div>
-              <UIcon name="i-lucide-move-right" class="self-center justify-self-center" />
-              <UInput v-model="state.link" class="w-full" />
-            </div>
-          </UFormField>
-          <UFormField name="publishedAt">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="self-center">Published At</div>
-              <UIcon name="i-lucide-move-right" class="self-center justify-self-center" />
-              <UInput v-model="state.publishedAt" class="w-full" />
-            </div>
-          </UFormField>
-        </div>
       </UForm>
     </template>
 
     <template #footer>
       <div class="ml-auto space-x-4">
         <UButton variant="outline"> Annuler </UButton>
-        <UButton @click="() => formRef?.submit()"> Ajouter </UButton>
+        <UButton :loading @click="() => formRef?.submit()"> Ajouter </UButton>
       </div>
     </template>
   </UModal>

@@ -39,7 +39,6 @@ export const rssSources = pgTable('rss_sources', {
   name: text('name').notNull(),
   url: text('url').notNull().unique(),
   siteUrl: text('site_url'),
-  description: text('description'),
   isActive: boolean('is_active').default(true).notNull(),
   lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -50,8 +49,6 @@ export const articles = pgTable('articles', {
   id: serial('id').primaryKey(),
   title: text('title').notNull(),
   link: text('link').notNull().unique(),
-  summary: text('summary'),
-  content: text('content'),
   publishedAt: timestamp('published_at', { withTimezone: true }),
   sourceId: integer('source_id')
     .references(() => rssSources.id, { onDelete: 'cascade' })

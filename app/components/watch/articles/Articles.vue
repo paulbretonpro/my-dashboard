@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import type { ArticlesFilters } from '~~/server/api/articles/filters'
 import type { ArticlesWithSource } from '~~/shared/types'
+
+const props = defineProps<{
+  filters: ArticlesFilters
+}>()
 
 const pagination = ref({
   page: 1,
@@ -10,14 +15,17 @@ const loading = ref(true)
 const total = ref(0)
 const posts = ref<ArticlesWithSource[]>([])
 
+const buildFetchQuery = () => ({
+  page: pagination.value.page,
+  perPage: pagination.value.perPage,
+  ...props.filters
+})
+
 const handleFetch = async () => {
   loading.value = true
   try {
     const data = await $fetch<PaginatedResponse<ArticlesWithSource>>('/api/articles', {
-      query: {
-        page: pagination.value.page,
-        perPage: pagination.value.perPage
-      }
+      query: buildFetchQuery()
     })
 
     posts.value = data.data
@@ -27,9 +35,19 @@ const handleFetch = async () => {
   }
 }
 
-watch(pagination, handleFetch, { deep: true })
+const handleUpdatePagination = (newPage: number) => {
+  pagination.value.page = newPage
+  handleFetch()
+}
+
+const refresh = () => {
+  pagination.value.page = 1
+  handleFetch()
+}
 
 onMounted(handleFetch)
+
+defineExpose({ refresh })
 </script>
 
 <template>
@@ -46,7 +64,7 @@ onMounted(handleFetch)
         <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
       </div>
       <UPagination
-        v-model:page="pagination.page"
+        :page="pagination.page"
         active-variant="outline"
         show-edges
         :items-per-page="pagination.perPage"
@@ -54,6 +72,7 @@ onMounted(handleFetch)
         :sibling-count="1"
         :total
         :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+        @update:page="handleUpdatePagination"
       />
     </template>
   </div>

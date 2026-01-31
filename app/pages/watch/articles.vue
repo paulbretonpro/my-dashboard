@@ -1,8 +1,24 @@
 <script setup lang="ts">
+import type { ArticlesFilters } from '~~/server/api/articles/filters'
+
 const { setLayout } = useLayoutStore()
+
 setLayout({
   title: 'Veille technologique'
 })
+
+const articlesRef = ref()
+
+const filters = ref<ArticlesFilters>({
+  period: '7d',
+  read: 'all' as 'all' | 'read' | 'unread',
+  new: false,
+  sources: []
+})
+
+const handleApplyFilters = () => {
+  articlesRef.value?.refresh()
+}
 </script>
 
 <template>
@@ -13,9 +29,9 @@ setLayout({
       variant="naked"
       orientation="horizontal"
     >
-      <WatchArticlesFilters class="ml-auto" />
+      <WatchArticlesFilters v-model="filters" @apply-filters="handleApplyFilters" class="ml-auto" />
     </UPageCard>
 
-    <WatchArticles />
+    <WatchArticles ref="articlesRef" :filters />
   </div>
 </template>

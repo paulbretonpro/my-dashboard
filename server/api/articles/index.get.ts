@@ -1,24 +1,31 @@
+import { and, count, eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
-import { and, count, eq, exists } from 'drizzle-orm'
-import { articles, userArticles, userSources } from '~~/server/db/schema'
+import { articles, userArticles } from '~~/server/db/schema'
+import validateQuery from '~~/server/utils/validateQuery'
+import { getPagination } from '~~/server/utils/filters'
+import {
+  articlesFiltersSchema,
+  newFilter,
+  periodFilter,
+  readFilter,
+  sourcesFilter,
+  userFilter
+} from './filters'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
-  const query = getQuery(event)
+  const query = validateQuery(event, articlesFiltersSchema)
 
-  const { limit, offset } = getPagination(query) // ex: limit=10
+  const filters = [
+    userFilter(user.sub),
+    periodFilter(query.period),
+    sourcesFilter(query.sources),
+    readFilter(user.sub, query.read),
+    newFilter(query.new, user.last_sign_in_at)
+  ].filter((filter) => !!filter)
 
-  const where = exists(
-    db
-      .select({ one: userSources.userId })
-      .from(userSources)
-      .where(
-        and(
-          eq(userSources.userId, user.sub),
-          eq(userSources.rssSourceId, articles.sourceId)
-        )
-      )
-  )
+  const where = filters.length ? and(...filters) : undefined
+  const { limit, offset } = getPagination(query)
 
   const [{ total }] = await db
     .select({ total: count() })
