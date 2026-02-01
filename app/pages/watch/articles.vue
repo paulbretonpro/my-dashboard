@@ -7,6 +7,8 @@ setLayout({
   title: 'Veille technologique'
 })
 
+const { isDesktop, isMobile } = useDevice()
+
 const articlesRef = ref()
 
 const filters = ref<ArticlesFilters>({
@@ -29,9 +31,23 @@ const handleApplyFilters = () => {
       variant="naked"
       orientation="horizontal"
     >
-      <WatchArticlesFilters v-model="filters" @apply-filters="handleApplyFilters" class="ml-auto" />
+      <WatchArticlesFilters
+        v-if="isDesktop"
+        v-model="filters"
+        @apply-filters="handleApplyFilters"
+        class="ml-auto"
+      />
     </UPageCard>
 
     <WatchArticles ref="articlesRef" :filters />
+
+    <div class="absolute bottom-16 right-12">
+      <WatchArticlesFilters
+        v-if="isMobile"
+        v-model="filters"
+        @apply-filters="handleApplyFilters"
+        class="ml-auto"
+      />
+    </div>
   </div>
 </template>

@@ -14,7 +14,11 @@ const defaultNewTask: NewTask = {
 const newTask = ref<NewTask>({ ...defaultNewTask })
 const loading = ref(false)
 
-const { data } = useNuxtData<PageWithChildren[]>(AppFetchKeysEnum.PAGES)
+const { data, status } = await useLazyFetch<PageWithChildren[]>('/api/pages', {
+  key: AppFetchKeysEnum.PAGES,
+  server: false,
+  default: () => []
+})
 
 const pages = computed<SelectItem[]>(() => {
   return data.value

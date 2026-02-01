@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@nuxtjs/supabase',
     '@nuxt/content',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxtjs/device'
   ],
 
   devtools: {

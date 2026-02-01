@@ -2,36 +2,17 @@
 import type { TableColumn } from '@nuxt/ui'
 import type { RssSource } from '~~/shared/types'
 
-const pagination = ref({
-  page: 1,
-  perPage: 10
-})
-
-const { data, status, refresh } = useLazyFetch<PaginatedResponse<RssSource>>('/api/rss', {
-  query: {
-    page: pagination.value.page,
-    perPage: pagination.value.perPage
-  }
-})
-
-const sources = computed(() => data.value?.data || [])
-const total = computed(() => data.value?.total || 0)
-
-const loading = computed(() => isLoading(status.value))
+const { sources, total, pagination, loading, refresh } = useSources()
 
 const columns = ref<TableColumn<RssSource>[]>([
   {
     header: 'Nom',
-    accessorKey: 'name'
-  },
-  {
-    header: 'Lien',
-    accessorKey: 'url',
-    meta: {
-      class: {
-        td: 'max-w-80 whitespace-break-spaces'
-      }
-    }
+    accessorKey: 'name',
+    cell: ({ row }) =>
+      h('div', { class: 'flex flex-col gap-1' }, [
+        h('div', { class: 'font-medium' }, row.original.name),
+        h('div', { class: 'text-xs text-muted-foreground' }, row.original.url)
+      ])
   },
   {
     header: 'Actif',
@@ -50,6 +31,17 @@ const columns = ref<TableColumn<RssSource>[]>([
       row.original.lastFetchedAt
         ? new Date(row.original.lastFetchedAt).toLocaleDateString()
         : 'Jamais'
+  },
+  {
+    id: 'action',
+    cell: ({ row }) =>
+      h(resolveComponent('UButton'), {
+        size: 'sm',
+        variant: 'subtle',
+        color: 'error',
+        icon: 'i-lucide-trash',
+        label: 'Se désabonner'
+      })
   }
 ])
 

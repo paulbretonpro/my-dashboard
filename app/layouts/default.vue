@@ -31,6 +31,7 @@ const links = [
     {
       label: 'Veille',
       icon: 'i-lucide-eye',
+      defaultOpen: true,
       children: [
         {
           label: 'Articles',
@@ -91,7 +92,7 @@ const groups = computed(() => [
 
         <UNavigationMenu :collapsed :items="links[0]" orientation="vertical" tooltip popover />
 
-        <LayoutPageMenu :collapsed />
+        <!-- <LayoutPageMenu :collapsed /> -->
       </template>
 
       <template #footer="{ collapsed }">

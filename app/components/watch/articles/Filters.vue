@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { ArticlesFilters } from '~~/server/api/articles/filters'
 
-const { data, pending } = useLazyFetch<PaginatedResponse<RssSource>>('/api/rss')
+const { sources, loading } = useSources({
+  server: false,
+  withPagination: false
+})
 
 const props = defineProps<{
   modelValue: ArticlesFilters
@@ -12,6 +15,8 @@ const emit = defineEmits<{
   'update:filters': [value: ArticlesFilters]
 }>()
 
+const { isMobile } = useDevice()
+
 const filters = computed({
   get: () => props.modelValue,
   set: (value: ArticlesFilters) => {
@@ -19,7 +24,6 @@ const filters = computed({
   }
 })
 
-const sources = computed(() => data.value?.data || [])
 const open = ref(false)
 const periodOptions = [
   { label: 'Dernières 24 heures', value: '24h' },
@@ -58,12 +62,15 @@ const applyFilters = () => {
     description="Affinez la liste des articles en fonction de vos préférences."
   >
     <UButton
-      label="Filtres"
       icon="i-lucide-filter"
-      color="neutral"
-      variant="subtle"
-      :loading="pending"
-    />
+      :color="isMobile ? 'primary' : 'neutral'"
+      :variant="isMobile ? 'solid' : 'subtle'"
+      :loading
+      :size="isMobile ? 'xl' : 'lg'"
+      :class="{ 'rounded-full p-4': isMobile }"
+    >
+      {{ isMobile ? '' : 'Filtrer' }}
+    </UButton>
 
     <template #body>
       <div class="h-full w-full">
@@ -106,7 +113,7 @@ const applyFilters = () => {
         />
 
         <div class="text-neutral-500 font-medium text-sm mb-1">Source(s)</div>
-        <div class="space-y-4 max-h-60 overflow-y-auto">
+        <div class="space-y-4 mb-6">
           <UCheckbox
             label="Toutes"
             size="xl"
@@ -119,7 +126,7 @@ const applyFilters = () => {
             :key="source.id"
             :label="source.name"
             size="xl"
-            :model-value="filters.sources.includes(source.id)"
+            :model-value="filters.sources?.includes(source.id)"
             @update:model-value="(value) => toggleSource(value, source.id)"
           />
         </div>
