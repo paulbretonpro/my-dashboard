@@ -14,7 +14,7 @@ const articlesRef = ref()
 const filters = ref<ArticlesFilters>({
   period: '7d',
   read: 'all' as 'all' | 'read' | 'unread',
-  new: false,
+  latest: undefined,
   sources: []
 })
 

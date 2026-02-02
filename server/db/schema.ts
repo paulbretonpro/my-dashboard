@@ -7,6 +7,7 @@ export const users = pgTable('users', {
   name: text('name'),
   avatarUrl: text('avatar_url'),
   lastConnection: timestamp('last_connection', { withTimezone: true }),
+  previousConnection: timestamp('previous_connection', { withTimezone: true }),
   createdAt: timestamp('created_at').defaultNow()
 })
 

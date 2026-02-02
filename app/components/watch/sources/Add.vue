@@ -21,6 +21,11 @@ const state = reactive<Partial<Schema>>({
   url: undefined
 })
 
+const resetForm = () => {
+  state.name = undefined
+  state.url = undefined
+}
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   try {
@@ -30,6 +35,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
     toast.add({ title: 'Source RSS ajoutée avec succès', color: 'success' })
     open.value = false
+    // Reset form state
+    resetForm()
   } catch (error) {
     toast.add({ title: "Erreur lors de l'ajout de la source RSS", color: 'error' })
   } finally {

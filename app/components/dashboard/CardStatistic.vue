@@ -1,12 +1,13 @@
 <script setup lang="ts">
 defineProps<{
   title: string
+  description: string
   count: number
 }>()
 </script>
 
 <template>
-  <UPageCard variant="subtle" :title orientation="horizontal">
+  <UPageCard variant="subtle" :title :description orientation="horizontal">
     <div class="text-3xl font-semibold text-center">{{ count }}</div>
 
     <template #footer>

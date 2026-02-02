@@ -1,5 +1,5 @@
 import { db } from '~~/server/db'
-import { count, eq } from 'drizzle-orm'
+import { and, count, eq, isNull } from 'drizzle-orm'
 import { rssSources, userSources } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
@@ -9,33 +9,58 @@ export default defineEventHandler(async (event) => {
   const { limit, offset } = getPagination(query)
 
   const [{ total }] = await db
-    .select({ total: count() })
-    .from(rssSources)
-
-  const data = await db.query.rssSources.findMany({
-    limit,
-    offset,
-    orderBy: (rssSources, { asc }) => [
-      asc(rssSources.name),
-    ],
-    with: {
-      userSources: {
-        where: eq(userSources.userId, user.sub),
-        columns: {
-          userId: true, // minimal
-        },
-      },
-    },
+  .select({
+    total: count(),
   })
+  .from(rssSources)
+  .leftJoin(
+    userSources,
+    and(
+      eq(userSources.rssSourceId, rssSources.id),
+      eq(userSources.userId, user.sub)
+    )
+  )
+  .where(
+    and(
+      isNull(userSources.userId),
+      eq(rssSources.isActive, true)
+    )
+  )
+
+  const sources = await db
+    .select({
+      id: rssSources.id,
+      name: rssSources.name,
+      url: rssSources.url,
+      siteUrl: rssSources.siteUrl,
+      isActive: rssSources.isActive,
+      createdAt: rssSources.createdAt,
+    })
+    .from(rssSources)
+    .leftJoin(
+      userSources,
+      and(
+        eq(userSources.rssSourceId, rssSources.id),
+        eq(userSources.userId, user.sub)
+      )
+    )
+    .where(
+      and(
+        isNull(userSources.userId),
+        eq(rssSources.isActive, true)
+      )
+    )
+    .orderBy(rssSources.createdAt)
+    .limit(limit)
+    .offset(offset)
   
-  const sources = data.map((source) => ({
+  const sourcesFormated = sources.map((source) => ({
     ...source,
-    isSubscribed: source.userSources.length > 0,
-    userSources: undefined, // optionnel : nettoyer la réponse
-  })).filter((source) => !source.isSubscribed)
+    isSubscribed: false,
+  }))
 
   return {
-    data: sources,
+    data: sourcesFormated,
     total: total ?? 0,
   }
 })

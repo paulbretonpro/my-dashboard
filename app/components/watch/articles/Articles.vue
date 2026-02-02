@@ -60,19 +60,26 @@ defineExpose({ refresh })
     />
 
     <template v-else>
-      <div class="flex flex-col gap-6 mb-6">
+      <div v-if="posts.length > 0" class="flex flex-col gap-6 mb-6">
         <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
+
+        <UPagination
+          :page="pagination.page"
+          active-variant="outline"
+          show-edges
+          :items-per-page="pagination.perPage"
+          :show-controls="false"
+          :sibling-count="1"
+          :total
+          :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+          @update:page="handleUpdatePagination"
+        />
       </div>
-      <UPagination
-        :page="pagination.page"
-        active-variant="outline"
-        show-edges
-        :items-per-page="pagination.perPage"
-        :show-controls="false"
-        :sibling-count="1"
-        :total
-        :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
-        @update:page="handleUpdatePagination"
+      <UEmpty
+        v-else
+        icon="i-lucide-file-text"
+        title="Aucun article trouvé"
+        description="Essaie de modifier tes filtres de recherche pour trouver des articles."
       />
     </template>
   </div>

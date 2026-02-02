@@ -6,7 +6,6 @@ setLayout({
 })
 
 const user = useSupabaseUser()
-const { isNotificationsSlideoverOpen } = useDashboard()
 
 const { data: dashboard } = useLazyFetch('/api/dashboard', {
   key: 'dashboard',
@@ -15,13 +14,17 @@ const { data: dashboard } = useLazyFetch('/api/dashboard', {
 
 const staticsInLateTasks = computed(() => ({
   title: 'En retard',
+  description: 'Les tâches en retard',
   count: dashboard.value?.inLateTasks ?? 0
 }))
 
 const staticsTodayTasks = computed(() => ({
   title: 'Aujourd’hui',
+  description: 'Les tâches prévues pour aujourd’hui',
   count: dashboard.value?.todayTasks ?? 0
 }))
+
+const newArticles = computed(() => dashboard.value?.newArticles ?? 0)
 
 const items = [
   [
@@ -38,7 +41,7 @@ const items = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 sm:gap-6 lg:gap-10 w-full lg:max-w-4xl mx-auto">
+  <div class="flex flex-col gap-6 w-full lg:max-w-4xl mx-auto">
     <UPageCard
       :title="`Bonjour, ${user?.displayName}`"
       description="Bienvenue sur votre dashboard. Vous pouvez commencer à organiser votre travail dès maintenant."
@@ -52,8 +55,17 @@ const items = [
     </UPageCard>
 
     <div class="grid grid-cols-2 gap-8">
-      <DashboardCardStatistic :title="staticsInLateTasks.title" :count="staticsInLateTasks.count" />
-      <DashboardCardStatistic :title="staticsTodayTasks.title" :count="staticsTodayTasks.count" />
+      <DashboardCardStatistic
+        :description="staticsInLateTasks.description"
+        :title="staticsInLateTasks.title"
+        :count="staticsInLateTasks.count"
+      />
+      <DashboardCardStatistic
+        :description="staticsTodayTasks.description"
+        :title="staticsTodayTasks.title"
+        :count="staticsTodayTasks.count"
+      />
+      <DashboardCardNewArticles :count="newArticles" class="col-span-2" />
     </div>
 
     <DashboardTable />

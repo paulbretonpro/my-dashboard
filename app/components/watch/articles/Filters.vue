@@ -105,11 +105,12 @@ const applyFilters = () => {
         </UFieldGroup>
 
         <UCheckbox
+          :model-value="filters.latest === 'true'"
           label="Nouveauté"
           description="Publié depuis la dernière connexion"
           size="xl"
           class="mb-6"
-          v-model="filters.new"
+          @update:model-value="(value) => (filters.latest = value ? 'true' : undefined)"
         />
 
         <div class="text-neutral-500 font-medium text-sm mb-1">Source(s)</div>

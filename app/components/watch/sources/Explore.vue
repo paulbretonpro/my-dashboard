@@ -5,9 +5,37 @@ interface RssSourceWithSubscription extends RssSource {
   isSubscribed: boolean
 }
 
+const loading = ref(true)
+
+const pagination = ref({
+  page: 1,
+  perPage: 10
+})
+
+const total = ref(0)
+
 const { setLayoutLoading } = useLayoutStore()
 
 const sources = ref<RssSourceWithSubscription[]>([])
+
+const handleGetRssSources = async () => {
+  loading.value = true
+  try {
+    const { data, total: count } = await $fetch<PaginatedResponse<RssSourceWithSubscription>>(
+      '/api/explore/sources',
+      {
+        query: {
+          page: pagination.value.page,
+          perPage: pagination.value.perPage
+        }
+      }
+    )
+    sources.value = data
+    total.value = count
+  } finally {
+    loading.value = false
+  }
+}
 
 const handleSubcribeUserToSource = async (source: RssSourceWithSubscription) => {
   if (!source) return
@@ -30,11 +58,7 @@ const handleSubcribeUserToSource = async (source: RssSourceWithSubscription) => 
   }
 }
 
-onMounted(async () => {
-  const response =
-    await $fetch<PaginatedResponse<RssSourceWithSubscription>>('/api/explore/sources')
-  sources.value = response.data
-})
+onMounted(handleGetRssSources)
 </script>
 
 <template>
@@ -65,5 +89,17 @@ onMounted(async () => {
         </div>
       </UCard>
     </div>
+
+    <UPagination
+      v-model:page="pagination.page"
+      active-variant="outline"
+      show-edges
+      :items-per-page="pagination.perPage"
+      :show-controls="false"
+      :sibling-count="1"
+      :total
+      :ui="{ list: 'justify-end', item: 'ring-0', ellipsis: 'ring-0' }"
+      @update:page="handleGetRssSources"
+    />
   </div>
 </template>

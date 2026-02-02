@@ -1,6 +1,6 @@
 import { and, count, eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
-import { articles, userArticles } from '~~/server/db/schema'
+import { articles, userArticles, users } from '~~/server/db/schema'
 import validateQuery from '~~/server/utils/validateQuery'
 import { getPagination } from '~~/server/utils/filters'
 import {
@@ -13,15 +13,19 @@ import {
 } from './filters'
 
 export default defineEventHandler(async (event) => {
-  const user = await requireUserAuth(event)
+  const userSession = await requireUserAuth(event)
   const query = validateQuery(event, articlesFiltersSchema)
 
+  console.log(query);
+
+  const [user] = await db.select().from(users).where(eq(users.id, userSession.sub))
+  
   const filters = [
-    userFilter(user.sub),
-    periodFilter(query.period),
+    userFilter(user.id),
     sourcesFilter(query.sources),
-    readFilter(user.sub, query.read),
-    newFilter(query.new, user.last_sign_in_at)
+    readFilter(user.id, query.read),
+    newFilter(query.latest, user.previousConnection),
+    periodFilter(query.period),
   ].filter((filter) => !!filter)
 
   const where = filters.length ? and(...filters) : undefined
@@ -37,7 +41,7 @@ export default defineEventHandler(async (event) => {
     with: {
       source: true,
       userArticles: {
-        where: eq(userArticles.userId, user.sub),
+        where: eq(userArticles.userId, user.id),
       },
     },
     orderBy: (articles, { desc }) => [

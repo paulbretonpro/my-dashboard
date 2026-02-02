@@ -2,6 +2,8 @@
 import type { TableColumn } from '@nuxt/ui'
 import type { RssSource } from '~~/shared/types'
 
+const { setLayoutLoading } = useLayoutStore()
+
 const { sources, total, pagination, loading, refresh } = useSources()
 
 const columns = ref<TableColumn<RssSource>[]>([
@@ -11,7 +13,16 @@ const columns = ref<TableColumn<RssSource>[]>([
     cell: ({ row }) =>
       h('div', { class: 'flex flex-col gap-1' }, [
         h('div', { class: 'font-medium' }, row.original.name),
-        h('div', { class: 'text-xs text-muted-foreground' }, row.original.url)
+        h(
+          resolveComponent('NuxtLink'),
+          {
+            class: 'text-xs text-muted-foreground',
+            to: row.original.url,
+            external: true,
+            target: '_blank'
+          },
+          row.original.url
+        )
       ])
   },
   {
@@ -40,10 +51,26 @@ const columns = ref<TableColumn<RssSource>[]>([
         variant: 'subtle',
         color: 'error',
         icon: 'i-lucide-trash',
-        label: 'Se désabonner'
+        label: 'Se désabonner',
+        onClick: () => handleSubscribeUserToSource(row.original)
       })
   }
 ])
+
+const handleSubscribeUserToSource = async (source: RssSource) => {
+  if (!source) return
+
+  try {
+    setLayoutLoading(true)
+    await $fetch(`/api/rss/${source.id}`, {
+      method: 'DELETE'
+    })
+
+    await refresh()
+  } finally {
+    setLayoutLoading(false)
+  }
+}
 
 defineExpose({
   refresh

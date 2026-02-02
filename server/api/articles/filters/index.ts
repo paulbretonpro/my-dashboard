@@ -9,7 +9,7 @@ export const articlesFiltersSchema = z.object({
   perPage: z.coerce.number().int().positive().optional(),
   period: z.enum(['24h', '7d', '30d']).optional(),
   read: z.enum(['all', 'read', 'unread']).optional(),
-  new: z.coerce.boolean().optional(),
+  latest: z.coerce.string().optional(),
   sources: z.array(z.coerce.number().int().positive()).optional()
 })
 
@@ -44,6 +44,8 @@ const periodToDate = (period?: string): Date | undefined => {
 
 export const periodFilter = (period?: string): SQL | undefined => {
   const since = periodToDate(period)
+  console.log(since);
+  
   if (!since) return
   return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, since))
 }
@@ -74,10 +76,16 @@ export const readFilter = (userId: string, value?: string): SQL | undefined => {
 }
 
 export const newFilter = (value?: unknown, lastSignInAt?: string | Date | null): SQL | undefined => {
+  console.log('value : ', value);
+  
   const isNew = typeof value === 'boolean' ? value : parseBoolean(value)
+  console.log('isNew : ', isNew);
+  
   if (!isNew) return
-
+  
   const lastLogin = parseDate(lastSignInAt ?? undefined)
+  console.log(lastLogin);
+
   if (!lastLogin || !isValidDate(lastLogin)) return
 
   return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, lastLogin))
