@@ -21,33 +21,36 @@ const links = [
       }
     },
     {
+      label: 'Veille',
+      type: 'label'
+    },
+    {
+      label: 'Articles',
+      icon: 'i-lucide-file-text',
+      to: '/watch/articles',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
+      label: 'Sources',
+      icon: 'i-lucide-rss',
+      to: '/watch/sources',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
+      label: 'Tâches',
+      type: 'label'
+    },
+    {
       label: 'Bloc notes',
       icon: 'i-lucide-list',
       to: '/notes',
       onSelect: () => {
         open.value = false
       }
-    },
-    {
-      label: 'Veille',
-      icon: 'i-lucide-eye',
-      defaultOpen: true,
-      children: [
-        {
-          label: 'Articles',
-          to: '/watch/articles',
-          onSelect: () => {
-            open.value = false
-          }
-        },
-        {
-          label: 'Sources',
-          to: '/watch/sources',
-          onSelect: () => {
-            open.value = false
-          }
-        }
-      ]
     }
   ]
 ] satisfies NavigationMenuItem[][]
@@ -90,7 +93,14 @@ const groups = computed(() => [
       <template #default="{ collapsed }">
         <UDashboardSearchButton :collapsed class="bg-transparent ring-default" />
 
-        <UNavigationMenu :collapsed :items="links[0]" orientation="vertical" tooltip popover />
+        <UNavigationMenu
+          :collapsed
+          :items="links[0]"
+          orientation="vertical"
+          :ui="{ label: 'mt-4' }"
+          tooltip
+          popover
+        />
 
         <!-- <LayoutPageMenu :collapsed /> -->
       </template>
@@ -108,7 +118,12 @@ const groups = computed(() => [
 
     <UDashboardPanel :ui="{ body: 'lg:py-12' }">
       <template #header>
-        <UDashboardNavbar :title>
+        <UDashboardNavbar>
+          <template #title>
+            <div class="font-semibold">
+              <ClientOnly fallback="My dashboard">{{ title }}</ClientOnly>
+            </div>
+          </template>
           <template #leading>
             <UDashboardSidebarCollapse />
           </template>

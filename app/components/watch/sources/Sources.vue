@@ -21,7 +21,9 @@ const columns = ref<TableColumn<RssSource>[]>([
             external: true,
             target: '_blank'
           },
-          row.original.url
+          {
+            default: () => row.original.url
+          }
         )
       ])
   },

@@ -7,7 +7,7 @@ export default defineNuxtPlugin(() => {
     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
       if (session?.user) {
         try {
-          await $fetch('/api/user/last-connection', { method: 'POST' })
+          $fetch('/api/user/last-connection', { method: 'POST' })
         } catch (error) {
           console.error('Failed to update last connection:', error)
         }
