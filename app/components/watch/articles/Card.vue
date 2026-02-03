@@ -29,9 +29,16 @@ const handleReadArticle = async () => {
 </script>
 
 <template>
-  <UPageCard orientation="horizontal" variant="outline">
+  <UPageCard
+    orientation="vertical"
+    variant="outline"
+    :ui="{ leading: 'w-full' }"
+    class="hover:bg-elevated/50 transition-all"
+  >
     <template #leading>
-      <UBadge :label="article.source.name" variant="soft" />
+      <div class="w-full flex justify-between items-center gap-2">
+        <UBadge :label="article.source.name" variant="soft" />
+      </div>
     </template>
     <template #title>
       <div class="flex items-center justify-between">

@@ -6,7 +6,10 @@ import {
   rssSources,
   articles,
   userSources,
-  userArticles
+  userArticles,
+  sourceTypes,
+  sourceTags,
+  sourceTagsRelationship
 } from './schema'
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -47,9 +50,14 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
 }))
 
 
-export const rssSourcesRelations = relations(rssSources, ({ many }) => ({
+export const rssSourcesRelations = relations(rssSources, ({ many, one }) => ({
   articles: many(articles),
-  userSources: many(userSources)
+  userSources: many(userSources),
+  sourceType: one(sourceTypes, {
+    fields: [rssSources.sourceTypeId],
+    references: [sourceTypes.id]
+  }),
+  tags: many(sourceTagsRelationship)
 }))
 
 
@@ -82,5 +90,24 @@ export const userArticlesRelations = relations(userArticles, ({ one }) => ({
   article: one(articles, {
     fields: [userArticles.articleId],
     references: [articles.id]
+  })
+}))
+
+export const sourceTypesRelations = relations(sourceTypes, ({ many }) => ({
+  rssSources: many(rssSources)
+}))
+
+export const sourceTagsRelations = relations(sourceTags, ({ many }) => ({
+  sourceTagsRelationship: many(sourceTagsRelationship)
+}))
+
+export const sourceTagsRelationshipRelations = relations(sourceTagsRelationship, ({ one }) => ({
+  source: one(rssSources, {
+    fields: [sourceTagsRelationship.sourceId],
+    references: [rssSources.id]
+  }),
+  tag: one(sourceTags, {
+    fields: [sourceTagsRelationship.tagId],
+    references: [sourceTags.id]
   })
 }))

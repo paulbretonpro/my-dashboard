@@ -78,6 +78,13 @@
       "when": 1769871244560,
       "tag": "0010_alter_table_rss_source_remove_content",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1770142817581,
+      "tag": "0011_add_source_types_and_tags",
+      "breakpoints": true
     }
   ]
 }

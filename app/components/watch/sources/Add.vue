@@ -11,19 +11,22 @@ const loading = ref(false)
 
 const schema = z.object({
   name: z.string(),
-  url: z.url('Invalid URL')
+  url: z.url('Invalid URL'),
+  siteUrl: z.string().optional()
 })
 
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({
   name: undefined,
-  url: undefined
+  url: undefined,
+  siteUrl: undefined
 })
 
 const resetForm = () => {
   state.name = undefined
   state.url = undefined
+  state.siteUrl = undefined
 }
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -51,12 +54,16 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     <template #body>
       <UForm ref="formRef" :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormField label="Nom" name="name">
+        <UFormField label="Nom" name="name" required>
           <UInput v-model="state.name" class="w-full" />
         </UFormField>
 
-        <UFormField label="Url" name="url">
+        <UFormField label="Url" name="url" required>
           <UInput v-model="state.url" class="w-full" />
+        </UFormField>
+
+        <UFormField label="Site URL" name="siteUrl">
+          <UInput v-model="state.siteUrl" class="w-full" />
         </UFormField>
       </UForm>
     </template>

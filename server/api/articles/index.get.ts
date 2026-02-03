@@ -16,8 +16,6 @@ export default defineEventHandler(async (event) => {
   const userSession = await requireUserAuth(event)
   const query = validateQuery(event, articlesFiltersSchema)
 
-  console.log(query);
-
   const [user] = await db.select().from(users).where(eq(users.id, userSession.sub))
   
   const filters = [

@@ -61,7 +61,9 @@ defineExpose({ refresh })
 
     <template v-else>
       <div v-if="posts.length > 0" class="flex flex-col gap-6 mb-6">
-        <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
+        <UPageColumns>
+          <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
+        </UPageColumns>
 
         <UPagination
           :page="pagination.page"

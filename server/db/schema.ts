@@ -36,6 +36,16 @@ export const tasks = pgTable('tasks', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })
 
+export const sourceTypes = pgTable('source_types', {
+  id: serial('id').primaryKey(),
+  label: text('label').notNull().unique()
+})
+
+export const sourceTags = pgTable('source_tags', {
+  id: serial('id').primaryKey(),
+  label: text('label').notNull().unique()
+})
+
 export const rssSources = pgTable('rss_sources', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
@@ -44,7 +54,8 @@ export const rssSources = pgTable('rss_sources', {
   isActive: boolean('is_active').default(true).notNull(),
   lastFetchedAt: timestamp('last_fetched_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  fieldMapping: jsonb('field_mapping').$type<RssFieldMapping>()
+  fieldMapping: jsonb('field_mapping').$type<RssFieldMapping>(),
+  sourceTypeId: integer('source_type_id').references(() => sourceTypes.id, { onDelete: 'set null' })
 })
 
 export const articles = pgTable('articles', {
@@ -87,5 +98,20 @@ export const userArticles = pgTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.articleId] })
+  })
+)
+
+export const sourceTagsRelationship = pgTable(
+  'source_tags_relationship',
+  {
+    sourceId: integer('source_id')
+      .references(() => rssSources.id, { onDelete: 'cascade' })
+      .notNull(),
+    tagId: integer('tag_id')
+      .references(() => sourceTags.id, { onDelete: 'cascade' })
+      .notNull()
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.sourceId, table.tagId] })
   })
 )
