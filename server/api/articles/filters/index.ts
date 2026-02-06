@@ -1,5 +1,5 @@
 import { and, eq, exists, gte, inArray, isNotNull, not, SQL } from 'drizzle-orm'
-import { articles, userArticles, userSources } from '~~/server/db/schema'
+import { articles, rssSources, userArticles, userSources } from '~~/server/db/schema'
 import { z } from 'zod'
 import { db } from '~~/server/db'
 import { isValidDate, parseBoolean, parseDate } from '~~/server/utils/filters'
@@ -10,7 +10,22 @@ export const articlesFiltersSchema = z.object({
   period: z.enum(['24h', '7d', '30d']).optional(),
   read: z.enum(['all', 'read', 'unread']).optional(),
   latest: z.coerce.string().optional(),
-  sources: z.array(z.coerce.number().int().positive()).optional()
+  sources: z.union([
+    z.array(z.coerce.number().int().positive()).optional(),
+    z.coerce.number().int().positive().optional()
+  ]).transform((value) => {
+    if (Array.isArray(value)) return value
+    if (typeof value === 'number') return [value]
+    return []
+  }),
+  sourcesTypes: z.union([
+    z.array(z.coerce.number().int().positive()).optional(),
+    z.coerce.number().int().positive().optional()
+  ]).transform((value) => {
+    if (Array.isArray(value)) return value
+    if (typeof value === 'number') return [value]
+    return []
+  })
 })
 
 export type ArticlesFilters = z.infer<typeof articlesFiltersSchema>
@@ -44,7 +59,6 @@ const periodToDate = (period?: string): Date | undefined => {
 
 export const periodFilter = (period?: string): SQL | undefined => {
   const since = periodToDate(period)
-  console.log(since);
   
   if (!since) return
   return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, since))
@@ -76,17 +90,28 @@ export const readFilter = (userId: string, value?: string): SQL | undefined => {
 }
 
 export const newFilter = (value?: unknown, lastSignInAt?: string | Date | null): SQL | undefined => {
-  console.log('value : ', value);
-  
   const isNew = typeof value === 'boolean' ? value : parseBoolean(value)
-  console.log('isNew : ', isNew);
   
   if (!isNew) return
   
   const lastLogin = parseDate(lastSignInAt ?? undefined)
-  console.log(lastLogin);
 
   if (!lastLogin || !isValidDate(lastLogin)) return
 
   return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, lastLogin))
+}
+
+export const sourceTypesFilter = (sourceTypeIds?: number[]): SQL | undefined => {
+  if (!sourceTypeIds?.length) return
+  return exists(
+    db
+      .select({ one: rssSources.id })
+      .from(rssSources)
+      .where(
+        and(
+          inArray(rssSources.sourceTypeId, sourceTypeIds),
+          eq(rssSources.id, articles.sourceId)
+        )
+      )
+  )
 }

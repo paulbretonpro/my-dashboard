@@ -63,3 +63,9 @@ export type PaginatedResponse<T> = {
   data: T[]
   total: number
 }
+
+export interface CountArticleBySourceType {
+  id: number
+  label: string
+  count: number
+}

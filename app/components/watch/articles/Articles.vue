@@ -1,53 +1,23 @@
 <script setup lang="ts">
-import type { ArticlesFilters } from '~~/server/api/articles/filters'
 import type { ArticlesWithSource } from '~~/shared/types'
 
-const props = defineProps<{
-  filters: ArticlesFilters
+defineProps<{
+  articles: ArticlesWithSource[]
+  loading: boolean
+  total: number
+  pagination: {
+    page: number
+    perPage: number
+  }
 }>()
 
-const pagination = ref({
-  page: 1,
-  perPage: 10
-})
-
-const loading = ref(true)
-const total = ref(0)
-const posts = ref<ArticlesWithSource[]>([])
-
-const buildFetchQuery = () => ({
-  page: pagination.value.page,
-  perPage: pagination.value.perPage,
-  ...props.filters
-})
-
-const handleFetch = async () => {
-  loading.value = true
-  try {
-    const data = await $fetch<PaginatedResponse<ArticlesWithSource>>('/api/articles', {
-      query: buildFetchQuery()
-    })
-
-    posts.value = data.data
-    total.value = data.total
-  } finally {
-    loading.value = false
-  }
-}
+const emit = defineEmits<{
+  'update:pagination': [page: number]
+}>()
 
 const handleUpdatePagination = (newPage: number) => {
-  pagination.value.page = newPage
-  handleFetch()
+  emit('update:pagination', newPage)
 }
-
-const refresh = () => {
-  pagination.value.page = 1
-  handleFetch()
-}
-
-onMounted(handleFetch)
-
-defineExpose({ refresh })
 </script>
 
 <template>
@@ -60,9 +30,9 @@ defineExpose({ refresh })
     />
 
     <template v-else>
-      <div v-if="posts.length > 0" class="flex flex-col gap-6 mb-6">
+      <div v-if="articles.length > 0" class="flex flex-col gap-6 mb-6">
         <UPageColumns>
-          <WatchArticlesCard v-for="article in posts" :key="article.id" :article />
+          <WatchArticlesCard v-for="article in articles" :key="article.id" :article />
         </UPageColumns>
 
         <UPagination

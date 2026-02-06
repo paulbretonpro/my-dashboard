@@ -9,7 +9,8 @@ import {
   periodFilter,
   readFilter,
   sourcesFilter,
-  userFilter
+  userFilter,
+  sourceTypesFilter
 } from './filters'
 
 export default defineEventHandler(async (event) => {
@@ -24,6 +25,7 @@ export default defineEventHandler(async (event) => {
     readFilter(user.id, query.read),
     newFilter(query.latest, user.previousConnection),
     periodFilter(query.period),
+    sourceTypesFilter(query.sourcesTypes)
   ].filter((filter) => !!filter)
 
   const where = filters.length ? and(...filters) : undefined
