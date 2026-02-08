@@ -33,7 +33,7 @@ const handleSelectSourceType = (sourceTypeId: number) => {
   <div class="flex gap-4">
     <UButton
       v-for="sourceType in data"
-      :key="sourceType.label"
+      :key="sourceType.id"
       :variant="filters.sourcesTypes?.includes(sourceType.id) ? 'solid' : 'outline'"
       color="neutral"
       size="sm"

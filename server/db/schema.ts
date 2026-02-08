@@ -115,3 +115,13 @@ export const sourceTagsRelationship = pgTable(
     pk: primaryKey({ columns: [table.sourceId, table.tagId] })
   })
 )
+
+export const summary = pgTable('summary', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull()
+})

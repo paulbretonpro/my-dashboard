@@ -25,6 +25,14 @@ const links = [
       type: 'label'
     },
     {
+      label: 'Résumés',
+      icon: 'i-lucide-folder-open',
+      to: '/watch/summary',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
       label: 'Articles',
       icon: 'i-lucide-file-text',
       to: '/watch/articles',
