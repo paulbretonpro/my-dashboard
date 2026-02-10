@@ -12,11 +12,17 @@ export default defineEventHandler(async (event) => {
 
   const summaryItem = await db.query.summary.findFirst({
     where: and(eq(summary.userId, user.sub), eq(summary.id, id)),
+    with: {
+      links: true
+    }
   })
 
   if (!summaryItem) {
-    throw createError({ statusCode: 404, statusMessage: 'Summary not found' })
+    throw createError({ statusCode: 404, statusMessage: 'Résumé non trouvé' })
   }
 
-  return summaryItem
+  return {
+    ...summaryItem,
+    links: summaryItem.links.map(link => link.url)
+  }
 })

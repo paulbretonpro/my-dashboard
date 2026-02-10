@@ -125,3 +125,16 @@ export const summary = pgTable('summary', {
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull()
 })
+
+export const summaryArticles = pgTable(
+  'summary_articles',
+  {
+    id: serial('id').primaryKey(),
+    summaryId: integer('summary_id')
+      .references(() => summary.id, { onDelete: 'cascade' })
+      .notNull(),
+    articleId: integer('article_id')
+      .references(() => articles.id, { onDelete: 'cascade' }),
+    url: text('url').notNull()
+  }
+)

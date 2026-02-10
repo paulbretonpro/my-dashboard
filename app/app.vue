@@ -18,6 +18,15 @@ useHead({
 const title = 'My dashboard'
 const description = ''
 
+const statusCode = (error: Error) => error?.statusCode ?? 500
+const statusMessage = (error: Error) => {
+  if (statusCode(error) === 404) {
+    return "Cette page n'existe pas"
+  }
+  return 'Erreur'
+}
+const message = "Une erreur s'est produite au chargement de cette page."
+
 useSeoMeta({
   title,
   description,
@@ -41,8 +50,9 @@ useSeoMeta({
           <div class="w-full">
             <UError
               :error="{
-                statusMessage: 'Oups....',
-                message: error.message ?? 'Une erreur s\'est produite au chargement de cette page.'
+                statusCode: statusCode(error),
+                statusMessage: statusMessage(error),
+                message
               }"
               :clear="{
                 label: 'Retour à la page d\'accueil',

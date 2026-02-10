@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { isDesktop } = useDevice()
+</script>
+
 <template>
   <div
     class="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/10 via-background to-background"
@@ -25,11 +29,11 @@
         <h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
           Accédez à votre espace
         </h1>
-        <p class="text-muted-foreground text-lg">
+        <p v-if="isDesktop" class="text-muted-foreground text-lg">
           Connectez-vous pour retrouver vos tableaux, vos tâches et vos rappels. La session est
           gérée par Supabase pour sécuriser vos données.
         </p>
-        <div class="grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+        <div v-if="isDesktop" class="grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
           <UCard>
             <p class="font-medium text-foreground">Authentification sécurisée</p>
             <p>Vos informations de connexion sont protégées par Supabase.</p>

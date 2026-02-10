@@ -141,7 +141,9 @@ const groups = computed(() => [
               Chargement...
             </UButton>
 
-            <component v-if="actions" :is="actions" />
+            <ClientOnly>
+              <component v-if="actions" :is="actions" />
+            </ClientOnly>
           </template>
         </UDashboardNavbar>
       </template>

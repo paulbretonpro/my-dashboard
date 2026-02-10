@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia'
-import { ref, type VNode } from 'vue'
+import { defineStore, skipHydrate } from 'pinia'
+import { ref, shallowRef, type VNode } from 'vue'
 
 type LayoutActions = (() => VNode) | null
 
 export const useLayoutStore = defineStore('layout', () => {
   const isLoading = ref(false)
   const title = ref('My Dashboard')
-  const actions = ref<LayoutActions>(null)
+  const actions = skipHydrate(shallowRef<LayoutActions>(null))
 
   const setLayout = (options: {
     title?: string

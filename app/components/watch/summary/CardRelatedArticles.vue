@@ -1,12 +1,7 @@
 <script setup lang="ts">
-const props = withDefaults(
-  defineProps<{
-    links?: string[]
-  }>(),
-  {
-    links: () => []
-  }
-)
+const props = defineProps<{
+  summary: SummaryWithLinks
+}>()
 </script>
 
 <template>
@@ -19,15 +14,19 @@ const props = withDefaults(
           Voici les articles liés à ce résumé. N'hésite pas à les consulter pour approfondir tes
           connaissances sur le sujet.
         </span>
-        <NuxtLink
-          v-for="(link, index) in props.links"
-          :key="index"
-          :to="link"
-          class="text-sm text-primary hover:underline break-all"
-          target="_blank"
-        >
-          {{ link }}
-        </NuxtLink>
+        <ul class="list-disc list-inside text-sm text-muted">
+          <li v-for="(link, index) in summary.links" :key="index">
+            <NuxtLink
+              v-for="(link, index) in summary.links"
+              :key="index"
+              :to="link"
+              class="text-sm text-primary hover:underline break-all"
+              target="_blank"
+            >
+              {{ link }}
+            </NuxtLink>
+          </li>
+        </ul>
       </div>
 
       <WatchSummaryPopoverAddArticleLink />

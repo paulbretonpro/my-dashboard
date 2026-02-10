@@ -1,17 +1,10 @@
-import { db } from "~~/server/db"
-import { summary } from "~~/server/db/schema"
-import { NewSummary } from "~~/shared/types"
+import { db } from '~~/server/db'
+import { summary, summaryArticles } from '~~/server/db/schema'
+import { NewSummary } from '~~/shared/types'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
   const body = await readBody<NewSummary>(event)
-  
-  if (!body.content) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Content is required"
-    })
-  }
 
   const insertedSummary = await db
     .insert(summary)
@@ -19,13 +12,19 @@ export default defineEventHandler(async (event) => {
       ...body,
       userId: user.sub
     })
-    .onConflictDoUpdate({
-      target: summary.id,
-      set: {
-        content: body.content,
-      }
-    })
     .returning()
+
+  console.log(insertedSummary[0]);
+  console.log(body);
+  
+
+  if (body.url || body.articleId) {
+    await db.insert(summaryArticles).values({
+      summaryId: insertedSummary[0].id,
+      articleId: body.articleId,
+      url: body.url ?? ''
+    })
+  }
 
   return insertedSummary[0]
 })

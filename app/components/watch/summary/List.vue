@@ -37,9 +37,12 @@ const handleUpdatePagination = (newPage: number) => {
             @click="navigateTo(`/watch/summary/${item.id}`)"
             class="hover:cursor-pointer"
           >
-            <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center justify-between gap-4 mb-4">
               <div>{{ item.title }}</div>
               <UIcon name="i-lucide-chevron-right" class="text-muted" />
+            </div>
+            <div class="text-sm text-muted">
+              {{ new Date(item.createdAt).toLocaleDateString() }}
             </div>
           </UCard>
         </UPageColumns>

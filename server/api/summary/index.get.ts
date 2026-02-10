@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     offset,
     orderBy: (summary, { desc }) => [
       desc(summary.createdAt)
-    ]
+    ],
   })
 
   return {

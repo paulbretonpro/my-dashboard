@@ -8,14 +8,15 @@ import { TextAlign } from '@tiptap/extension-text-align'
 import { CodeBlockShiki } from 'tiptap-extension-code-block-shiki'
 import { ImageUpload } from '@/composables/editor/editor-image-upload-completion'
 
-const toast = useToast()
+const summary = defineModel<Summary>({ required: true })
+const emit = defineEmits<{
+  onBlur: [editor: EditorEvents['blur'] & { title: string }]
+}>()
+
 const { setLayout } = useLayoutStore()
 
 const editorRef = useTemplateRef('editorRef')
 
-const value = ref(`# Titre du résumé`)
-
-const summaryId = ref<number>()
 const placeholder = 'Entre ton texte, tape "/ " pour les commandes...'
 
 const {
@@ -172,24 +173,9 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(
 )
 
 const handleUploadContent = async (props: EditorEvents['blur']) => {
-  try {
-    const title = getTitleFromJSON(editorRef.value?.editor?.getJSON() || { content: [] })
-    const response = await $fetch('/api/summary', {
-      method: 'POST',
-      body: {
-        content: props.editor.getHTML(),
-        id: summaryId.value,
-        title
-      }
-    })
-    summaryId.value = response.id
-  } catch {
-    toast.add({
-      title: 'Erreur',
-      description: 'Une erreur est survenue lors de la sauvegarde du résumé.',
-      color: 'error'
-    })
-  }
+  const title = getTitleFromJSON(editorRef.value?.editor?.getJSON() || { content: [] })
+
+  emit('onBlur', { ...props, title })
 }
 
 const getTitleFromJSON = (json: JSONContent): string => {
@@ -207,7 +193,7 @@ const getTitleFromJSON = (json: JSONContent): string => {
   <UEditor
     ref="editorRef"
     v-slot="{ editor, handlers }"
-    v-model="value"
+    v-model="summary.content"
     content-type="markdown"
     @blur="handleUploadContent"
     :extensions="[

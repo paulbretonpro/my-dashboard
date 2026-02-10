@@ -99,6 +99,13 @@
       "when": 1770548421390,
       "tag": "0013_alter_table_summary_add_title",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1770640405216,
+      "tag": "0014_add_summary_articles",
+      "breakpoints": true
     }
   ]
 }
