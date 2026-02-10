@@ -3,7 +3,7 @@ import { WatchSummaryActionsSummary } from '#components'
 
 const { setLayout } = useLayoutStore()
 
-const { getSummary, summary, summaryId, loading } = useSummary()
+const { getSummary, summary, summaryId, loading, error } = useSummary()
 
 setLayout({
   actions: () =>
@@ -34,6 +34,14 @@ onMounted(getSummary)
       description="Si le chargement est trop long, tu as le temps pour un café "
     />
     <template v-else>
+      <UEmpty
+        v-if="error"
+        icon="i-lucide-alert-triangle"
+        title="Erreur"
+        description="Une erreur est survenue lors du chargement du résumé."
+        class="mx-auto"
+      />
+
       <WatchSummaryCardRelatedArticles v-if="summary" :summary />
       <UEditor
         ref="editorRef"

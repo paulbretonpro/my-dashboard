@@ -5,7 +5,10 @@ const pagination = ref({
 })
 const total = ref(0)
 const loading = ref(true)
+const loadingCreateSummary = ref(false)
 const summary = ref<Summary[]>([])
+
+const toast = useToast()
 
 const handleFetchSummary = async () => {
   loading.value = true
@@ -29,6 +32,30 @@ const handleUpdatePagination = (newPage: number) => {
   handleFetchSummary()
 }
 
+const handleCreateSummary = async () => {
+  loadingCreateSummary.value = true
+  try {
+    const summary = await $fetch<Summary>('/api/summary', {
+      method: 'POST',
+      body: {
+        content: DEFAULT_SUMMARY_CONTENT,
+        title: DEFAULT_SUMMARY_TITLE
+      }
+    })
+    console.log(summary)
+
+    await navigateTo(`/watch/summary/${summary.id}/edit`)
+  } catch {
+    toast.add({
+      title: 'Erreur',
+      description: 'Impossible de créer un nouveau résumé.',
+      color: 'error'
+    })
+  } finally {
+    loadingCreateSummary.value = false
+  }
+}
+
 onMounted(handleFetchSummary)
 </script>
 
@@ -41,10 +68,11 @@ onMounted(handleFetchSummary)
       orientation="horizontal"
     >
       <UButton
+        :loading="loadingCreateSummary"
         label="Ajouter"
         icon="i-lucide-plus"
-        @click="navigateTo('/watch/summary/create')"
         class="ml-auto"
+        @click="handleCreateSummary"
       />
     </UPageCard>
 

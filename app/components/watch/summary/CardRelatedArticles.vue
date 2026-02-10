@@ -17,7 +17,6 @@ const props = defineProps<{
         <ul class="list-disc list-inside text-sm text-muted">
           <li v-for="(link, index) in summary.links" :key="index">
             <NuxtLink
-              v-for="(link, index) in summary.links"
               :key="index"
               :to="link"
               class="text-sm text-primary hover:underline break-all"
@@ -29,7 +28,7 @@ const props = defineProps<{
         </ul>
       </div>
 
-      <WatchSummaryPopoverAddArticleLink />
+      <WatchSummaryPopoverAddArticleLink :summary />
     </div>
   </UCard>
 </template>
