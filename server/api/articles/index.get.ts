@@ -43,6 +43,7 @@ export default defineEventHandler(async (event) => {
       userArticles: {
         where: eq(userArticles.userId, user.id),
       },
+      summary: true
     },
     orderBy: (articles, { desc }) => [
       desc(articles.publishedAt),

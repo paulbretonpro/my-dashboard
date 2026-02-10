@@ -29,6 +29,12 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-07-11',
 
+  runtimeConfig: {
+    public: {
+      aiGatewayApiKey: process.env.NUXT_AI_GATEWAY_API_KEY || ''
+    }
+  },
+
   eslint: {
     config: {
       stylistic: {
@@ -49,5 +55,17 @@ export default defineNuxtConfig({
       callback: '/confirm',
       exclude: ['/']
     },
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@nuxt/ui > prosemirror-state',
+        '@nuxt/ui > prosemirror-transform',
+        '@nuxt/ui > prosemirror-model',
+        '@nuxt/ui > prosemirror-view',
+        '@nuxt/ui > prosemirror-gapcursor'
+      ]
+    }
   }
 })

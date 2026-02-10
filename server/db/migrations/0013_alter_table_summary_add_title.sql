@@ -1,0 +1,1 @@
+ALTER TABLE "summary" ADD COLUMN "title" text NOT NULL;

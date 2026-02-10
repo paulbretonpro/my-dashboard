@@ -9,6 +9,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const toast = useToast()
+const { isDesktop } = useDevice()
 
 const loading = ref(false)
 
@@ -17,14 +18,12 @@ const fields: AuthFormField[] = [
     name: 'email',
     type: 'email',
     label: 'Email',
-    placeholder: 'Enter your email',
     required: true
   },
   {
     name: 'password',
-    label: 'Password',
+    label: 'Mot de passe',
     type: 'password',
-    placeholder: 'Enter your password',
     required: true
   }
 ]
@@ -45,8 +44,8 @@ const providers = [
 ]
 
 const schema = z.object({
-  email: z.email('Invalid email'),
-  password: z.string('Password is required').min(8, 'Must be at least 8 characters')
+  email: z.email('Email invalide'),
+  password: z.string('Mot de passe est requis').min(8, 'Doit contenir au moins 8 caractères')
 })
 
 type Schema = z.output<typeof schema>
@@ -71,8 +70,8 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
 
 <template>
   <!-- Card login -->
-  <UCard variant="subtle">
-    <template #header>
+  <UCard variant="subtle" class="md:mx-auto">
+    <template #header v-if="isDesktop">
       <div class="flex items-center gap-2 justify-between">
         <div class="space-y-2">
           <div class="text-2xl">Connexion</div>
@@ -92,7 +91,10 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
       :providers
       :submit="{
         loading,
-        icon: 'i-lucide-log-in'
+        trailingIcon: 'i-lucide-arrow-right',
+        ui: {
+          trailingIcon: 'ml-0 size-4'
+        }
       }"
       @submit="onSubmit"
     />

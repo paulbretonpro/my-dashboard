@@ -9,13 +9,15 @@ import {
   userArticles,
   sourceTypes,
   sourceTags,
-  sourceTagsRelationship
+  sourceTagsRelationship,
+  summary,
+  summaryArticles
 } from './schema'
 
 export const usersRelations = relations(users, ({ many }) => ({
   pages: many(pages),
   tasks: many(tasks),
-
+  summary: many(summary),
   userSources: many(userSources),
   userArticles: many(userArticles)
 }))
@@ -66,7 +68,11 @@ export const articlesRelations = relations(articles, ({ one, many }) => ({
     fields: [articles.sourceId],
     references: [rssSources.id]
   }),
-  userArticles: many(userArticles)
+  userArticles: many(userArticles),
+  summary: one(summaryArticles, {
+    fields: [articles.id],
+    references: [summaryArticles.articleId]
+  })
 }))
 
 
@@ -109,5 +115,24 @@ export const sourceTagsRelationshipRelations = relations(sourceTagsRelationship,
   tag: one(sourceTags, {
     fields: [sourceTagsRelationship.tagId],
     references: [sourceTags.id]
+  })
+}))
+
+export const summaryRelations = relations(summary, ({ one, many }) => ({
+  user: one(users, {
+    fields: [summary.userId],
+    references: [users.id]
+  }),
+  links: many(summaryArticles)
+}))
+
+export const summaryArticlesRelations = relations(summaryArticles, ({ one }) => ({
+  summary: one(summary, {
+    fields: [summaryArticles.summaryId],
+    references: [summary.id]
+  }),
+  article: one(articles, {
+    fields: [summaryArticles.articleId],
+    references: [articles.id]
   })
 }))
