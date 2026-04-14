@@ -15,6 +15,6 @@ setLayout({
       orientation="horizontal"
     />
 
-    <NotesTabs class="mb-4" />
+    <TasksTabs class="mb-4" />
   </div>
 </template>

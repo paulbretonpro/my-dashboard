@@ -14,12 +14,12 @@ const hasTasks = computed(() => total.value > 0)
         @update:modelValue="updateSearch"
       />
 
-      <NotesTabsHistoryFiltersSelectStatus v-model="filters.status" />
+      <TasksTabsHistoryFiltersSelectStatus v-model="filters.status" />
 
-      <NotesTabsHistoryFiltersModal v-model="filters" />
+      <TasksTabsHistoryFiltersModal v-model="filters" />
     </div>
 
-    <NotesListTask :tasks :loading @update="refresh" />
+    <TasksListTask :tasks :loading @update="refresh" />
 
     <UPagination
       v-if="hasTasks"

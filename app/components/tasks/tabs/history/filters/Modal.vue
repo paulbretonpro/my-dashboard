@@ -9,7 +9,7 @@ const filters = defineModel<TaskFilters>()
     <template #body>
       <div class="grid grid-cols-2 gap-4">
         <UiDatepickerRange />
-        <NotesTabsHistoryFiltersSelectDeadline class="w-full" />
+        <TasksTabsHistoryFiltersSelectDeadline class="w-full" />
       </div>
     </template>
   </UModal>

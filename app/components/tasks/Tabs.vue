@@ -16,11 +16,11 @@ const items = ref<TabsItem[]>([
 <template>
   <UTabs variant="link" color="neutral" :items class="w-full" :ui="{ content: 'py-4' }">
     <template #today>
-      <NotesTabsToday />
+      <TasksTabsToday />
     </template>
 
     <template #history>
-      <NotesTabsHistory />
+      <TasksTabsHistory />
     </template>
   </UTabs>
 </template>
