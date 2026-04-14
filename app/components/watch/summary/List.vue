@@ -39,7 +39,7 @@ const handleUpdatePagination = (newPage: number) => {
           >
             <div class="flex items-center justify-between gap-4 mb-4">
               <div>{{ item.title }}</div>
-              <UIcon name="i-lucide-chevron-right" class="text-muted" />
+              <UButton color="neutral" variant="subtle" icon="i-lucide-ellipsis-vertical" />
             </div>
             <div class="text-sm text-muted">
               {{ new Date(item.createdAt).toLocaleDateString() }}

@@ -14,10 +14,6 @@ export default defineEventHandler(async (event) => {
     })
     .returning()
 
-  console.log(insertedSummary[0]);
-  console.log(body);
-  
-
   if (body.url || body.articleId) {
     await db.insert(summaryArticles).values({
       summaryId: insertedSummary[0].id,
@@ -27,4 +23,4 @@ export default defineEventHandler(async (event) => {
   }
 
   return insertedSummary[0]
-})
+})  

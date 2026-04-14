@@ -1,4 +1,4 @@
-import { users, tasks, pages, rssSources, articles, summary } from '~~/server/db/schema'
+import { users, tasks, pages, rssSources, articles, summary, notes } from '~~/server/db/schema'
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -20,6 +20,9 @@ export type ArticlesWithSource = typeof articles.$inferSelect & { source: RssSou
 export type Summary = typeof summary.$inferSelect
 export type NewSummary = typeof summary.$inferInsert & { title?: string, content?: string, articleId?: number, url?: string }
 export type SummaryWithLinks = Summary & { links: string[] }
+
+export type Note = typeof notes.$inferSelect
+export type NewNote = typeof notes.$inferInsert
 
 export enum AppFetchKeysEnum {
   PAGES = 'pages',

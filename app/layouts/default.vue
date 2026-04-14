@@ -53,8 +53,20 @@ const links = [
       type: 'label'
     },
     {
-      label: 'Bloc notes',
+      label: 'Mes tâches',
       icon: 'i-lucide-list',
+      to: '/tasks',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
+      label: 'Notes',
+      type: 'label'
+    },
+    {
+      label: 'Bloc notes',
+      icon: 'i-lucide-notebook-text',
       to: '/notes',
       onSelect: () => {
         open.value = false

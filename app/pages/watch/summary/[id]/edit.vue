@@ -51,7 +51,7 @@ onMounted(async () => {
   />
 
   <div v-if="summary" class="lg:max-w-7xl mx-auto w-full space-y-6">
-    <WatchSummaryCardRelatedArticles :summary />
+    <WatchSummaryCardRelatedArticles :summary @link-added="getSummary" />
 
     <div
       class="flex justify-center p-4 relative h-svh overflow-y-auto !p-0 rounded-b-md rounded-t-md"

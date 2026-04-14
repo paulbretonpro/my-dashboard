@@ -2,6 +2,8 @@
 const props = defineProps<{
   summary: SummaryWithLinks
 }>()
+
+const emit = defineEmits(['link-added'])
 </script>
 
 <template>
@@ -28,7 +30,7 @@ const props = defineProps<{
         </ul>
       </div>
 
-      <WatchSummaryPopoverAddArticleLink :summary />
+      <WatchSummaryPopoverAddArticleLink :summary @link-added="emit('link-added')" />
     </div>
   </UCard>
 </template>

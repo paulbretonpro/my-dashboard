@@ -42,7 +42,6 @@ const handleCreateSummary = async () => {
         title: DEFAULT_SUMMARY_TITLE
       }
     })
-    console.log(summary)
 
     await navigateTo(`/watch/summary/${summary.id}/edit`)
   } catch {

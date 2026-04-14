@@ -138,3 +138,13 @@ export const summaryArticles = pgTable(
     url: text('url').notNull()
   }
 )
+
+export const notes = pgTable('notes', {
+  id: serial('id').primaryKey(),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  title: text('title').notNull(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull()
+})

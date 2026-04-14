@@ -3,6 +3,8 @@ const props = defineProps<{
   summary: Summary
 }>()
 
+const emit = defineEmits(['link-added'])
+
 const open = ref(false)
 const link = ref('')
 
@@ -17,6 +19,7 @@ const handleAddLink = async () => {
 
     open.value = false
     link.value = ''
+    emit('link-added')
   } catch {
     useToast().add({
       title: 'Erreur',
