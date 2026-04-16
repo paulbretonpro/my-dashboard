@@ -13,8 +13,10 @@ setLayout({
       description="Gérer toutes vos tâches."
       variant="naked"
       orientation="horizontal"
-    />
+    >
+      <TasksFiltersModal />
+    </UPageCard>
 
-    <TasksTabs class="mb-4" />
+    <TasksList />
   </div>
 </template>

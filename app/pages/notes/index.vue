@@ -39,7 +39,7 @@ const handleFetchNotes = async (options: {
         <UCard
           v-for="item in items"
           :key="item.id"
-          variant="soft"
+          variant="subtle"
           @click.prevent="navigateTo(`/notes/${item.id}`)"
           class="hover:cursor-pointer"
         >

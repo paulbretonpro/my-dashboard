@@ -1,35 +1,28 @@
 <script setup lang="ts">
-const pagination = ref({
-  page: 1,
-  perPage: 10
-})
-const total = ref(0)
-const loading = ref(true)
 const loadingCreateSummary = ref(false)
-const summary = ref<Summary[]>([])
 
 const toast = useToast()
 
-const handleFetchSummary = async () => {
-  loading.value = true
+const handleFetchSummary = async (options: {
+  page: number
+  perPage: number
+}): Promise<PaginatedResponse<Summary> | undefined> => {
   try {
-    const { data, total: newTotal } = await $fetch<PaginatedResponse<Summary>>('/api/summary', {
+    const response = await $fetch<PaginatedResponse<Summary>>('/api/summary', {
       query: {
-        page: pagination.value.page,
-        perPage: pagination.value.perPage
+        page: options.page,
+        perPage: options.perPage
       }
     })
 
-    total.value = newTotal
-    summary.value = data
-  } finally {
-    loading.value = false
+    return response
+  } catch {
+    toast.add({
+      title: 'Erreur',
+      description: 'Impossible de charger les résumés, réessaie plus tard.',
+      color: 'error'
+    })
   }
-}
-
-const handleUpdatePagination = (newPage: number) => {
-  pagination.value.page = newPage
-  handleFetchSummary()
 }
 
 const handleCreateSummary = async () => {
@@ -54,33 +47,35 @@ const handleCreateSummary = async () => {
     loadingCreateSummary.value = false
   }
 }
-
-onMounted(handleFetchSummary)
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full lg:max-w-5xl mx-auto">
-    <UPageCard
-      title="Liste des résumés"
-      description="Tous les résumés de vos veilles."
-      variant="naked"
-      orientation="horizontal"
-    >
-      <UButton
-        :loading="loadingCreateSummary"
-        label="Ajouter"
-        icon="i-lucide-plus"
-        class="ml-auto"
-        @click="handleCreateSummary"
-      />
-    </UPageCard>
-
-    <WatchSummaryList
-      :summary
-      :loading
-      :total
-      :pagination
-      @update:pagination="handleUpdatePagination"
-    />
-  </div>
+  <SharedPage
+    title="Liste des résumés"
+    description="Tous les résumés de vos veilles."
+    create-path="/watch/summary"
+    empty-message="Aucun résumé trouvé"
+    icon="i-lucide-folder-open"
+    :fetch-fn="handleFetchSummary"
+  >
+    <template #default="{ items }">
+      <UPageColumns>
+        <UCard
+          v-for="item in items"
+          :key="item.id"
+          variant="subtle"
+          @click="navigateTo(`/watch/summary/${item.id}`)"
+          class="hover:cursor-pointer"
+        >
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div>{{ item.title }}</div>
+            <UButton color="neutral" variant="subtle" icon="i-lucide-ellipsis-vertical" />
+          </div>
+          <div class="text-sm text-muted">
+            {{ new Date(item.createdAt).toLocaleDateString() }}
+          </div>
+        </UCard>
+      </UPageColumns>
+    </template>
+  </SharedPage>
 </template>

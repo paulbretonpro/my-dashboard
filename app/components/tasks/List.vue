@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { today } from '@/utils/date'
-
-const DEFAULT_PER_PAGE = 100
+const DEFAULT_PER_PAGE = 20
 
 const { tasks, loading, refresh, filters, total } = useTasks({
-  createdAt: today.toString(),
   perPage: DEFAULT_PER_PAGE
 })
-
-const displayPagination = computed(() => total.value > DEFAULT_PER_PAGE)
 </script>
 
 <template>
@@ -18,7 +13,6 @@ const displayPagination = computed(() => total.value > DEFAULT_PER_PAGE)
     <TasksListTask :tasks :loading @update="refresh" />
 
     <UPagination
-      v-if="displayPagination"
       v-model:page="filters.page"
       active-variant="outline"
       show-edges

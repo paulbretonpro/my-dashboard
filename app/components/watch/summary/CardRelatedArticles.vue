@@ -4,6 +4,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['link-added'])
+
+const { isMobile } = useDevice()
 </script>
 
 <template>
@@ -12,7 +14,7 @@ const emit = defineEmits(['link-added'])
       <UIcon name="i-lucide-file-text" class="text-muted" />
       <div class="flex grow flex-col gap-2">
         <span class="text-sm font-medium">Article(s) lié(s)</span>
-        <span class="text-sm text-muted">
+        <span class="text-sm text-muted" v-if="!isMobile">
           Voici les articles liés à ce résumé. N'hésite pas à les consulter pour approfondir tes
           connaissances sur le sujet.
         </span>
@@ -30,7 +32,15 @@ const emit = defineEmits(['link-added'])
         </ul>
       </div>
 
-      <WatchSummaryPopoverAddArticleLink :summary @link-added="emit('link-added')" />
+      <WatchSummaryPopoverAddArticleLink
+        v-if="!isMobile"
+        :summary
+        @link-added="emit('link-added')"
+      />
     </div>
+
+    <template #footer v-if="isMobile">
+      <WatchSummaryPopoverAddArticleLink :summary @link-added="emit('link-added')" />
+    </template>
   </UCard>
 </template>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
+const { isMobile } = useDevice()
+
 const { title, isLoading, actions } = storeToRefs(useLayoutStore())
 
 const { tasks, updateSearch } = useTasks({
@@ -139,7 +141,7 @@ const groups = computed(() => [
     <UDashboardPanel :ui="{ body: 'lg:py-12' }">
       <template #header>
         <UDashboardNavbar>
-          <template #title>
+          <template #title v-if="!isMobile">
             <div class="font-semibold">
               <ClientOnly fallback="My dashboard">{{ title }}</ClientOnly>
             </div>

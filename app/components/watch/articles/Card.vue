@@ -56,7 +56,7 @@ const handleCreateSummary = async () => {
 <template>
   <UPageCard
     orientation="vertical"
-    :variant="isRead ? 'outline' : 'soft'"
+    :variant="isRead ? 'outline' : 'subtle'"
     :ui="{ leading: 'w-full' }"
     class="hover:bg-elevated transition-all hover:cursor-pointer"
     @click="handleReadArticle"

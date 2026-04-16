@@ -1,48 +1,14 @@
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui'
-import { AppFetchKeysEnum } from '~~/shared/types'
-
 const emit = defineEmits(['new-task-added'])
 
 const defaultNewTask: NewTask = {
   content: '',
   deadline: undefined,
-  recall: undefined,
-  pageId: undefined
+  recall: undefined
 }
 
 const newTask = ref<NewTask>({ ...defaultNewTask })
 const loading = ref(false)
-
-const { data, status } = await useLazyFetch<PageWithChildren[]>('/api/pages', {
-  key: AppFetchKeysEnum.PAGES,
-  server: false,
-  default: () => []
-})
-
-const pages = computed<SelectItem[]>(() => {
-  return data.value
-    ?.map((page: PageWithChildren) => {
-      if (page?.children && page.children.length > 0) {
-        return [
-          { type: 'label', label: page.name },
-          ...page.children.map((child: Page) => ({
-            type: 'item',
-            label: child.name,
-            id: child.id
-          })),
-          { type: 'separator' }
-        ]
-      } else {
-        return {
-          type: 'item',
-          label: page.name,
-          id: page.id
-        }
-      }
-    })
-    .flat()
-})
 
 const handleSubmit = async () => {
   loading.value = true
@@ -83,17 +49,6 @@ const handleSubmit = async () => {
         >
           Recall
         </UButton>
-        <USelect
-          v-if="pages.length"
-          v-model="newTask.pageId"
-          :items="pages"
-          :class="{ 'border border-dashed border-accented': newTask.pageId === undefined }"
-          placeholder="Page"
-          size="xs"
-          value-key="id"
-          :variant="newTask.pageId === undefined ? 'ghost' : 'outline'"
-          class="w-32"
-        />
       </div>
 
       <UChatPromptSubmit

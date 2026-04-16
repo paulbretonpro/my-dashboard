@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
   <div v-else-if="tasks.length === 0" class="text-center text-muted">Aucune tâche</div>
 
-  <div v-else class="space-y-2" v-auto-animate>
+  <div v-else class="space-y-4" v-auto-animate>
     <UiTask v-for="task in tasks" :key="task.id" :task @update="(task) => emit('update', task)" />
   </div>
 </template>
