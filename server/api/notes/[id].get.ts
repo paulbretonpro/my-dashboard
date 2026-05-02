@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
 import { notes } from '~~/server/db/schema'
 
@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
     .select()
     .from(notes)
     .where(and(eq(notes.id, id), eq(notes.userId, user.sub)))
+    .orderBy(desc(notes.createdAt))
 
   return note ? note[0] : undefined
 })
