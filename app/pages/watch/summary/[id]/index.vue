@@ -8,13 +8,20 @@ const { getSummary, summary, summaryId, loading, error } = useSummary()
 setLayout({
   actions: () =>
     h(WatchSummaryActionsSummary, {
-      onDelete: () => {
-        const toast = useToast()
-        toast.add({
-          title: 'Suppression du résumé',
-          description: "Cette fonctionnalité n'est pas encore disponible.",
-          color: 'info'
-        })
+      onDelete: async () => {
+        try {
+          await $fetch(`/api/summary/${summaryId}`, {
+            method: 'DELETE'
+          })
+
+          navigateTo('/watch/summary')
+        } catch {
+          useToast().add({
+            title: 'Erreur',
+            description: 'Une erreur est survenue lors de la suppression du résumé.',
+            color: 'error'
+          })
+        }
       },
       onEdit: () => {
         navigateTo(`/watch/summary/${summaryId}/edit`)

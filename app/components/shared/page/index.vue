@@ -1,9 +1,4 @@
 <script setup lang="ts" generic="T">
-// titre
-// description
-// path to create
-// slot filters
-// slot content { item }
 const props = defineProps<{
   title: string
   description?: string
@@ -11,6 +6,7 @@ const props = defineProps<{
   emptyMessage: string
   icon: string
   fetchFn: (options: { page: number; perPage: number }) => Promise<PaginatedResponse<T> | undefined>
+  createFn?: () => Promise<void>
 }>()
 
 const loading = ref(true)
@@ -52,7 +48,7 @@ onMounted(handleFetchItems)
 <template>
   <div class="flex flex-col gap-6 w-full lg:max-w-5xl mx-auto">
     <UPageCard :title :description variant="naked" orientation="horizontal">
-      <UButton label="Ajouter" icon="i-lucide-plus" :to="createPath" class="ml-auto" />
+      <UButton label="Ajouter" icon="i-lucide-plus" :to="createPath" class="ml-auto" @click="createFn" />
     </UPageCard>
 
     <SharedPageList

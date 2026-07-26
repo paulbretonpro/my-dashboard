@@ -57,6 +57,7 @@ const handleCreateSummary = async () => {
     empty-message="Aucun résumé trouvé"
     icon="i-lucide-folder-open"
     :fetch-fn="handleFetchSummary"
+    :create-fn="handleCreateSummary"
   >
     <template #default="{ items }">
       <UPageColumns>
@@ -69,7 +70,7 @@ const handleCreateSummary = async () => {
         >
           <div class="flex items-center justify-between gap-4 mb-4">
             <div>{{ item.title }}</div>
-            <UButton color="neutral" variant="subtle" icon="i-lucide-ellipsis-vertical" />
+            <UButton color="neutral" variant="subtle" icon="i-lucide-arrow-right" />
           </div>
           <div class="text-sm text-muted">
             {{ new Date(item.createdAt).toLocaleDateString() }}

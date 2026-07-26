@@ -28,7 +28,7 @@ const handleRefresh = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full lg:max-w-2xl mx-auto">
+  <div class="flex flex-col gap-6 w-full lg:max-w-4xl mx-auto">
     <UPageCard
       title="Sources RSS"
       description="Gérer les sources RSS."
