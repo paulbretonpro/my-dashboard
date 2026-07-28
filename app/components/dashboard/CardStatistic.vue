@@ -7,11 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <UPageCard variant="subtle" :title :description orientation="horizontal">
+  <UPageCard variant="subtle" :title :description spotlight spotlight-color="primary" to="/tasks">
     <div class="text-3xl font-semibold text-center">{{ count }}</div>
-
-    <template #footer>
-      <UButton variant="ghost" size="xs" trailing-icon="i-lucide-arrow-right">Voir toutes</UButton>
-    </template>
   </UPageCard>
 </template>

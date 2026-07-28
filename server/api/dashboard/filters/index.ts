@@ -1,4 +1,4 @@
-import { and, eq, gte, lt } from 'drizzle-orm'
+import { and, eq, ne, gte, lt } from 'drizzle-orm'
 import { articles, tasks } from '~~/server/db/schema'
 
 export const getTodayRange = (now: Date = new Date()) => {
@@ -14,10 +14,10 @@ export const getTodayRange = (now: Date = new Date()) => {
 export const userFilter = (userId: string) => eq(tasks.userId, userId)
 
 export const inLateTasksFilter = (startOfToday: Date) =>
-  and(eq(tasks.isDone, false), lt(tasks.deadline, startOfToday))
+  and(ne(tasks.status, 'done'), lt(tasks.deadline, startOfToday))
 
 export const todayTasksFilter = (startOfToday: Date, endOfToday: Date) =>
-  and(eq(tasks.isDone, false), gte(tasks.deadline, startOfToday), lt(tasks.deadline, endOfToday))
+  and(ne(tasks.status, 'done'), gte(tasks.deadline, startOfToday), lt(tasks.deadline, endOfToday))
 
 export const newArticlesFilter = (lastConnection: Date) =>
   gte(articles.publishedAt, lastConnection)

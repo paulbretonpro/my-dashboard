@@ -51,12 +51,12 @@ const links = [
       }
     },
     {
-      label: 'Tâches',
+      label: 'Roadmap',
       type: 'label'
     },
     {
-      label: 'Mes tâches',
-      icon: 'i-lucide-list',
+      label: 'Sujets',
+      icon: 'i-lucide-route',
       to: '/tasks',
       onSelect: () => {
         open.value = false
@@ -80,10 +80,10 @@ const links = [
 const groups = computed(() => [
   {
     id: 'tasks',
-    label: 'Tâches',
+    label: 'Sujets',
     items: tasks.value.map((task) => ({
-      label: task.content,
-      icon: 'i-lucide-check-square',
+      label: task.title,
+      icon: 'i-lucide-route',
       to: `/tasks/${task.id}`,
       onSelect: () => {
         open.value = false

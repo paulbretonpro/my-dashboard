@@ -4,6 +4,7 @@ export const isValidDate = (date?: Date) => date instanceof Date && !Number.isNa
 
 export const parseDate = (value?: unknown) => {
   if (!value) return undefined
+  if (value instanceof Date) return isValidDate(value) ? value : undefined
   const date = new Date(String(value))
   return isValidDate(date) ? date : undefined
 }

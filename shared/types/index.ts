@@ -7,8 +7,8 @@ export type Page = typeof pages.$inferSelect
 export type PageWithChildren = Page & { children: Page[] }
 export type NewPage = typeof pages.$inferInsert
 
-export type Task = Omit<typeof tasks.$inferSelect, 'isDone'> & { isDone: boolean }
-export type TaskWithPage = Task & { page?: Page }
+export type Task = typeof tasks.$inferSelect
+export type TaskWithPage = Task
 export type NewTask = Omit<typeof tasks.$inferInsert, 'userId'>
 
 export type RssSource = typeof rssSources.$inferSelect
@@ -42,17 +42,15 @@ export type TaskFilters = {
   deadlineFilter?: 'no-deadline' | 'overdue' | 'today' | 'this-week' | 'this-month'
   descending?: boolean
   page?: number
-  pageId?: number
   perPage?: number
   search?: string
   sortBy?: TaskSortByEnum
-  status?: 'all' | 'true' | 'false'
+  status?: 'all' | 'todo' | 'pending' | 'done'
 }
 
 export enum TaskSortByEnum {
   DEADLINE = 'deadline',
-  IS_DONE = 'is_done',
-  RECALL = 'recall',
+  STATUS = 'status',
   CREATED_AT = 'created_at'
 }
 

@@ -1,29 +1,48 @@
 import { tasks } from '~~/server/db/schema'
 
 export type TaskUpdateBody = {
-  isDone?: boolean
-  additionalNotes?: string | null
+  title?: string
+  content?: string | null
+  status?: 'todo' | 'pending' | 'done'
+  deadline?: string | Date | null
 }
 
 export function buildTaskUpdatePayload(body: TaskUpdateBody) {
-  const { isDone, additionalNotes } = body
+  const { title, content, status, deadline } = body
 
   const updatePayload: Partial<typeof tasks.$inferInsert> = {}
 
-  if (isDone !== undefined) {
-    if (typeof isDone !== 'boolean') {
-      throw createError({ statusCode: 400, statusMessage: 'Invalid isDone value' })
+  if (title !== undefined) {
+    if (typeof title !== 'string' || !title.trim()) {
+      throw createError({ statusCode: 400, statusMessage: 'Invalid title value' })
     }
-
-    updatePayload.isDone = isDone
+    updatePayload.title = title.trim()
   }
 
-  if (additionalNotes !== undefined) {
-    if (additionalNotes !== null && typeof additionalNotes !== 'string') {
-      throw createError({ statusCode: 400, statusMessage: 'Invalid additionalNotes value' })
+  if (content !== undefined) {
+    if (content !== null && typeof content !== 'string') {
+      throw createError({ statusCode: 400, statusMessage: 'Invalid content value' })
     }
+    updatePayload.content = content
+  }
 
-    updatePayload.additionalNotes = additionalNotes
+  if (status !== undefined) {
+    if (!['todo', 'pending', 'done'].includes(status)) {
+      throw createError({ statusCode: 400, statusMessage: 'Invalid status value' })
+    }
+    updatePayload.status = status
+  }
+
+  if (deadline !== undefined) {
+    if (deadline === null) {
+      updatePayload.deadline = null
+    } else {
+      const parsedDate = new Date(deadline)
+      if (Number.isNaN(parsedDate.getTime())) {
+        throw createError({ statusCode: 400, statusMessage: 'Invalid deadline date' })
+      }
+      updatePayload.deadline = parsedDate
+    }
   }
 
   if (!Object.keys(updatePayload).length) {

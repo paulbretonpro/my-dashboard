@@ -1,63 +1,240 @@
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
-import type { TableColumn } from '@nuxt/ui'
-import { TaskSortByEnum } from '~~/shared/types'
+const {
+  loading,
+  activeWeeksTasks,
+  thisWeeksTasks,
+  timelineItems,
+  progressStats,
+  getRelativeDaysString,
+  changeTaskStatus
+} = useRoadmap()
 
-const { tasks, loading } = useTasks({ sortBy: TaskSortByEnum.CREATED_AT, descending: true })
+provide('changeTaskStatus', changeTaskStatus)
 
-const data = computed(() => tasks.value || [])
-const columns: TableColumn<Task>[] = [
-  {
-    header: 'Tâche',
-    accessorKey: 'content',
-    meta: {
-      class: {
-        td: 'max-w-80 whitespace-break-spaces'
-      }
-    }
-  },
-  {
-    header: 'Statut',
-    accessorKey: 'isDone',
-    cell: ({ row }) =>
-      h(resolveComponent('UBadge'), {
-        color: row.original.isDone ? 'success' : 'info',
-        variant: 'soft',
-        label: row.original.isDone ? 'Terminée' : 'À faire'
-      })
-  },
-  {
-    header: 'Date limite',
-    accessorKey: 'deadline',
-    cell: ({ row }) =>
-      row.original.deadline ? new Date(row.original.deadline).toLocaleDateString() : 'Aucune'
-  },
-  {
-    header: 'Créée le',
-    accessorKey: 'createdAt',
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString()
-  },
-  {
-    header: 'Actions',
-    cell: ({ row }) =>
-      h(
-        resolveComponent('NuxtLink'),
-        {
-          label: 'Voir',
-          to: `/tasks/${row.original.id}`
-        },
-        () =>
-          h(resolveComponent('UButton'), {
-            size: 'sm',
-            variant: 'ghost',
-            color: 'neutral',
-            icon: 'i-lucide-move-right'
-          })
-      )
-  }
-]
+const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
 </script>
 
 <template>
-  <UiTableBorderLess :data :columns :loading />
+  <div class="space-y-6">
+    <!-- Sélecteur de design (Segmented Control) -->
+    <div
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-default"
+    >
+      <div class="flex flex-col gap-0.5">
+        <h3 class="text-sm font-bold text-highlighted">Échéances de la semaine</h3>
+        <p class="text-xs text-muted">Choisissez votre affichage favori parmi nos prototypes</p>
+      </div>
+
+      <div class="flex bg-elevated border border-default p-1 rounded-lg gap-1">
+        <UButton
+          label="Timeline"
+          icon="i-lucide-git-commit"
+          color="neutral"
+          :variant="currentView === 'timeline' ? 'solid' : 'ghost'"
+          @click="currentView = 'timeline'"
+        />
+        <UButton
+          label="Grille"
+          icon="i-lucide-layout-grid"
+          color="neutral"
+          :variant="currentView === 'cards' ? 'solid' : 'ghost'"
+          @click="currentView = 'cards'"
+        />
+        <UButton
+          label="Progression"
+          icon="i-lucide-trending-up"
+          color="neutral"
+          :variant="currentView === 'progress' ? 'solid' : 'ghost'"
+          @click="currentView = 'progress'"
+        />
+      </div>
+    </div>
+
+    <!-- Mode de chargement global -->
+    <div v-if="loading && thisWeeksTasks.length === 0" class="text-center py-12 text-muted">
+      <UIcon name="i-lucide-loader-circle" class="animate-spin text-2xl" />
+      <p class="mt-2 text-sm">Chargement des échéances...</p>
+    </div>
+
+    <!-- Mode vide global -->
+    <div
+      v-else-if="thisWeeksTasks.length === 0"
+      class="text-center py-12 border border-dashed border-default rounded-xl bg-elevated/20"
+    >
+      <UIcon name="i-lucide-calendar" class="text-3xl text-muted" />
+      <h4 class="mt-2 font-semibold text-highlighted">Aucun sujet cette semaine</h4>
+      <p class="text-xs text-muted mt-1">
+        Vous n'avez aucun sujet à traiter planifié pour cette semaine.
+      </p>
+    </div>
+
+    <!-- Rendu des différents designs -->
+    <div v-else>
+      <div v-if="currentView === 'timeline'" class="space-y-6" v-auto-animate>
+        <div
+          v-if="activeWeeksTasks.length === 0"
+          class="text-center py-8 italic text-xs text-muted"
+        >
+          Tous les sujets de la semaine sont terminés ! 🎉
+        </div>
+
+        <UTimeline v-else :items="timelineItems" color="primary" class="ml-2">
+          <template #description="{ item }">
+            <div class="grid grid-cols-1 gap-3 mt-2">
+              <div
+                v-for="task in (item as any).tasks"
+                :key="task.id"
+                class="p-4 border border-default bg-elevated/40 hover:bg-elevated/80 rounded-xl transition-all shadow-sm flex items-center justify-between gap-4"
+              >
+                <div class="flex flex-col gap-1 min-w-0">
+                  <NuxtLink
+                    :to="`/tasks/${task.id}`"
+                    class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate"
+                  >
+                    {{ task.title }}
+                  </NuxtLink>
+                  <span class="text-xs text-muted">
+                    Statut : {{ task.status === 'todo' ? 'À faire' : 'En attente' }}
+                  </span>
+                </div>
+                <UButton
+                  icon="i-lucide-chevron-right"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                  :to="`/tasks/${task.id}`"
+                />
+              </div>
+            </div>
+          </template>
+        </UTimeline>
+      </div>
+
+      <div v-else-if="currentView === 'cards'" v-auto-animate>
+        <div
+          v-if="activeWeeksTasks.length === 0"
+          class="text-center py-8 italic text-xs text-muted"
+        >
+          Tous les sujets de la semaine sont terminés ! 🎉
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TasksCard v-for="task in activeWeeksTasks" :key="task.id" :task="task" />
+        </div>
+      </div>
+
+      <div
+        v-else-if="currentView === 'progress'"
+        class="grid grid-cols-1 md:grid-cols-3 gap-6"
+        v-auto-animate
+      >
+        <!-- Anneau de progression circular SVG -->
+        <div
+          class="md:col-span-1 flex flex-col items-center justify-center p-6 border border-default bg-elevated/40 rounded-2xl text-center space-y-4"
+        >
+          <h4 class="text-sm font-bold text-highlighted">Progression Hebdomadaire</h4>
+
+          <div class="relative flex items-center justify-center">
+            <!-- SVG Cercle de progression -->
+            <svg class="w-32 h-32 transform -rotate-90">
+              <circle
+                cx="64"
+                cy="64"
+                r="50"
+                stroke="currentColor"
+                class="text-default/20"
+                stroke-width="8"
+                fill="transparent"
+              />
+              <circle
+                cx="64"
+                cy="64"
+                r="50"
+                stroke="currentColor"
+                class="text-primary transition-all duration-500 ease-out"
+                stroke-width="8"
+                fill="transparent"
+                :stroke-dasharray="2 * Math.PI * 50"
+                :stroke-dashoffset="2 * Math.PI * 50 * (1 - progressStats.percentage / 100)"
+                stroke-linecap="round"
+              />
+            </svg>
+            <div class="absolute flex flex-col items-center justify-center">
+              <span class="text-2xl font-black text-highlighted"
+                >{{ progressStats.percentage }}%</span
+              >
+              <span class="text-[10px] text-muted uppercase tracking-wider font-bold"
+                >Complété</span
+              >
+            </div>
+          </div>
+
+          <p class="text-xs text-muted">
+            <strong>{{ progressStats.done }}</strong> sur
+            <strong>{{ progressStats.total }}</strong> sujets terminés cette semaine.
+          </p>
+        </div>
+
+        <!-- Liste d'action simplifiée -->
+        <div class="md:col-span-2 space-y-3" v-auto-animate>
+          <h4 class="text-xs font-bold text-muted uppercase tracking-wider pb-1">
+            Sujets actifs restants
+          </h4>
+
+          <div
+            v-if="activeWeeksTasks.length === 0"
+            class="text-center py-12 border border-dashed border-default rounded-xl bg-success/5 text-success"
+          >
+            <UIcon name="i-lucide-party-popper" class="text-3xl" />
+            <h5 class="font-bold mt-2">Semaine bouclée !</h5>
+            <p class="text-xs opacity-80 mt-0.5">
+              Tous les sujets de la semaine ont été brillamment traités.
+            </p>
+          </div>
+
+          <div v-else class="space-y-2">
+            <div
+              v-for="task in activeWeeksTasks"
+              :key="task.id"
+              class="p-4 border border-default bg-elevated/40 hover:bg-elevated/70 rounded-xl transition-all shadow-sm flex items-center justify-between gap-4"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <!-- Case à cocher rapide d'achèvement -->
+                <UButton
+                  icon="i-lucide-circle"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                  class="text-muted hover:text-success flex-shrink-0"
+                  title="Marquer comme complété"
+                  @click="changeTaskStatus(task, 'done')"
+                />
+
+                <div class="flex flex-col gap-0.5 min-w-0">
+                  <NuxtLink
+                    :to="`/tasks/${task.id}`"
+                    class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate"
+                  >
+                    {{ task.title }}
+                  </NuxtLink>
+                  <span class="text-[10px] text-muted font-medium flex items-center gap-1">
+                    <UIcon name="i-lucide-clock" />
+                    {{ getRelativeDaysString(task.deadline) }}
+                  </span>
+                </div>
+              </div>
+
+              <UButton
+                icon="i-lucide-chevron-right"
+                color="neutral"
+                variant="ghost"
+                size="sm"
+                :to="`/tasks/${task.id}`"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>

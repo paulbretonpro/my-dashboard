@@ -24,12 +24,10 @@ export const pages = pgTable('pages', {
 
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
-  content: text('content').notNull(),
-  additionalNotes: text('additional_notes'),
+  title: text('title').notNull(),
+  content: text('content'),
+  status: text('status').default('todo').notNull(), // 'todo', 'pending', 'done'
   deadline: timestamp('deadline', { withTimezone: true }),
-  isDone: boolean('is_done').default(false),
-  recall: timestamp('recall', { withTimezone: true }),
-  pageId: integer('page_id').references(() => pages.id, { onDelete: 'cascade' }),
   userId: uuid('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),

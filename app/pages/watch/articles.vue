@@ -92,6 +92,7 @@ onMounted(() => {
       description="Tous les articles issus de vos sources RSS."
       variant="naked"
       orientation="horizontal"
+      :ui="{ title: 'text-2xl text-pretty font-bold text-highlighted' }"
     >
       <WatchArticlesFilters
         v-if="isDesktop"
