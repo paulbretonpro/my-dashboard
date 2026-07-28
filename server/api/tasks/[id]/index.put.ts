@@ -1,7 +1,8 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
 import { tasks } from '~~/server/db/schema'
-import { buildTaskUpdatePayload, TaskUpdateBody } from './services/update-service'
+import { buildTaskUpdatePayload } from './services/update-service'
+import type { TaskUpdateBody } from './services/update-service'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
@@ -13,8 +14,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const task = await db.query.tasks.findFirst({
-    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id)),
-    with: { page: true }
+    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id))
   })
 
   if (!task) {
@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(tasks.id, id), eq(tasks.userId, user.sub)))
 
   return await db.query.tasks.findFirst({
-    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id)),
-    with: { page: true }
+    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id))
   })
 })

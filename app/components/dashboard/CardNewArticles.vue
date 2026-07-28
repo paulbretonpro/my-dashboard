@@ -9,14 +9,11 @@ defineProps<{
     variant="subtle"
     title="Nouveaux articles"
     description="Les articles publiés depuis votre dernière connexion"
-    orientation="horizontal"
+    spotlight
+    spotlight-color="primary"
+    class="cursor-pointer"
+    to="/watch/articles"
   >
     <div class="text-3xl font-semibold text-center">{{ count }}</div>
-
-    <template #footer>
-      <NuxtLink to="/watch/articles">
-        <UButton variant="ghost" size="xs" trailing-icon="i-lucide-arrow-right">Voir tous</UButton>
-      </NuxtLink>
-    </template>
   </UPageCard>
 </template>

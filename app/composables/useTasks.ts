@@ -27,7 +27,6 @@ export default function (options?: TaskFilters & { immediate?: boolean }) {
     createdBefore: options?.createdBefore,
     deadline: options?.deadline,
     descending: options?.descending ?? false,
-    pageId: options?.pageId,
     search: options?.search,
     sortBy: options?.sortBy ?? TaskSortByEnum.CREATED_AT,
     status: options?.status ?? 'all'
@@ -43,7 +42,6 @@ export default function (options?: TaskFilters & { immediate?: boolean }) {
     createdBefore: normalizeDate(filters.value.createdBefore),
     deadline: normalizeDate(filters.value.deadline),
     descending: filters.value.descending,
-    pageId: filters.value.pageId,
     search: filters.value.search?.trim() || undefined,
     sortBy: filters.value.sortBy,
     status: filters.value.status === 'all' ? undefined : filters.value.status

@@ -40,8 +40,7 @@ export default defineEventHandler(async (event) => {
     where,
     limit,
     offset,
-    orderBy: isDescending ? desc(sortColumn) : asc(sortColumn),
-    with: { page: true }
+    orderBy: isDescending ? desc(sortColumn) : asc(sortColumn)
   })
 
   return {

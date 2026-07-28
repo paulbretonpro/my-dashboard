@@ -32,7 +32,6 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
   children: many(pages, {
     relationName: 'page_parent'
   }),
-  tasks: many(tasks),
   user: one(users, {
     fields: [pages.userId],
     references: [users.id]
@@ -41,10 +40,6 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
 
 
 export const tasksRelations = relations(tasks, ({ one }) => ({
-  page: one(pages, {
-    fields: [tasks.pageId],
-    references: [pages.id]
-  }),
   user: one(users, {
     fields: [tasks.userId],
     references: [users.id]

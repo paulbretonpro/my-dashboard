@@ -14,30 +14,17 @@ const { data: dashboard } = useLazyFetch('/api/dashboard', {
 
 const staticsInLateTasks = computed(() => ({
   title: 'En retard',
-  description: 'Les tâches en retard',
+  description: 'Les sujets en retard',
   count: dashboard.value?.inLateTasks ?? 0
 }))
 
 const staticsTodayTasks = computed(() => ({
   title: 'Aujourd’hui',
-  description: 'Les tâches prévues pour aujourd’hui',
+  description: 'Les sujets prévus pour aujourd’hui',
   count: dashboard.value?.todayTasks ?? 0
 }))
 
 const newArticles = computed(() => dashboard.value?.newArticles ?? 0)
-
-const items = [
-  [
-    {
-      label: 'Ajouter une tâche',
-      icon: 'i-lucide-check-square'
-    },
-    {
-      label: 'Ajouter une page',
-      icon: 'i-lucide-file-plus'
-    }
-  ]
-]
 </script>
 
 <template>
@@ -48,13 +35,13 @@ const items = [
       variant="naked"
     >
       <template #title>
-        <div class="text-base text-pretty font-semibold text-highlighted">
+        <div class="text-2xl text-pretty font-bold text-highlighted">
           Bonjour, <span class="text-primary font-bold">{{ user?.displayName }}</span>
         </div>
       </template>
     </UPageCard>
 
-    <div class="grid grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <DashboardCardStatistic
         :description="staticsInLateTasks.description"
         :title="staticsInLateTasks.title"
@@ -65,7 +52,7 @@ const items = [
         :title="staticsTodayTasks.title"
         :count="staticsTodayTasks.count"
       />
-      <DashboardCardNewArticles :count="newArticles" class="col-span-2" />
+      <DashboardCardNewArticles :count="newArticles" />
     </div>
 
     <DashboardTable />

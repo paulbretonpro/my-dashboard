@@ -34,6 +34,7 @@ const handleRefresh = () => {
       description="Gérer les sources RSS."
       variant="naked"
       orientation="horizontal"
+      :ui="{ title: 'text-2xl text-pretty font-bold text-highlighted' }"
     >
       <template #default>
         <div class="space-x-4 ml-auto">

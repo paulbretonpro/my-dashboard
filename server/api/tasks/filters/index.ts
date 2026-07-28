@@ -1,7 +1,8 @@
-import { and, AnyColumn, eq, gte, ilike, lt, lte, SQL } from 'drizzle-orm'
+import { and, eq, ne, gte, ilike, lt, lte, isNull } from 'drizzle-orm'
+import type { AnyColumn, SQL } from 'drizzle-orm'
 import { tasks } from '~~/server/db/schema'
 import { z } from 'zod'
-import { parseBoolean, parseDate } from '~~/server/utils/filters'
+import { parseDate } from '~~/server/utils/filters'
 
 const dateSchema = z.preprocess((value) => {
   if (typeof value === 'string' || value instanceof Date) {
@@ -18,18 +19,21 @@ export const taskFiltersSchema = z.object({
   deadlineFilter: z.enum(['no-deadline', 'overdue', 'today', 'this-week', 'this-month']).optional(),
   descending: z.coerce.boolean().optional(),
   page: z.coerce.number().int().positive().optional(),
-  pageId: z.coerce.number().int().positive().optional(),
   perPage: z.coerce.number().int().positive().optional(),
   search: z.string().trim().min(1).optional(),
-  sortBy: z.enum(['created_at', 'deadline']).optional(),
-  status: z.enum(['all', 'true', 'false']).optional()
+  sortBy: z.enum(['created_at', 'deadline', 'status', 'title']).optional(),
+  status: z.enum(['all', 'todo', 'pending', 'done']).optional()
 })
 
 export const getSortColumn = (sortBy?: string): AnyColumn => {
   switch (sortBy) {
     case 'deadline':
       return tasks.deadline
-    case 'createdAt':
+    case 'status':
+      return tasks.status
+    case 'title':
+      return tasks.title
+    case 'created_at':
     default:
       return tasks.createdAt
   }
@@ -38,12 +42,12 @@ export const getSortColumn = (sortBy?: string): AnyColumn => {
 export const searchFilter = (value?: unknown): SQL | undefined => {
   if (typeof value !== 'string') return
   const search = value.trim()
-  return search ? ilike(tasks.content, `%${search}%`) : undefined
+  return search ? ilike(tasks.title, `%${search}%`) : undefined
 }
 
 export const statusFilter = (value?: string): SQL | undefined => {
-  const isDone = parseBoolean(value)
-  return typeof isDone === 'boolean' ? eq(tasks.isDone, isDone) : undefined
+  if (!value || value === 'all') return undefined
+  return eq(tasks.status, value)
 }
 
 export const deadlineRangeFilter = (filter?: string): SQL | undefined => {
@@ -59,10 +63,10 @@ export const deadlineRangeFilter = (filter?: string): SQL | undefined => {
 
   switch (filter) {
     case 'no-deadline':
-      return eq(tasks.deadline, null)
+      return isNull(tasks.deadline)
 
     case 'overdue':
-      return and(lte(tasks.deadline, now), eq(tasks.isDone, false))
+      return and(lte(tasks.deadline, now), ne(tasks.status, 'done'))
 
     case 'today':
       return and(gte(tasks.deadline, startOfToday), lte(tasks.deadline, endOfToday))
@@ -93,7 +97,7 @@ export const deadlineFilter = (value?: unknown): SQL | undefined => {
   return deadline ? lte(tasks.deadline, deadline) : undefined
 }
 
-export const createdAtFilters = (query: TaskFilters): SQL[] => {
+export const createdAtFilters = (query: any): SQL[] => {
   const filters: SQL[] = []
 
   const createdAt = parseDate(query.createdAt)

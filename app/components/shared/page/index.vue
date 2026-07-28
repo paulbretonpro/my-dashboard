@@ -47,8 +47,20 @@ onMounted(handleFetchItems)
 
 <template>
   <div class="flex flex-col gap-6 w-full lg:max-w-5xl mx-auto">
-    <UPageCard :title :description variant="naked" orientation="horizontal">
-      <UButton label="Ajouter" icon="i-lucide-plus" :to="createPath" class="ml-auto" @click="createFn" />
+    <UPageCard
+      :title
+      :description
+      variant="naked"
+      orientation="horizontal"
+      :ui="{ title: 'text-2xl text-pretty font-bold text-highlighted' }"
+    >
+      <UButton
+        label="Ajouter"
+        icon="i-lucide-plus"
+        :to="createPath"
+        class="ml-auto"
+        @click="createFn"
+      />
     </UPageCard>
 
     <SharedPageList
