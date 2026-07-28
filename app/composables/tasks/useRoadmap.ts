@@ -13,10 +13,10 @@ export default function useRoadmap() {
   // Définition de la plage de la semaine courante (du lundi au dimanche)
   const getWeekRange = () => {
     const now = new Date()
-    
+
     const startOfWeek = new Date(now)
     startOfWeek.setHours(0, 0, 0, 0)
-    
+
     const day = startOfWeek.getDay()
     const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1)
     startOfWeek.setDate(diff)
@@ -63,7 +63,9 @@ export default function useRoadmap() {
 
   // Sujets actifs de la semaine courante (todo & pending)
   const activeWeeksTasks = computed(() => {
-    return thisWeeksTasks.value.filter((task) => task.status === 'todo' || task.status === 'pending')
+    return thisWeeksTasks.value.filter(
+      (task) => task.status === 'todo' || task.status === 'pending'
+    )
   })
 
   // Statistiques de progression de la semaine
@@ -110,13 +112,13 @@ export default function useRoadmap() {
     if (!deadlineStr) return ''
     const now = new Date()
     now.setHours(0, 0, 0, 0)
-    
+
     const deadline = new Date(deadlineStr)
     deadline.setHours(0, 0, 0, 0)
-    
+
     const diffTime = deadline.getTime() - now.getTime()
     const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
-    
+
     if (diffDays < 0) {
       return `En retard (${Math.abs(diffDays)}j)`
     } else if (diffDays === 0) {
@@ -140,10 +142,14 @@ export default function useRoadmap() {
   const changeTaskStatus = async (task: any, newStatus: string) => {
     const getStatusLabel = (status: string) => {
       switch (status) {
-        case 'todo': return 'À faire'
-        case 'pending': return 'En attente'
-        case 'done': return 'Terminé'
-        default: return 'Inconnu'
+        case 'todo':
+          return 'À faire'
+        case 'pending':
+          return 'En attente'
+        case 'done':
+          return 'Terminé'
+        default:
+          return 'Inconnu'
       }
     }
 

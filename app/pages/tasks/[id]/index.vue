@@ -109,7 +109,9 @@ const getStatusBadgeProps = (status?: string) => {
         </NuxtLink>
       </div>
 
-      <div class="p-0 sm:p-8 border-0 sm:border border-default bg-transparent sm:bg-elevated/40 rounded-none sm:rounded-md shadow-none sm:shadow-sm space-y-6">
+      <div
+        class="p-0 sm:p-8 border-0 sm:border border-default bg-transparent sm:bg-elevated/40 rounded-none sm:rounded-md shadow-none sm:shadow-sm space-y-6"
+      >
         <div class="flex flex-col gap-4">
           <h1 class="text-3xl font-extrabold text-highlighted leading-tight">
             {{ task.title }}

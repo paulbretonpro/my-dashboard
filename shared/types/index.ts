@@ -18,7 +18,12 @@ export type Articles = typeof articles.$inferSelect
 export type ArticlesWithSource = typeof articles.$inferSelect & { source: RssSource }
 
 export type Summary = typeof summary.$inferSelect
-export type NewSummary = typeof summary.$inferInsert & { title?: string, content?: string, articleId?: number, url?: string }
+export type NewSummary = typeof summary.$inferInsert & {
+  title?: string
+  content?: string
+  articleId?: number
+  url?: string
+}
 export type SummaryWithLinks = Summary & { links: string[] }
 
 export type Note = typeof notes.$inferSelect

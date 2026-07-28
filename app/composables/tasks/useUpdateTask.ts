@@ -1,6 +1,6 @@
 export default function useUpdateTask(task: Task) {
   const { setLayoutLoading } = useLayoutStore()
-  
+
   const loading = ref(false)
   const error = ref()
 

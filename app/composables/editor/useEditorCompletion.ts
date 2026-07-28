@@ -3,24 +3,36 @@ import type { Editor } from '@tiptap/vue-3'
 import { Completion } from './editor-completion-extension'
 import type { CompletionStorage } from './editor-completion-extension'
 
-type CompletionMode = 'continue' | 'fix' | 'extend' | 'reduce' | 'simplify' | 'summarize' | 'translate'
+type CompletionMode =
+  | 'continue'
+  | 'fix'
+  | 'extend'
+  | 'reduce'
+  | 'simplify'
+  | 'summarize'
+  | 'translate'
 
 export interface UseEditorCompletionOptions {
   api?: string
 }
 
-export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined } | null | undefined>, options: UseEditorCompletionOptions = {}) {
+export function useEditorCompletion(
+  editorRef: Ref<{ editor: Editor | undefined } | null | undefined>,
+  options: UseEditorCompletionOptions = {}
+) {
   // State for direct insertion/transform mode
   const insertState = ref<{
     pos: number
-    deleteRange?: { from: number, to: number }
+    deleteRange?: { from: number; to: number }
   }>()
   const mode = ref<CompletionMode>('continue')
   const language = ref<string>()
 
   // Helper to get completion storage
   function getCompletionStorage() {
-    const storage = editorRef.value?.editor?.storage as Record<string, CompletionStorage> | undefined
+    const storage = editorRef.value?.editor?.storage as
+      | Record<string, CompletionStorage>
+      | undefined
     return storage?.completion
   }
 
@@ -45,14 +57,12 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
         if (editor) {
           // Delete the original selection if not already done
           if (insertState.value.deleteRange) {
-            editor.chain()
-              .focus()
-              .deleteRange(insertState.value.deleteRange)
-              .run()
+            editor.chain().focus().deleteRange(insertState.value.deleteRange).run()
           }
 
           // Insert with markdown parsing
-          editor.chain()
+          editor
+            .chain()
             .focus()
             .insertContentAt(insertState.value.pos, completionText, { contentType: 'markdown' })
             .run()
@@ -79,7 +89,10 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
       // Add space prefix if needed (so preview matches what will be inserted)
       let suggestionText = newCompletion
       if (storage.position !== undefined) {
-        const textBefore = editor.state.doc.textBetween(Math.max(0, storage.position - 1), storage.position)
+        const textBefore = editor.state.doc.textBetween(
+          Math.max(0, storage.position - 1),
+          storage.position
+        )
         if (textBefore && !/\s/.test(textBefore) && !suggestionText.startsWith(' ')) {
           suggestionText = ' ' + suggestionText
         }
@@ -98,10 +111,7 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
 
       // If this is the first chunk and we have a selection to replace, delete it first
       if (insertState.value.deleteRange && !oldCompletion) {
-        editor.chain()
-          .focus()
-          .deleteRange(insertState.value.deleteRange)
-          .run()
+        editor.chain().focus().deleteRange(insertState.value.deleteRange).run()
         insertState.value.deleteRange = undefined
       }
 
@@ -114,22 +124,33 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
 
         // For "continue" mode, add a space before if needed (first chunk only)
         if (mode.value === 'continue' && !oldCompletion) {
-          const textBefore = editor.state.doc.textBetween(Math.max(0, insertState.value.pos - 1), insertState.value.pos)
+          const textBefore = editor.state.doc.textBetween(
+            Math.max(0, insertState.value.pos - 1),
+            insertState.value.pos
+          )
           if (textBefore && !/\s/.test(textBefore)) {
             delta = ' ' + delta
           }
         }
 
-        editor.chain().focus().command(({ tr }) => {
-          tr.insertText(delta, insertState.value!.pos)
-          return true
-        }).run()
+        editor
+          .chain()
+          .focus()
+          .command(({ tr }) => {
+            tr.insertText(delta, insertState.value!.pos)
+            return true
+          })
+          .run()
         insertState.value.pos += delta.length
       }
     }
   })
 
-  function triggerTransform(editor: Editor, transformMode: Exclude<CompletionMode, 'continue'>, lang?: string) {
+  function triggerTransform(
+    editor: Editor,
+    transformMode: Exclude<CompletionMode, 'continue'>,
+    lang?: string
+  ) {
     if (isLoading.value) return
 
     getCompletionStorage()?.clearSuggestion()
@@ -144,14 +165,19 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
     const selectedText = state.doc.textBetween(selection.from, selection.to)
 
     // Replace the selected text with the transformed version
-    insertState.value = { pos: selection.from, deleteRange: { from: selection.from, to: selection.to } }
+    insertState.value = {
+      pos: selection.from,
+      deleteRange: { from: selection.from, to: selection.to }
+    }
 
     complete(selectedText)
   }
 
   function getMarkdownBefore(editor: Editor, pos: number): string {
     const { state } = editor
-    const serializer = (editor.storage.markdown as { serializer?: { serialize: (content: unknown) => string } })?.serializer
+    const serializer = (
+      editor.storage.markdown as { serializer?: { serialize: (content: unknown) => string } }
+    )?.serializer
     if (serializer) {
       const slice = state.doc.slice(0, pos)
       return serializer.serialize(slice.content)
@@ -260,7 +286,8 @@ export function useEditorCompletion(editorRef: Ref<{ editor: Editor | undefined 
         triggerTransform(editor, 'translate', cmd?.language)
         return editor.chain()
       },
-      isActive: (_editor: Editor, cmd: { language?: string } | undefined) => !!(isLoading.value && mode.value === 'translate' && language.value === cmd?.language),
+      isActive: (_editor: Editor, cmd: { language?: string } | undefined) =>
+        !!(isLoading.value && mode.value === 'translate' && language.value === cmd?.language),
       isDisabled: (editor: Editor) => editor.state.selection.empty || !!isLoading.value
     }
   }

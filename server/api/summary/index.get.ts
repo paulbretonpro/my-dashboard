@@ -1,7 +1,7 @@
-import { count, eq } from "drizzle-orm"
-import { db } from "~~/server/db"
-import { summary } from "~~/server/db/schema"
-import { summaryFiltersSchema } from "./filters"
+import { count, eq } from 'drizzle-orm'
+import { db } from '~~/server/db'
+import { summary } from '~~/server/db/schema'
+import { summaryFiltersSchema } from './filters'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
@@ -12,22 +12,17 @@ export default defineEventHandler(async (event) => {
 
   const where = eq(summary.userId, user.sub)
 
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(summary)
-    .where(where)
+  const [{ total }] = await db.select({ total: count() }).from(summary).where(where)
 
   const response = await db.query.summary.findMany({
     where,
     limit,
     offset,
-    orderBy: (summary, { desc }) => [
-      desc(summary.createdAt)
-    ],
+    orderBy: (summary, { desc }) => [desc(summary.createdAt)]
   })
 
   return {
     data: response,
-    total: total ?? 0,
+    total: total ?? 0
   }
 })

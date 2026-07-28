@@ -1,12 +1,12 @@
 // API pour ajouter une url à un résumé id à la table summaryArticles
 
-import z from "zod"
-import { db } from "~~/server/db"
-import { summaryArticles } from "~~/server/db/schema"
+import z from 'zod'
+import { db } from '~~/server/db'
+import { summaryArticles } from '~~/server/db/schema'
 
 interface NewSummaryArticles {
   url: string
-} 
+}
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   if (!url) {
     throw createError({
       statusCode: 400,
-      message: "URL is required"
+      message: 'URL is required'
     })
   }
 

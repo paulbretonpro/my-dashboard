@@ -15,7 +15,7 @@ serve(async (req) => {
   const defaultMapping = {
     title: 'title',
     link: 'link',
-    published: 'pubDate',
+    published: 'pubDate'
   }
 
   const parser = new XMLParser({
@@ -51,9 +51,7 @@ serve(async (req) => {
           ? json.rss.channel.item
           : [json.rss.channel.item]
       } else if (json.feed?.entry) {
-        items = Array.isArray(json.feed.entry)
-          ? json.feed.entry
-          : [json.feed.entry]
+        items = Array.isArray(json.feed.entry) ? json.feed.entry : [json.feed.entry]
       }
 
       const mapping = {
@@ -69,23 +67,19 @@ serve(async (req) => {
         if (!title || !link) continue
 
         const tooOld =
-          published &&
-          new Date(published) <
-            new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+          published && new Date(published) < new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
 
         if (tooOld) continue
 
-        const { error: insertError } = await supabase
-          .from('articles')
-          .upsert(
-            {
-              title: title.toString(),
-              link: link.toString(),
-              published_at: published ? new Date(published) : null,
-              source_id: source.id
-            },
-            { onConflict: 'link' }
-          )
+        const { error: insertError } = await supabase.from('articles').upsert(
+          {
+            title: title.toString(),
+            link: link.toString(),
+            published_at: published ? new Date(published) : null,
+            source_id: source.id
+          },
+          { onConflict: 'link' }
+        )
 
         if (insertError) {
           console.error('Insert error', insertError)

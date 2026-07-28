@@ -8,11 +8,10 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<NewSummary>(event)
   const id = Number(getRouterParam(event, 'id'))
 
-  
   if (!Number.isFinite(id) || id <= 0) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid summary id' })
   }
-  
+
   if (!body.content || !body.title) {
     throw createError({
       statusCode: 400,
@@ -33,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const updatedSummary = await db
     .update(summary)
     .set({
-      ...body,
+      ...body
     })
     .where(where)
 })

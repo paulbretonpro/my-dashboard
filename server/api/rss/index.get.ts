@@ -7,34 +7,28 @@ export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
   const query = validateQuery(event, rssSourceFiltersSchema)
 
-  const filters = [
-    userFilter(user.sub),
-    searchFilter(query.search),
-  ].filter(Boolean)
+  const filters = [userFilter(user.sub), searchFilter(query.search)].filter(Boolean)
 
   const where = filters.length ? and(...filters) : undefined
 
   if (query.page) {
     const { limit, offset } = getPagination(query)
 
-    const [{ total }] = await db
-      .select({ total: count() })
-      .from(rssSources)
-      .where(where)
+    const [{ total }] = await db.select({ total: count() }).from(rssSources).where(where)
 
     const data = await db.query.rssSources.findMany({
       where,
       limit,
-      offset,
+      offset
     })
 
     return {
       data,
-      total: total ?? 0,
+      total: total ?? 0
     }
   } else {
     const data = await db.query.rssSources.findMany({
-      where,
+      where
     })
     return { data }
   }

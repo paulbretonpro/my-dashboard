@@ -23,6 +23,6 @@ export default defineEventHandler(async (event) => {
 
   return {
     ...summaryItem,
-    links: summaryItem.links.map(link => link.url)
+    links: summaryItem.links.map((link) => link.url)
   }
 })

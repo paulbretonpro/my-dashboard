@@ -75,7 +75,7 @@ export default function (options?: TaskFilters & { immediate?: boolean }) {
   const refresh = async (task?: TaskWithPage) => {
     // On refresh uniquement la tache mise à jour
     if (task) {
-      const index = tasks.value.findIndex(t => t.id === task.id)
+      const index = tasks.value.findIndex((t) => t.id === task.id)
       if (index !== -1) {
         tasks.value[index] = task
       }

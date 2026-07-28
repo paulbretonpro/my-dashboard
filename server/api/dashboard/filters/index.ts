@@ -19,5 +19,4 @@ export const inLateTasksFilter = (startOfToday: Date) =>
 export const todayTasksFilter = (startOfToday: Date, endOfToday: Date) =>
   and(ne(tasks.status, 'done'), gte(tasks.deadline, startOfToday), lt(tasks.deadline, endOfToday))
 
-export const newArticlesFilter = (lastConnection: Date) =>
-  gte(articles.publishedAt, lastConnection)
+export const newArticlesFilter = (lastConnection: Date) => gte(articles.publishedAt, lastConnection)

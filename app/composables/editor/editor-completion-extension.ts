@@ -88,13 +88,18 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
               return DecorationSet.empty
             }
 
-            const widget = Decoration.widget(storage.position, () => {
-              const span = document.createElement('span')
-              span.className = 'completion-suggestion'
-              span.textContent = storage.suggestion
-              span.style.cssText = 'color: var(--ui-text-muted); opacity: 0.6; pointer-events: none;'
-              return span
-            }, { side: 1 })
+            const widget = Decoration.widget(
+              storage.position,
+              () => {
+                const span = document.createElement('span')
+                span.className = 'completion-suggestion'
+                span.textContent = storage.suggestion
+                span.style.cssText =
+                  'color: var(--ui-text-muted); opacity: 0.6; pointer-events: none;'
+                return span
+              },
+              { side: 1 }
+            )
 
             return DecorationSet.create(state.doc, [widget])
           }
@@ -115,8 +120,12 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         this.storage.debouncedTrigger?.(editor as Editor)
         return true
       },
-      'Tab': ({ editor }) => {
-        if (!this.storage.visible || !this.storage.suggestion || this.storage.position === undefined) {
+      Tab: ({ editor }) => {
+        if (
+          !this.storage.visible ||
+          !this.storage.suggestion ||
+          this.storage.position === undefined
+        ) {
           return false
         }
 
@@ -136,7 +145,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
         this.options.onAccept?.()
         return true
       },
-      'Escape': ({ editor }) => {
+      Escape: ({ editor }) => {
         if (this.storage.visible) {
           this.storage.clearSuggestion()
           // Force decoration update
@@ -195,7 +204,7 @@ export const Completion = Extension.create<CompletionOptions, CompletionStorage>
 
       // Don't trigger if text ends with trigger characters
       const triggerChars = options.triggerCharacters || []
-      const endsWithTrigger = triggerChars.some(char => textContent.endsWith(char))
+      const endsWithTrigger = triggerChars.some((char) => textContent.endsWith(char))
 
       if (!isAtEndOfBlock || !hasContent || endsWithPunctuation || endsWithTrigger) {
         return

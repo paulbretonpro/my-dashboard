@@ -1,6 +1,12 @@
 import { db } from '~~/server/db'
 import { articles, tasks, userArticles, users, userSources } from '~~/server/db/schema'
-import { getTodayRange, inLateTasksFilter, newArticlesFilter, todayTasksFilter, userFilter } from './filters'
+import {
+  getTodayRange,
+  inLateTasksFilter,
+  newArticlesFilter,
+  todayTasksFilter,
+  userFilter
+} from './filters'
 import { and, eq, inArray } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
@@ -32,12 +38,7 @@ export default defineEventHandler(async (event) => {
     const newArticles = await db
       .select()
       .from(articles)
-      .where(
-        and(
-          inArray(articles.sourceId, sourceIds),
-          newArticlesFilter(user.previousConnection)
-        )
-      )
+      .where(and(inArray(articles.sourceId, sourceIds), newArticlesFilter(user.previousConnection)))
     newArticlesCount = newArticles.length
   }
 

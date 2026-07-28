@@ -123,57 +123,14 @@ const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
         </div>
       </div>
 
+      <!-- PROPOSITION 3 : PROGRESS GAMIFIÉ -->
       <div
         v-else-if="currentView === 'progress'"
         class="grid grid-cols-1 md:grid-cols-3 gap-6"
         v-auto-animate
       >
         <!-- Anneau de progression circular SVG -->
-        <div
-          class="md:col-span-1 flex flex-col items-center justify-center p-6 border border-default bg-elevated/40 rounded-2xl text-center space-y-4"
-        >
-          <h4 class="text-sm font-bold text-highlighted">Progression Hebdomadaire</h4>
-
-          <div class="relative flex items-center justify-center">
-            <!-- SVG Cercle de progression -->
-            <svg class="w-32 h-32 transform -rotate-90">
-              <circle
-                cx="64"
-                cy="64"
-                r="50"
-                stroke="currentColor"
-                class="text-default/20"
-                stroke-width="8"
-                fill="transparent"
-              />
-              <circle
-                cx="64"
-                cy="64"
-                r="50"
-                stroke="currentColor"
-                class="text-primary transition-all duration-500 ease-out"
-                stroke-width="8"
-                fill="transparent"
-                :stroke-dasharray="2 * Math.PI * 50"
-                :stroke-dashoffset="2 * Math.PI * 50 * (1 - progressStats.percentage / 100)"
-                stroke-linecap="round"
-              />
-            </svg>
-            <div class="absolute flex flex-col items-center justify-center">
-              <span class="text-2xl font-black text-highlighted"
-                >{{ progressStats.percentage }}%</span
-              >
-              <span class="text-[10px] text-muted uppercase tracking-wider font-bold"
-                >Complété</span
-              >
-            </div>
-          </div>
-
-          <p class="text-xs text-muted">
-            <strong>{{ progressStats.done }}</strong> sur
-            <strong>{{ progressStats.total }}</strong> sujets terminés cette semaine.
-          </p>
-        </div>
+        <TasksWeeklyProgress v-bind="progressStats" class="md:col-span-1" />
 
         <!-- Liste d'action simplifiée -->
         <div class="md:col-span-2 space-y-3" v-auto-animate>

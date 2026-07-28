@@ -8,11 +8,7 @@ export const useLayoutStore = defineStore('layout', () => {
   const title = ref('My Dashboard')
   const actions = skipHydrate(shallowRef<LayoutActions>(null))
 
-  const setLayout = (options: {
-    title?: string
-    loading?: boolean
-    actions?: LayoutActions
-  }) => {
+  const setLayout = (options: { title?: string; loading?: boolean; actions?: LayoutActions }) => {
     resetLayout()
 
     if (options.title) title.value = options.title
@@ -36,6 +32,6 @@ export const useLayoutStore = defineStore('layout', () => {
     resetLayout,
     setLayout,
     setLayoutLoading,
-    title,
+    title
   }
 })

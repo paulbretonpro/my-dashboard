@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const query = validateQuery(event, articlesFiltersSchema)
 
   const [user] = await db.select().from(users).where(eq(users.id, userSession.sub))
-  
+
   const filters = [
     userFilter(user.id),
     sourcesFilter(query.sources),
@@ -31,25 +31,20 @@ export default defineEventHandler(async (event) => {
   const where = filters.length ? and(...filters) : undefined
   const { limit, offset } = getPagination(query)
 
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(articles)
-    .where(where)
+  const [{ total }] = await db.select({ total: count() }).from(articles).where(where)
 
   const data = await db.query.articles.findMany({
     where,
     with: {
       source: true,
       userArticles: {
-        where: eq(userArticles.userId, user.id),
+        where: eq(userArticles.userId, user.id)
       },
       summary: true
     },
-    orderBy: (articles, { desc }) => [
-      desc(articles.publishedAt),
-    ],
+    orderBy: (articles, { desc }) => [desc(articles.publishedAt)],
     limit,
-    offset,
+    offset
   })
 
   const articlesFormated = data.map((article) => {
@@ -58,12 +53,12 @@ export default defineEventHandler(async (event) => {
     return {
       ...article,
       isFavorite: userArticle?.isFavorite ?? false,
-      isRead: userArticle?.isRead ?? false,
+      isRead: userArticle?.isRead ?? false
     }
   })
 
   return {
     data: articlesFormated,
-    total: total ?? 0,
+    total: total ?? 0
   }
 })

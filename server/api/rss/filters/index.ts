@@ -6,7 +6,7 @@ import { db } from '~~/server/db'
 export const rssSourceFiltersSchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   perPage: z.coerce.number().int().positive().optional(),
-  search: z.string().trim().min(1).optional(),
+  search: z.string().trim().min(1).optional()
 })
 
 export const searchFilter = (value?: unknown): SQL | undefined => {

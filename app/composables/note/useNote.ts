@@ -1,13 +1,13 @@
 export default function () {
   const route = useRoute()
-  
+
   const toast = useToast()
 
   const noteId = Number(route.params.id)
   const note = ref<Note>()
   const loading = ref(true)
   const error = ref(false)
-  
+
   const getNote = async () => {
     error.value = false
     loading.value = true
@@ -30,6 +30,6 @@ export default function () {
     getNote,
     loading,
     note,
-    noteId,
+    noteId
   }
 }

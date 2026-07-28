@@ -121,7 +121,10 @@ const onSave = async () => {
       </UFormField>
     </div>
 
-    <div v-if="!hideFooterButtons" class="fixed bottom-0 left-0 right-0 z-40 p-4 bg-elevated/95 backdrop-blur-md border-t border-default flex justify-end gap-2 sm:relative sm:p-0 sm:bg-transparent sm:border-0 sm:mt-auto sm:pt-2">
+    <div
+      v-if="!hideFooterButtons"
+      class="fixed bottom-0 left-0 right-0 z-40 p-4 bg-elevated/95 backdrop-blur-md border-t border-default flex justify-end gap-2 sm:relative sm:p-0 sm:bg-transparent sm:border-0 sm:mt-auto sm:pt-2"
+    >
       <UButton label="Annuler" color="neutral" variant="ghost" @click="emit('cancel')" />
       <UButton label="Enregistrer" color="primary" @click="onSave" />
     </div>

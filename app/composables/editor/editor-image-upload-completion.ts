@@ -20,9 +20,11 @@ export const ImageUpload = Node.create({
     return {}
   },
   parseHTML() {
-    return [{
-      tag: 'div[data-type="image-upload"]'
-    }]
+    return [
+      {
+        tag: 'div[data-type="image-upload"]'
+      }
+    ]
   },
   renderHTML({ HTMLAttributes }) {
     return ['div', mergeAttributes(HTMLAttributes, { 'data-type': 'image-upload' })]
@@ -32,9 +34,11 @@ export const ImageUpload = Node.create({
   },
   addCommands() {
     return {
-      insertImageUpload: () => ({ commands }: CommandProps) => {
-        return commands.insertContent({ type: this.name })
-      }
+      insertImageUpload:
+        () =>
+        ({ commands }: CommandProps) => {
+          return commands.insertContent({ type: this.name })
+        }
     }
   }
 })

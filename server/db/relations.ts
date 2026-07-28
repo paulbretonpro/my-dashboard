@@ -22,7 +22,6 @@ export const usersRelations = relations(users, ({ many }) => ({
   userArticles: many(userArticles)
 }))
 
-
 export const pagesRelations = relations(pages, ({ one, many }) => ({
   parent: one(pages, {
     relationName: 'page_parent',
@@ -38,14 +37,12 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
   })
 }))
 
-
 export const tasksRelations = relations(tasks, ({ one }) => ({
   user: one(users, {
     fields: [tasks.userId],
     references: [users.id]
   })
 }))
-
 
 export const rssSourcesRelations = relations(rssSources, ({ many, one }) => ({
   articles: many(articles),
@@ -56,7 +53,6 @@ export const rssSourcesRelations = relations(rssSources, ({ many, one }) => ({
   }),
   tags: many(sourceTagsRelationship)
 }))
-
 
 export const articlesRelations = relations(articles, ({ one, many }) => ({
   source: one(rssSources, {
@@ -70,7 +66,6 @@ export const articlesRelations = relations(articles, ({ one, many }) => ({
   })
 }))
 
-
 export const userSourcesRelations = relations(userSources, ({ one }) => ({
   user: one(users, {
     fields: [userSources.userId],
@@ -81,7 +76,6 @@ export const userSourcesRelations = relations(userSources, ({ one }) => ({
     references: [rssSources.id]
   })
 }))
-
 
 export const userArticlesRelations = relations(userArticles, ({ one }) => ({
   user: one(users, {

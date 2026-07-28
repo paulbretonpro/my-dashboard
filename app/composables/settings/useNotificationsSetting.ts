@@ -41,7 +41,8 @@ export default function () {
         {
           name: 'important_updates',
           label: 'Important updates',
-          description: 'Receive emails about important updates like security fixes, maintenance, etc.'
+          description:
+            'Receive emails about important updates like security fixes, maintenance, etc.'
         }
       ]
     }

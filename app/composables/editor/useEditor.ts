@@ -1,6 +1,6 @@
-import type { EditorCustomHandlers, EditorToolbarItem } from "@nuxt/ui"
-import type { Editor } from "@tiptap/vue-3"
-import type { ShallowRef } from "vue"
+import type { EditorCustomHandlers, EditorToolbarItem } from '@nuxt/ui'
+import type { Editor } from '@tiptap/vue-3'
+import type { ShallowRef } from 'vue'
 import { useEditorCompletion } from '~/composables/editor/useEditorCompletion'
 
 export default function (editorRef: ShallowRef<Editor | undefined | null>) {
@@ -400,7 +400,6 @@ export default function (editorRef: ShallowRef<Editor | undefined | null>) {
         ]
       ] satisfies EditorToolbarItem<typeof customHandlers>[][]
   )
-
 
   const suggestionItems = [
     [

@@ -25,10 +25,10 @@ export default defineEventHandler(async (event) => {
   // Mettre à jour : previousConnection = lastConnection, lastConnection = maintenant
   await db
     .update(users)
-      .set({ 
-        previousConnection: currentUser?.lastConnection || null,
-        lastConnection: new Date() 
-      })
+    .set({
+      previousConnection: currentUser?.lastConnection || null,
+      lastConnection: new Date()
+    })
     .where(eq(users.id, user.sub))
 
   return { success: true, message: 'Last connection updated' }

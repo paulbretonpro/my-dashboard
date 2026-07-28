@@ -1,13 +1,13 @@
 export default function () {
   const route = useRoute()
-  
+
   const toast = useToast()
 
   const summaryId = Number(route.params.id)
   const summary = ref<SummaryWithLinks>()
   const loading = ref(true)
   const error = ref(false)
-  
+
   const getSummary = async () => {
     error.value = false
     loading.value = true
@@ -30,6 +30,6 @@ export default function () {
     getSummary,
     loading,
     summary,
-    summaryId,
+    summaryId
   }
 }

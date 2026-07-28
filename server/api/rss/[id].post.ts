@@ -1,5 +1,5 @@
-import { db } from "~~/server/db"
-import { userSources } from "~~/server/db/schema"
+import { db } from '~~/server/db'
+import { userSources } from '~~/server/db/schema'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
@@ -14,10 +14,13 @@ export default defineEventHandler(async (event) => {
   }
 
   // Insert into user_sources table
-  const result = await db.insert(userSources).values({
-    userId: user.sub,
-    rssSourceId: Number(id)
-  }).returning()
+  const result = await db
+    .insert(userSources)
+    .values({
+      userId: user.sub,
+      rssSourceId: Number(id)
+    })
+    .returning()
 
   return {
     success: true,

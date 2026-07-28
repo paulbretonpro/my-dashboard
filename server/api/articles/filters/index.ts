@@ -10,22 +10,26 @@ export const articlesFiltersSchema = z.object({
   period: z.enum(['24h', '7d', '30d']).optional(),
   read: z.enum(['all', 'read', 'unread']).optional(),
   latest: z.coerce.string().optional(),
-  sources: z.union([
-    z.array(z.coerce.number().int().positive()).optional(),
-    z.coerce.number().int().positive().optional()
-  ]).transform((value) => {
-    if (Array.isArray(value)) return value
-    if (typeof value === 'number') return [value]
-    return []
-  }),
-  sourcesTypes: z.union([
-    z.array(z.coerce.number().int().positive()).optional(),
-    z.coerce.number().int().positive().optional()
-  ]).transform((value) => {
-    if (Array.isArray(value)) return value
-    if (typeof value === 'number') return [value]
-    return []
-  })
+  sources: z
+    .union([
+      z.array(z.coerce.number().int().positive()).optional(),
+      z.coerce.number().int().positive().optional()
+    ])
+    .transform((value) => {
+      if (Array.isArray(value)) return value
+      if (typeof value === 'number') return [value]
+      return []
+    }),
+  sourcesTypes: z
+    .union([
+      z.array(z.coerce.number().int().positive()).optional(),
+      z.coerce.number().int().positive().optional()
+    ])
+    .transform((value) => {
+      if (Array.isArray(value)) return value
+      if (typeof value === 'number') return [value]
+      return []
+    })
 })
 
 export type ArticlesFilters = z.infer<typeof articlesFiltersSchema>
@@ -35,12 +39,7 @@ export const userFilter = (userId: string): SQL =>
     db
       .select({ one: userSources.userId })
       .from(userSources)
-      .where(
-        and(
-          eq(userSources.userId, userId),
-          eq(userSources.rssSourceId, articles.sourceId)
-        )
-      )
+      .where(and(eq(userSources.userId, userId), eq(userSources.rssSourceId, articles.sourceId)))
   )
 
 const periodToDate = (period?: string): Date | undefined => {
@@ -59,7 +58,7 @@ const periodToDate = (period?: string): Date | undefined => {
 
 export const periodFilter = (period?: string): SQL | undefined => {
   const since = periodToDate(period)
-  
+
   if (!since) return
   return and(isNotNull(articles.publishedAt), gte(articles.publishedAt, since))
 }
@@ -89,11 +88,14 @@ export const readFilter = (userId: string, value?: string): SQL | undefined => {
   if (value === 'unread') return not(readExists)
 }
 
-export const newFilter = (value?: unknown, lastSignInAt?: string | Date | null): SQL | undefined => {
+export const newFilter = (
+  value?: unknown,
+  lastSignInAt?: string | Date | null
+): SQL | undefined => {
   const isNew = typeof value === 'boolean' ? value : parseBoolean(value)
-  
+
   if (!isNew) return
-  
+
   const lastLogin = parseDate(lastSignInAt ?? undefined)
 
   if (!lastLogin || !isValidDate(lastLogin)) return
@@ -108,10 +110,7 @@ export const sourceTypesFilter = (sourceTypeIds?: number[]): SQL | undefined => 
       .select({ one: rssSources.id })
       .from(rssSources)
       .where(
-        and(
-          inArray(rssSources.sourceTypeId, sourceTypeIds),
-          eq(rssSources.id, articles.sourceId)
-        )
+        and(inArray(rssSources.sourceTypeId, sourceTypeIds), eq(rssSources.id, articles.sourceId))
       )
   )
 }

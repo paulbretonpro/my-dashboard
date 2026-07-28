@@ -1,19 +1,26 @@
 import { db } from '~~/server/db'
 import { eq, count, and } from 'drizzle-orm'
 import { rssSources, sourceTypes, articles } from '~~/server/db/schema'
-import { articlesFiltersSchema, newFilter, periodFilter, readFilter, sourcesFilter, userFilter } from './filters'
+import {
+  articlesFiltersSchema,
+  newFilter,
+  periodFilter,
+  readFilter,
+  sourcesFilter,
+  userFilter
+} from './filters'
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserAuth(event)
 
-  const query = validateQuery(event, articlesFiltersSchema)  
-  
+  const query = validateQuery(event, articlesFiltersSchema)
+
   const filters = [
     userFilter(user.sub),
     sourcesFilter(query.sources),
     readFilter(user.sub, query.read),
     newFilter(query.latest, user.previousConnection),
-    periodFilter(query.period),
+    periodFilter(query.period)
   ].filter((filter) => !!filter)
 
   const articlesJoinCondition = filters.length

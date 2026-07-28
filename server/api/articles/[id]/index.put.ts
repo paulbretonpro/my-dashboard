@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const article = await db.query.userArticles.findFirst({
-    where: and(eq(userArticles.userId, user.sub), eq(userArticles.articleId, id)),
+    where: and(eq(userArticles.userId, user.sub), eq(userArticles.articleId, id))
   })
 
   const updatePayload = buildArticleUpdatePayload(body)
@@ -22,14 +22,12 @@ export default defineEventHandler(async (event) => {
     await db.insert(userArticles).values({
       userId: user.sub,
       articleId: id,
-      ...updatePayload,
+      ...updatePayload
     })
   }
-
 
   await db
     .update(userArticles)
     .set(updatePayload)
-    .where(and(eq(userArticles.articleId, id), eq(userArticles.userId, user.sub))) 
-    
+    .where(and(eq(userArticles.articleId, id), eq(userArticles.userId, user.sub)))
 })

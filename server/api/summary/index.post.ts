@@ -23,4 +23,4 @@ export default defineEventHandler(async (event) => {
   }
 
   return insertedSummary[0]
-})  
+})

@@ -1,4 +1,14 @@
-import { boolean, integer, jsonb, pgTable, primaryKey, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgTable,
+  primaryKey,
+  serial,
+  text,
+  timestamp,
+  uuid
+} from 'drizzle-orm/pg-core'
 import { RssFieldMapping } from '~~/shared/types'
 
 export const users = pgTable('users', {
@@ -124,18 +134,14 @@ export const summary = pgTable('summary', {
     .notNull()
 })
 
-export const summaryArticles = pgTable(
-  'summary_articles',
-  {
-    id: serial('id').primaryKey(),
-    summaryId: integer('summary_id')
-      .references(() => summary.id, { onDelete: 'cascade' })
-      .notNull(),
-    articleId: integer('article_id')
-      .references(() => articles.id, { onDelete: 'cascade' }),
-    url: text('url').notNull()
-  }
-)
+export const summaryArticles = pgTable('summary_articles', {
+  id: serial('id').primaryKey(),
+  summaryId: integer('summary_id')
+    .references(() => summary.id, { onDelete: 'cascade' })
+    .notNull(),
+  articleId: integer('article_id').references(() => articles.id, { onDelete: 'cascade' }),
+  url: text('url').notNull()
+})
 
 export const notes = pgTable('notes', {
   id: serial('id').primaryKey(),
