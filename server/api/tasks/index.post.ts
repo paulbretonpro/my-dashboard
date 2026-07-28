@@ -10,6 +10,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid deadline date' })
   }
 
+  const tagId = body.tagId ? Number(body.tagId) : null
+  if (tagId && (!Number.isInteger(tagId) || tagId <= 0)) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid tagId value' })
+  }
+
   const insertedTask = await db
     .insert(tasks)
     .values({
@@ -17,6 +22,7 @@ export default defineEventHandler(async (event) => {
       content: body.content,
       status: body.status || 'todo',
       deadline: deadline,
+      tagId: tagId,
       userId: user.sub
     })
     .returning()

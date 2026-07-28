@@ -11,7 +11,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const task = await db.query.tasks.findFirst({
-    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id))
+    where: and(eq(tasks.userId, user.sub), eq(tasks.id, id)),
+    with: { tag: true }
   })
 
   if (!task) {

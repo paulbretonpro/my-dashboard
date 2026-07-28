@@ -79,6 +79,26 @@ const handleStatusChange = async (newStatus: string) => {
       class="flex flex-wrap items-center gap-2 text-xs text-muted border-t border-dashed border-default/50 pt-3"
     >
       <UBadge
+        v-if="task.tag"
+        :style="{
+          backgroundColor: `var(--color-${task.tag.color}-500)15`,
+          color: `var(--color-${task.tag.color}-500)`,
+          borderColor: `var(--color-${task.tag.color}-500)30`
+        }"
+        variant="outline"
+        class="flex items-center gap-1.5 font-bold"
+      >
+        <span
+          class="rounded-full size-1.5 bg-(--chip-light) dark:bg-(--chip-dark)"
+          :style="{
+            '--chip-light': `var(--color-${task.tag.color}-500)`,
+            '--chip-dark': `var(--color-${task.tag.color}-400)`
+          }"
+        />
+        {{ task.tag.name }}
+      </UBadge>
+
+      <UBadge
         v-if="task.deadline"
         :color="dimmed ? 'neutral' : 'info'"
         variant="soft"
@@ -86,10 +106,6 @@ const handleStatusChange = async (newStatus: string) => {
       >
         <UIcon name="i-lucide-calendar" />
         {{ new Date(task.deadline).toLocaleDateString('fr-FR') }}
-      </UBadge>
-      <UBadge color="neutral" variant="soft" class="flex items-center gap-1">
-        <UIcon name="i-lucide-clock" />
-        {{ new Date(task.createdAt).toLocaleDateString('fr-FR') }}
       </UBadge>
     </div>
 

@@ -32,12 +32,23 @@ export const pages = pgTable('pages', {
     .notNull()
 })
 
+export const taskTags = pgTable('task_tags', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  color: text('color').default('#3b82f6').notNull(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+})
+
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
   title: text('title').notNull(),
   content: text('content'),
   status: text('status').default('todo').notNull(), // 'todo', 'pending', 'done'
   deadline: timestamp('deadline', { withTimezone: true }),
+  tagId: integer('tag_id').references(() => taskTags.id, { onDelete: 'set null' }),
   userId: uuid('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),

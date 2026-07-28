@@ -5,10 +5,11 @@ export type TaskUpdateBody = {
   content?: string | null
   status?: 'todo' | 'pending' | 'done'
   deadline?: string | Date | null
+  tagId?: number | null
 }
 
 export function buildTaskUpdatePayload(body: TaskUpdateBody) {
-  const { title, content, status, deadline } = body
+  const { title, content, status, deadline, tagId } = body
 
   const updatePayload: Partial<typeof tasks.$inferInsert> = {}
 
@@ -43,6 +44,13 @@ export function buildTaskUpdatePayload(body: TaskUpdateBody) {
       }
       updatePayload.deadline = parsedDate
     }
+  }
+
+  if (tagId !== undefined) {
+    if (tagId !== null && (typeof tagId !== 'number' || tagId <= 0)) {
+      throw createError({ statusCode: 400, statusMessage: 'Invalid tagId value' })
+    }
+    updatePayload.tagId = tagId
   }
 
   if (!Object.keys(updatePayload).length) {

@@ -1,4 +1,13 @@
-import { users, tasks, pages, rssSources, articles, summary, notes } from '~~/server/db/schema'
+import {
+  users,
+  tasks,
+  taskTags,
+  pages,
+  rssSources,
+  articles,
+  summary,
+  notes
+} from '~~/server/db/schema'
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -8,7 +17,9 @@ export type PageWithChildren = Page & { children: Page[] }
 export type NewPage = typeof pages.$inferInsert
 
 export type Task = typeof tasks.$inferSelect
-export type TaskWithPage = Task
+export type TaskTag = typeof taskTags.$inferSelect
+export type NewTaskTag = typeof taskTags.$inferInsert
+export type TaskWithPage = Task & { tag?: TaskTag | null }
 export type NewTask = Omit<typeof tasks.$inferInsert, 'userId'>
 
 export type RssSource = typeof rssSources.$inferSelect

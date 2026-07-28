@@ -11,7 +11,10 @@ const form = ref({
   title: props.task?.title || '',
   content: props.task?.content || '',
   status: props.task?.status || 'todo',
-  deadline: props.task?.deadline ? new Date(props.task.deadline).toISOString().substring(0, 10) : ''
+  deadline: props.task?.deadline
+    ? new Date(props.task.deadline).toISOString().substring(0, 10)
+    : '',
+  tagId: props.task?.tagId || null
 })
 
 defineExpose({
@@ -27,6 +30,59 @@ const statusOptions = [
 ]
 
 const titleInputRef = ref<any>(null)
+
+// Gestion des tags/catégories de sujets
+const { tags, createTag } = useTaskTags()
+
+const tagsOptions = computed(() => {
+  const options: { label: string; value: number | null }[] = [
+    { label: 'Aucune catégorie', value: null }
+  ]
+  if (tags.value) {
+    for (const tag of tags.value) {
+      options.push({ label: tag.name, value: tag.id })
+    }
+  }
+  return options
+})
+
+const isCreatingTag = ref(false)
+const newTagName = ref('')
+const newTagColor = ref('blue')
+
+const colors = [
+  'red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'green',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'purple',
+  'fuchsia',
+  'pink',
+  'rose'
+]
+
+const handleCreateTag = async () => {
+  if (!newTagName.value.trim()) return
+  try {
+    const created = await createTag(newTagName.value.trim(), newTagColor.value)
+    if (created) {
+      form.value.tagId = created.id
+      newTagName.value = ''
+      isCreatingTag.value = false
+    }
+  } catch (e) {
+    console.error('Failed to create inline tag:', e)
+  }
+}
 
 onMounted(() => {
   setTimeout(() => {
@@ -57,7 +113,8 @@ const onSave = async () => {
       title: form.value.title.trim(),
       content: form.value.content,
       status: form.value.status,
-      deadline: form.value.deadline ? new Date(form.value.deadline).toISOString() : null
+      deadline: form.value.deadline ? new Date(form.value.deadline).toISOString() : null,
+      tagId: form.value.tagId
     }
 
     await $fetch(path, {
@@ -115,6 +172,85 @@ const onSave = async () => {
           <UInput v-model="form.deadline" type="date" class="w-full" />
         </UFormField>
       </div>
+
+      <!-- Sélection et création de Catégorie (Tag) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <UFormField label="Catégorie" name="tagId">
+          <div class="flex gap-2 w-full">
+            <USelectMenu
+              v-model="form.tagId"
+              :items="tagsOptions"
+              label-key="label"
+              value-key="value"
+              placeholder="Aucune catégorie"
+              class="flex-1"
+            />
+            <UButton
+              icon="i-lucide-plus"
+              color="neutral"
+              variant="subtle"
+              @click="isCreatingTag = true"
+              title="Nouvelle catégorie"
+            />
+          </div>
+        </UFormField>
+      </div>
+
+      <!-- Modal de création de catégorie -->
+      <UModal v-model:open="isCreatingTag" title="Nouvelle Catégorie">
+        <template #body>
+          <div class="space-y-4">
+            <UFormField label="Nom de la catégorie" required>
+              <UInput
+                v-model="newTagName"
+                placeholder="Ex: Marketing, Frontend..."
+                class="w-full"
+              />
+            </UFormField>
+
+            <UFormField label="Couleur de l'étiquette">
+              <div class="flex flex-wrap gap-2 p-2 border border-default rounded-xl bg-default/40">
+                <button
+                  v-for="color in colors"
+                  :key="color"
+                  type="button"
+                  class="h-6 w-6 rounded-full border flex items-center justify-center transition-transform hover:scale-110 shrink-0"
+                  :style="{
+                    backgroundColor: `var(--color-${color}-500)`,
+                    borderColor: newTagColor === color ? 'var(--color-neutral-950)' : 'transparent'
+                  }"
+                  @click="newTagColor = color"
+                  :title="color"
+                >
+                  <UIcon
+                    v-if="newTagColor === color"
+                    name="i-lucide-check"
+                    class="text-xs text-white"
+                  />
+                </button>
+              </div>
+            </UFormField>
+          </div>
+        </template>
+
+        <template #footer>
+          <div class="flex justify-end gap-2 w-full">
+            <UButton
+              label="Annuler"
+              color="neutral"
+              variant="ghost"
+              @click="isCreatingTag = false"
+            />
+            <UButton
+              label="Créer"
+              color="primary"
+              icon="i-lucide-plus"
+              @click="handleCreateTag"
+              :disabled="!newTagName.trim()"
+            />
+          </div>
+        </template>
+      </UModal>
 
       <UFormField label="Description / Contenu" name="content" class="min-h-64 sm:min-h-96">
         <SharedEditor v-model="form.content" />

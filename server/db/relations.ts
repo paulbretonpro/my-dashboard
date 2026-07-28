@@ -3,6 +3,7 @@ import {
   users,
   pages,
   tasks,
+  taskTags,
   rssSources,
   articles,
   userSources,
@@ -37,10 +38,22 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
   })
 }))
 
+export const taskTagsRelations = relations(taskTags, ({ many, one }) => ({
+  tasks: many(tasks),
+  user: one(users, {
+    fields: [taskTags.userId],
+    references: [users.id]
+  })
+}))
+
 export const tasksRelations = relations(tasks, ({ one }) => ({
   user: one(users, {
     fields: [tasks.userId],
     references: [users.id]
+  }),
+  tag: one(taskTags, {
+    fields: [tasks.tagId],
+    references: [taskTags.id]
   })
 }))
 

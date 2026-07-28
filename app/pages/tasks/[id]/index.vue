@@ -119,6 +119,27 @@ const getStatusBadgeProps = (status?: string) => {
 
           <div class="flex flex-wrap items-center gap-4 text-sm text-muted">
             <UBadge
+              v-if="task.tag"
+              :style="{
+                backgroundColor: `var(--color-${task.tag.color}-500)15`,
+                color: `var(--color-${task.tag.color}-500)`,
+                borderColor: `var(--color-${task.tag.color}-500)30`
+              }"
+              variant="outline"
+              size="md"
+              class="flex items-center gap-1.5 font-bold"
+            >
+              <span
+                class="rounded-full size-1.5 bg-(--chip-light) dark:bg-(--chip-dark)"
+                :style="{
+                  '--chip-light': `var(--color-${task.tag.color}-500)`,
+                  '--chip-dark': `var(--color-${task.tag.color}-400)`
+                }"
+              />
+              {{ task.tag.name }}
+            </UBadge>
+
+            <UBadge
               :color="getStatusBadgeProps(task.status).color"
               variant="soft"
               size="md"

@@ -12,6 +12,16 @@ const {
 provide('changeTaskStatus', changeTaskStatus)
 
 const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
+
+// Trier les sujets de la semaine pour placer ceux terminés (done) à la fin
+const sortedWeeksTasks = computed(() => {
+  if (!thisWeeksTasks.value) return []
+  return [...thisWeeksTasks.value].sort((a, b) => {
+    const aDone = a.status === 'done' ? 1 : 0
+    const bDone = b.status === 'done' ? 1 : 0
+    return aDone - bDone
+  })
+})
 </script>
 
 <template>
@@ -27,6 +37,13 @@ const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
 
       <div class="flex bg-elevated border border-default p-1 rounded-lg gap-1">
         <UButton
+          label="Progression"
+          icon="i-lucide-trending-up"
+          color="neutral"
+          :variant="currentView === 'progress' ? 'solid' : 'ghost'"
+          @click="currentView = 'progress'"
+        />
+        <UButton
           label="Timeline"
           icon="i-lucide-git-commit"
           color="neutral"
@@ -39,13 +56,6 @@ const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
           color="neutral"
           :variant="currentView === 'cards' ? 'solid' : 'ghost'"
           @click="currentView = 'cards'"
-        />
-        <UButton
-          label="Progression"
-          icon="i-lucide-trending-up"
-          color="neutral"
-          :variant="currentView === 'progress' ? 'solid' : 'ghost'"
-          @click="currentView = 'progress'"
         />
       </div>
     </div>
@@ -135,46 +145,45 @@ const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
         <!-- Liste d'action simplifiée -->
         <div class="md:col-span-2 space-y-3" v-auto-animate>
           <h4 class="text-xs font-bold text-muted uppercase tracking-wider pb-1">
-            Sujets actifs restants
+            Sujets de la semaine
           </h4>
 
-          <div
-            v-if="activeWeeksTasks.length === 0"
-            class="text-center py-12 border border-dashed border-default rounded-xl bg-success/5 text-success"
-          >
-            <UIcon name="i-lucide-party-popper" class="text-3xl" />
-            <h5 class="font-bold mt-2">Semaine bouclée !</h5>
-            <p class="text-xs opacity-80 mt-0.5">
-              Tous les sujets de la semaine ont été brillamment traités.
-            </p>
-          </div>
-
-          <div v-else class="space-y-2">
+          <div class="space-y-2">
             <div
-              v-for="task in activeWeeksTasks"
+              v-for="task in sortedWeeksTasks"
               :key="task.id"
-              class="p-4 border border-default bg-elevated/40 hover:bg-elevated/70 rounded-xl transition-all shadow-sm flex items-center justify-between gap-4"
+              :class="[
+                'p-4 border border-default bg-elevated/40 hover:bg-elevated/70 rounded-xl transition-all shadow-sm flex items-center justify-between gap-4',
+                { 'opacity-60': task.status === 'done' }
+              ]"
             >
               <div class="flex items-center gap-3 min-w-0">
-                <!-- Case à cocher rapide d'achèvement -->
+                <!-- Case à cocher rapide d'achèvement interactive -->
                 <UButton
-                  icon="i-lucide-circle"
-                  color="neutral"
+                  :icon="task.status === 'done' ? 'i-lucide-circle-check' : 'i-lucide-circle'"
+                  :color="task.status === 'done' ? 'success' : 'neutral'"
                   variant="ghost"
                   size="sm"
-                  class="text-muted hover:text-success flex-shrink-0"
-                  title="Marquer comme complété"
-                  @click="changeTaskStatus(task, 'done')"
+                  class="flex-shrink-0"
+                  :class="
+                    task.status === 'done' ? 'text-success-500' : 'text-muted hover:text-success'
+                  "
+                  :title="task.status === 'done' ? 'Réouvrir le sujet' : 'Marquer comme complété'"
+                  @click="changeTaskStatus(task, task.status === 'done' ? 'todo' : 'done')"
                 />
 
                 <div class="flex flex-col gap-0.5 min-w-0">
                   <NuxtLink
                     :to="`/tasks/${task.id}`"
-                    class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate"
+                    class="font-semibold hover:text-primary transition-colors text-sm truncate"
+                    :class="task.status === 'done' ? 'line-through text-muted' : 'text-highlighted'"
                   >
                     {{ task.title }}
                   </NuxtLink>
-                  <span class="text-[10px] text-muted font-medium flex items-center gap-1">
+                  <span
+                    class="text-[10px] text-muted font-medium flex items-center gap-1"
+                    :class="{ 'line-through': task.status === 'done' }"
+                  >
                     <UIcon name="i-lucide-clock" />
                     {{ getRelativeDaysString(task.deadline) }}
                   </span>
