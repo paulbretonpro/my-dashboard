@@ -16,7 +16,7 @@ const onSave = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full lg:max-w-7xl mx-auto px-6 py-6">
+  <div class="flex flex-col gap-6 w-full lg:max-w-7xl mx-auto">
     <div class="flex justify-between items-center gap-4">
       <div class="flex flex-col gap-1">
         <h1 class="text-2xl font-bold text-highlighted">Roadmap de sujets</h1>
@@ -50,7 +50,12 @@ const onSave = () => {
     >
       <template #body>
         <div class="p-1 h-full overflow-y-auto">
-          <TasksForm ref="formRef" hide-footer-buttons @save="onSave" @cancel="isCreating = false" />
+          <TasksForm
+            ref="formRef"
+            hide-footer-buttons
+            @save="onSave"
+            @cancel="isCreating = false"
+          />
         </div>
       </template>
 

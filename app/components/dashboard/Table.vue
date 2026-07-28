@@ -1,163 +1,17 @@
 <script setup lang="ts">
-import { TaskSortByEnum } from '~~/shared/types'
+const {
+  loading,
+  activeWeeksTasks,
+  thisWeeksTasks,
+  timelineItems,
+  progressStats,
+  getRelativeDaysString,
+  changeTaskStatus
+} = useRoadmap()
 
-// On récupère tous les sujets de la roadmap pour pouvoir filtrer et calculer la progression de la semaine
-const { tasks, loading, refresh } = useTasks({
-  sortBy: TaskSortByEnum.DEADLINE,
-  descending: false,
-  perPage: 100
-})
+provide('changeTaskStatus', changeTaskStatus)
 
-const toast = useToast()
 const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
-
-// Définition de la plage de la semaine courante (du lundi au dimanche)
-const getWeekRange = () => {
-  const now = new Date()
-
-  const startOfWeek = new Date(now)
-  startOfWeek.setHours(0, 0, 0, 0)
-
-  const day = startOfWeek.getDay()
-  // diff ramène au lundi de la semaine courante
-  const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1)
-  startOfWeek.setDate(diff)
-
-  const endOfWeek = new Date(startOfWeek)
-  endOfWeek.setDate(startOfWeek.getDate() + 6)
-  endOfWeek.setHours(23, 59, 59, 999)
-
-  return { startOfWeek, endOfWeek }
-}
-
-// Tous les sujets de la semaine courante (lundi au dimanche)
-const thisWeeksTasks = computed(() => {
-  if (!tasks.value) return []
-  const { startOfWeek, endOfWeek } = getWeekRange()
-
-  return tasks.value.filter((task) => {
-    if (!task.deadline) return false
-    const deadlineDate = new Date(task.deadline)
-    return deadlineDate >= startOfWeek && deadlineDate <= endOfWeek
-  })
-})
-
-// Sujets actifs de la semaine courante (todo & pending)
-const activeTasks = computed(() => {
-  return thisWeeksTasks.value.filter((task) => task.status === 'todo' || task.status === 'pending')
-})
-
-// Statistiques de progression de la semaine
-const progressStats = computed(() => {
-  const total = thisWeeksTasks.value.length
-  const done = thisWeeksTasks.value.filter((t) => t.status === 'done').length
-  const percentage = total > 0 ? Math.round((done / total) * 100) : 0
-  return { total, done, percentage }
-})
-
-// Grouper les sujets actifs par jour de la semaine pour la Timeline (Proposition 1)
-const timelineDays = computed(() => {
-  const daysMap: Record<string, any[]> = {}
-
-  for (const task of activeTasks.value) {
-    if (!task.deadline) continue
-    const dateStr = new Date(task.deadline).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'short'
-    })
-    const formattedDay = dateStr.charAt(0).toUpperCase() + dateStr.slice(1)
-
-    if (!daysMap[formattedDay]) {
-      daysMap[formattedDay] = []
-    }
-    daysMap[formattedDay].push(task)
-  }
-
-  return Object.entries(daysMap).map(([day, items]) => ({ day, items }))
-})
-
-// On mappe les jours de la timeline vers le format d'items de UTimeline de Nuxt UI
-const timelineItems = computed(() => {
-  return timelineDays.value.map((group) => ({
-    title: group.day,
-    icon: 'i-lucide-calendar-days',
-    tasks: group.items
-  }))
-})
-
-// Formater la date en texte naturel relatif pour les Cartes (Proposition 2)
-const getRelativeDaysString = (deadlineStr: string | Date | null | undefined) => {
-  if (!deadlineStr) return ''
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-
-  const deadline = new Date(deadlineStr)
-  deadline.setHours(0, 0, 0, 0)
-
-  const diffTime = deadline.getTime() - now.getTime()
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays < 0) {
-    return `En retard (${Math.abs(diffDays)}j)`
-  } else if (diffDays === 0) {
-    return "Aujourd'hui"
-  } else if (diffDays === 1) {
-    return 'Demain'
-  } else if (diffDays === 2) {
-    return 'Après-demain'
-  } else {
-    return `Dans ${diffDays} jours`
-  }
-}
-
-// Couleurs de fiches adaptées selon l'urgence pour les Cartes (Proposition 2)
-const getCardUrgencyClass = (deadlineStr: string | Date | null | undefined) => {
-  if (!deadlineStr) return 'border-l-4 border-info bg-info/5 sm:hover:bg-info/10'
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-
-  const deadline = new Date(deadlineStr)
-  deadline.setHours(0, 0, 0, 0)
-
-  const diffTime = deadline.getTime() - now.getTime()
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays < 0) {
-    return 'border-l-4 border-error bg-error/5 sm:hover:bg-error/10'
-  } else if (diffDays === 0 || diffDays === 1) {
-    return 'border-l-4 border-warning bg-warning/5 sm:hover:bg-warning/10'
-  } else {
-    return 'border-l-4 border-info bg-info/5 sm:hover:bg-info/10'
-  }
-}
-
-const stripHtml = (html?: string) => {
-  if (!html) return ''
-  return html.replace(/<[^>]*>/g, '').trim()
-}
-
-// Changer de statut rapidement (utile pour la proposition 3 gamifiée)
-const changeTaskStatus = async (task: any, newStatus: string) => {
-  try {
-    await $fetch(`/api/tasks/${task.id}`, {
-      method: 'PUT',
-      body: { status: newStatus }
-    })
-    toast.add({
-      title: 'Roadmap mise à jour',
-      description: `Le sujet "${task.title}" est maintenant marqué comme ${newStatus === 'done' ? 'terminé' : 'à faire'}.`,
-      color: 'success'
-    })
-    refresh()
-  } catch (err) {
-    toast.add({
-      title: 'Erreur',
-      description: 'Impossible de mettre à jour le statut.',
-      color: 'error'
-    })
-  }
-}
 </script>
 
 <template>
@@ -177,15 +31,13 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
           icon="i-lucide-git-commit"
           color="neutral"
           :variant="currentView === 'timeline' ? 'solid' : 'ghost'"
-          size="xs"
           @click="currentView = 'timeline'"
         />
         <UButton
-          label="Fiches"
+          label="Grille"
           icon="i-lucide-layout-grid"
           color="neutral"
           :variant="currentView === 'cards' ? 'solid' : 'ghost'"
-          size="xs"
           @click="currentView = 'cards'"
         />
         <UButton
@@ -193,7 +45,6 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
           icon="i-lucide-trending-up"
           color="neutral"
           :variant="currentView === 'progress' ? 'solid' : 'ghost'"
-          size="xs"
           @click="currentView = 'progress'"
         />
       </div>
@@ -219,9 +70,11 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
 
     <!-- Rendu des différents designs -->
     <div v-else>
-      <!-- PROPOSITION 1 : TIMELINE (UTimeline) -->
       <div v-if="currentView === 'timeline'" class="space-y-6" v-auto-animate>
-        <div v-if="activeTasks.length === 0" class="text-center py-8 italic text-xs text-muted">
+        <div
+          v-if="activeWeeksTasks.length === 0"
+          class="text-center py-8 italic text-xs text-muted"
+        >
           Tous les sujets de la semaine sont terminés ! 🎉
         </div>
 
@@ -240,9 +93,9 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
                   >
                     {{ task.title }}
                   </NuxtLink>
-                  <span class="text-xs text-muted"
-                    >Statut : {{ task.status === 'todo' ? 'À faire' : 'En attente' }}</span
-                  >
+                  <span class="text-xs text-muted">
+                    Statut : {{ task.status === 'todo' ? 'À faire' : 'En attente' }}
+                  </span>
                 </div>
                 <UButton
                   icon="i-lucide-chevron-right"
@@ -257,90 +110,19 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
         </UTimeline>
       </div>
 
-      <!-- PROPOSITION 2 : CARDS -->
       <div v-else-if="currentView === 'cards'" v-auto-animate>
-        <div v-if="activeTasks.length === 0" class="text-center py-8 italic text-xs text-muted">
+        <div
+          v-if="activeWeeksTasks.length === 0"
+          class="text-center py-8 italic text-xs text-muted"
+        >
           Tous les sujets de la semaine sont terminés ! 🎉
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
-            v-for="task in activeTasks"
-            :key="task.id"
-            class="p-4 border border-default bg-elevated/50 hover:bg-elevated/80 rounded-xl transition-all shadow-sm hover:shadow flex flex-col gap-3 group"
-          >
-            <div class="flex flex-col gap-1 min-w-0">
-              <div class="flex justify-between items-start gap-4">
-                <NuxtLink
-                  :to="`/tasks/${task.id}`"
-                  class="font-bold text-highlighted hover:text-primary transition-colors text-base break-words"
-                >
-                  {{ task.title }}
-                </NuxtLink>
-                <UBadge :color="task.status === 'todo' ? 'info' : 'warning'" variant="soft" size="xs">
-                  {{ task.status === 'todo' ? 'À faire' : 'En attente' }}
-                </UBadge>
-              </div>
-              <p v-if="task.content" class="text-xs text-muted line-clamp-2 mt-1">
-                {{ stripHtml(task.content) }}
-              </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2 text-xs text-muted border-t border-dashed border-default/50 pt-3">
-              <UBadge v-if="task.deadline" color="info" variant="soft" size="xs" class="flex items-center gap-1">
-                <UIcon name="i-lucide-calendar" />
-                {{ new Date(task.deadline).toLocaleDateString('fr-FR') }}
-              </UBadge>
-              <UBadge color="neutral" variant="soft" size="xs" class="flex items-center gap-1">
-                <UIcon name="i-lucide-clock" />
-                {{ new Date(task.createdAt).toLocaleDateString('fr-FR') }}
-              </UBadge>
-            </div>
-
-            <div class="flex justify-between items-center gap-2 mt-1">
-              <!-- Déplacer statut -->
-              <div class="flex gap-1">
-                <UButton
-                  v-if="task.status === 'todo'"
-                  icon="i-lucide-clock"
-                  color="warning"
-                  variant="subtle"
-                  size="xs"
-                  title="Mettre en attente"
-                  @click="changeTaskStatus(task, 'pending')"
-                />
-                <UButton
-                  v-if="task.status === 'pending'"
-                  icon="i-lucide-circle"
-                  color="info"
-                  variant="subtle"
-                  size="xs"
-                  title="Remettre à faire"
-                  @click="changeTaskStatus(task, 'todo')"
-                />
-                <UButton
-                  icon="i-lucide-circle-check"
-                  color="success"
-                  variant="subtle"
-                  size="xs"
-                  title="Marquer terminé"
-                  @click="changeTaskStatus(task, 'done')"
-                />
-              </div>
-
-              <UButton
-                icon="i-lucide-square-pen"
-                color="neutral"
-                variant="ghost"
-                size="sm"
-                :to="`/tasks/${task.id}`"
-              />
-            </div>
-          </div>
+          <TasksCard v-for="task in activeWeeksTasks" :key="task.id" :task="task" />
         </div>
       </div>
 
-      <!-- PROPOSITION 3 : PROGRESS GAMIFIÉ -->
       <div
         v-else-if="currentView === 'progress'"
         class="grid grid-cols-1 md:grid-cols-3 gap-6"
@@ -381,7 +163,9 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
               <span class="text-2xl font-black text-highlighted"
                 >{{ progressStats.percentage }}%</span
               >
-              <span class="text-[10px] text-muted font-bold">Complété</span>
+              <span class="text-[10px] text-muted uppercase tracking-wider font-bold"
+                >Complété</span
+              >
             </div>
           </div>
 
@@ -393,10 +177,12 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
 
         <!-- Liste d'action simplifiée -->
         <div class="md:col-span-2 space-y-3" v-auto-animate>
-          <h4 class="text-xs font-bold text-muted pb-1">Sujets actifs restants</h4>
+          <h4 class="text-xs font-bold text-muted uppercase tracking-wider pb-1">
+            Sujets actifs restants
+          </h4>
 
           <div
-            v-if="activeTasks.length === 0"
+            v-if="activeWeeksTasks.length === 0"
             class="text-center py-12 border border-dashed border-default rounded-xl bg-success/5 text-success"
           >
             <UIcon name="i-lucide-party-popper" class="text-3xl" />
@@ -408,7 +194,7 @@ const changeTaskStatus = async (task: any, newStatus: string) => {
 
           <div v-else class="space-y-2">
             <div
-              v-for="task in activeTasks"
+              v-for="task in activeWeeksTasks"
               :key="task.id"
               class="p-4 border border-default bg-elevated/40 hover:bg-elevated/70 rounded-xl transition-all shadow-sm flex items-center justify-between gap-4"
             >
