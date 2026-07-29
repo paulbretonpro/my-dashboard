@@ -51,6 +51,14 @@ const links = [
       }
     },
     {
+      label: 'GitHub',
+      icon: 'i-simple-icons-github',
+      to: '/watch/github',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
       label: 'Roadmap',
       type: 'label'
     },
