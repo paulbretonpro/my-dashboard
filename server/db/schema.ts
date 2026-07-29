@@ -163,3 +163,13 @@ export const notes = pgTable('notes', {
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull()
 })
+
+export const userGithubRepositories = pgTable('user_github_repositories', {
+  id: serial('id').primaryKey(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  owner: text('owner').notNull(),
+  repo: text('repo').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+})

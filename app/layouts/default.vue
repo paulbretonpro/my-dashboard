@@ -51,6 +51,14 @@ const links = [
       }
     },
     {
+      label: 'GitHub',
+      icon: 'i-simple-icons-github',
+      to: '/watch/github',
+      onSelect: () => {
+        open.value = false
+      }
+    },
+    {
       label: 'Roadmap',
       type: 'label'
     },
@@ -108,10 +116,6 @@ const groups = computed(() => [
       class="bg-elevated/25"
       :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
-      <template #header="{ collapsed }">
-        <TeamsMenu :collapsed />
-      </template>
-
       <template #default="{ collapsed }">
         <UDashboardSearchButton :collapsed class="bg-transparent ring-default" />
 

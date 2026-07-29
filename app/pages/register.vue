@@ -3,7 +3,7 @@ import * as z from 'zod'
 import type { FormSubmitEvent, AuthFormField } from '@nuxt/ui'
 
 definePageMeta({
-  title: 'Login',
+  title: 'Register',
   layout: 'login'
 })
 
@@ -53,15 +53,23 @@ type Schema = z.output<typeof schema>
 const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
   loading.value = true
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signUp({
     email: payload.data.email,
-    password: payload.data.password
+    password: payload.data.password,
+    options: {
+      emailRedirectTo: `${window.location.origin}/confirm`
+    }
   })
 
   if (error) {
-    toast.add({ title: 'Error', description: error.message, color: 'error' })
+    toast.add({ title: 'Erreur', description: error.message, color: 'error' })
   } else {
-    navigateTo('/dashboard')
+    toast.add({
+      title: 'Inscription réussie',
+      description: 'Veuillez vérifier votre boîte de réception pour confirmer votre compte.',
+      color: 'success'
+    })
+    navigateTo('/login')
   }
 
   loading.value = false
@@ -69,18 +77,18 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
 </script>
 
 <template>
-  <!-- Card login -->
+  <!-- Card Register -->
   <UCard variant="subtle" class="md:mx-auto">
     <template #header v-if="isDesktop">
       <div class="flex items-center gap-2 justify-between">
         <div class="space-y-2">
-          <div class="text-2xl">Connexion</div>
-          <div>Identifiez-vous pour continuer sur le dashboard.</div>
+          <div class="text-2xl">Inscription</div>
+          <div>Créez un compte pour commencer à utiliser le dashboard.</div>
         </div>
         <div
           class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
         >
-          <UIcon name="i-lucide-log-in" class="h-6 w-6" />
+          <UIcon name="i-lucide-user-plus" class="h-6 w-6" />
         </div>
       </div>
     </template>
@@ -90,6 +98,7 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
       :fields
       :providers
       :submit="{
+        label: 'S\'inscrire',
         loading,
         trailingIcon: 'i-lucide-arrow-right',
         ui: {
@@ -102,8 +111,8 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
     <template #footer>
       <div class="text-sm text-muted-foreground">
         <div class="text-xs">
-          Besoin d'un compte ?
-          <NuxtLink class="text-primary hover:underline" to="/register"> Créer un compte </NuxtLink>
+          Vous avez déjà un compte ?
+          <NuxtLink class="text-primary hover:underline" to="/login"> Se connecter </NuxtLink>
           .
         </div>
       </div>

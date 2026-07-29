@@ -9,8 +9,21 @@ export default defineEventHandler(async (event) => {
   // Récupérer la date de dernière connexion actuelle
   const [currentUser] = await db.select().from(users).where(eq(users.id, user.sub))
 
-  // Si currentUser.lastConnection est égal à aujourd'hui, ne rien faire
   const now = new Date()
+
+  if (!currentUser) {
+    await db.insert(users).values({
+      id: user.sub,
+      email: user.email || '',
+      name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+      avatarUrl: user.user_metadata?.avatar_url || null,
+      lastConnection: now,
+      previousConnection: null
+    })
+    return { success: true, message: 'User created and last connection set' }
+  }
+
+  // Si currentUser.lastConnection est égal à aujourd'hui, ne rien faire
   if (currentUser?.lastConnection) {
     const lastConnectionDate = new Date(currentUser.lastConnection)
     if (

@@ -23,28 +23,6 @@ export default function () {
           description: 'Receive desktop notifications.'
         }
       ]
-    },
-    {
-      title: 'Account updates',
-      description: 'Receive updates about Nuxt UI.',
-      fields: [
-        {
-          name: 'weekly_digest',
-          label: 'Weekly digest',
-          description: 'Receive a weekly digest of news.'
-        },
-        {
-          name: 'product_updates',
-          label: 'Product updates',
-          description: 'Receive a monthly email with all new features and updates.'
-        },
-        {
-          name: 'important_updates',
-          label: 'Important updates',
-          description:
-            'Receive emails about important updates like security fixes, maintenance, etc.'
-        }
-      ]
     }
   ]
 

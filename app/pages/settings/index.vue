@@ -10,6 +10,40 @@ const { profile, profileSchema, onFileClick, onFileChange, onSubmit } = useUserS
 const { state, sections, onChange } = useNotificationsSetting()
 
 const { password, passwordSchema, validate } = useSecuritySettings()
+
+const toast = useToast()
+const supabase = useSupabaseClient()
+const isDeletingAccount = ref(false)
+
+const onDeleteAccount = async () => {
+  const confirmed = confirm("Êtes-vous sûr de vouloir supprimer définitivement votre compte et toutes vos données ? Cette action est irréversible.")
+  if (!confirmed) return
+
+  isDeletingAccount.value = true
+  try {
+    await $fetch('/api/user', { method: 'DELETE' })
+    
+    // Déconnecter l'utilisateur localement
+    await supabase.auth.signOut()
+    
+    toast.add({
+      title: 'Compte supprimé',
+      description: 'Votre compte et toutes vos données ont été définitivement supprimés.',
+      color: 'success'
+    })
+    
+    // Rediriger vers la page d'accueil ou de connexion
+    navigateTo('/login')
+  } catch (error: any) {
+    toast.add({
+      title: 'Erreur',
+      description: error.message || 'Impossible de supprimer votre compte.',
+      color: 'error'
+    })
+  } finally {
+    isDeletingAccount.value = false
+  }
+}
 </script>
 
 <template>
@@ -53,16 +87,6 @@ const { password, passwordSchema, validate } = useSecuritySettings()
         </UFormField>
         <USeparator />
         <UFormField
-          name="username"
-          label="Username"
-          description="Your unique username for logging in and your profile URL."
-          required
-          class="flex max-sm:flex-col justify-between items-start gap-4"
-        >
-          <UInput v-model="profile.username" type="username" autocomplete="off" />
-        </UFormField>
-        <USeparator />
-        <UFormField
           name="avatar"
           label="Avatar"
           description="JPG, GIF or PNG. 1MB Max."
@@ -79,16 +103,6 @@ const { password, passwordSchema, validate } = useSecuritySettings()
               @change="onFileChange"
             />
           </div>
-        </UFormField>
-        <USeparator />
-        <UFormField
-          name="bio"
-          label="Bio"
-          description="Brief description for your profile. URLs are hyperlinked."
-          class="flex max-sm:flex-col justify-between items-start gap-4"
-          :ui="{ container: 'w-full' }"
-        >
-          <UTextarea v-model="profile.bio" :rows="5" autoresize class="w-full" />
         </UFormField>
       </UPageCard>
     </UForm>
@@ -154,7 +168,12 @@ const { password, passwordSchema, validate } = useSecuritySettings()
       class="bg-gradient-to-tl from-error/10 from-5% to-default"
     >
       <template #footer>
-        <UButton label="Delete account" color="error" />
+        <UButton
+          label="Delete account"
+          color="error"
+          :loading="isDeletingAccount"
+          @click="onDeleteAccount"
+        />
       </template>
     </UPageCard>
   </div>

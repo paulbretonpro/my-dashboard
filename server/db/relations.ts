@@ -12,7 +12,8 @@ import {
   sourceTags,
   sourceTagsRelationship,
   summary,
-  summaryArticles
+  summaryArticles,
+  userGithubRepositories
 } from './schema'
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -20,7 +21,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   tasks: many(tasks),
   summary: many(summary),
   userSources: many(userSources),
-  userArticles: many(userArticles)
+  userArticles: many(userArticles),
+  githubRepositories: many(userGithubRepositories)
 }))
 
 export const pagesRelations = relations(pages, ({ one, many }) => ({
@@ -136,5 +138,12 @@ export const summaryArticlesRelations = relations(summaryArticles, ({ one }) => 
   article: one(articles, {
     fields: [summaryArticles.articleId],
     references: [articles.id]
+  })
+}))
+
+export const userGithubRepositoriesRelations = relations(userGithubRepositories, ({ one }) => ({
+  user: one(users, {
+    fields: [userGithubRepositories.userId],
+    references: [users.id]
   })
 }))
