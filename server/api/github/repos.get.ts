@@ -2,6 +2,13 @@ import { eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
 import { userGithubRepositories } from '~~/server/db/schema'
 
+interface LatestRelease {
+  name: string | null
+  tagName: string
+  htmlUrl: string
+  publishedAt: string
+}
+
 interface GithubRepoResponse {
   id: number
   owner: string
@@ -18,6 +25,7 @@ interface GithubRepoResponse {
   updatedAt: string | null
   avatarUrl: string | null
   status: 'success' | 'error'
+  latestRelease: LatestRelease | null
 }
 
 export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> => {
@@ -26,7 +34,7 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
   const trackedRepos = await db
     .select()
     .from(userGithubRepositories)
-    .where(eq(userGithubRepositories.userId, user.id))
+    .where(eq(userGithubRepositories.userId, user.sub))
 
   // Fetch from GitHub API in parallel with explicit types
   const fetchPromises: Promise<GithubRepoResponse>[] = trackedRepos.map(
@@ -39,12 +47,29 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
           headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`
         }
 
-        const repoInfo = await $fetch<any>(
-          `https://api.github.com/repos/${item.owner}/${item.repo}`,
-          {
-            headers
-          }
-        )
+        const [repoInfo, latestReleaseInfo] = await Promise.all([
+          $fetch<any>(
+            `https://api.github.com/repos/${item.owner}/${item.repo}`,
+            {
+              headers
+            }
+          ),
+          $fetch<any>(
+            `https://api.github.com/repos/${item.owner}/${item.repo}/releases/latest`,
+            {
+              headers
+            }
+          ).catch(() => null)
+        ])
+
+        const latestRelease = latestReleaseInfo
+          ? {
+              name: latestReleaseInfo.name,
+              tagName: latestReleaseInfo.tag_name,
+              htmlUrl: latestReleaseInfo.html_url,
+              publishedAt: latestReleaseInfo.published_at
+            }
+          : null
 
         return {
           id: item.id,
@@ -61,7 +86,8 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
           htmlUrl: repoInfo.html_url,
           updatedAt: repoInfo.pushed_at || repoInfo.updated_at,
           avatarUrl: repoInfo.owner?.avatar_url,
-          status: 'success'
+          status: 'success',
+          latestRelease
         }
       } catch (error: any) {
         console.error(`Failed to fetch repo ${item.owner}/${item.repo}:`, error)
@@ -81,7 +107,8 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
           htmlUrl: `https://github.com/${item.owner}/${item.repo}`,
           updatedAt: null,
           avatarUrl: null,
-          status: 'error'
+          status: 'error',
+          latestRelease: null
         }
       }
     }

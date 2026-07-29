@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     .where(
       and(
         eq(userGithubRepositories.id, Number(id)),
-        eq(userGithubRepositories.userId, user.id)
+        eq(userGithubRepositories.userId, user.sub)
       )
     )
     .returning()

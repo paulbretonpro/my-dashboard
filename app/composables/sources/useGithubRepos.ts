@@ -3,7 +3,11 @@ import { ref } from 'vue'
 export default function useGithubRepos() {
   const toast = useToast()
 
-  const { data: repos, pending: loading, refresh } = useFetch('/api/github/repos', {
+  const {
+    data: repos,
+    pending: loading,
+    refresh
+  } = useFetch('/api/github/repos', {
     key: 'github-repos',
     headers: useRequestHeaders(['cookie'])
   })
@@ -12,6 +16,8 @@ export default function useGithubRepos() {
   const isSubmitting = ref(false)
 
   const handleAddRepo = async () => {
+    console.log(newRepoUrl.value)
+
     if (!newRepoUrl.value.trim()) return
     isSubmitting.value = true
 

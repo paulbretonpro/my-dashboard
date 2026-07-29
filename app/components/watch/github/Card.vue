@@ -47,6 +47,43 @@ const formatDate = (dateStr: string | null) => {
       <p class="text-xs text-muted line-clamp-2 h-8">
         {{ repo.description || 'Aucune description disponible' }}
       </p>
+
+      <!-- Dernière Release -->
+      <div class="border-t border-default/50 pt-3 mt-1 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold tracking-wider uppercase text-muted">
+            Dernière Release
+          </span>
+          <span v-if="repo.latestRelease" class="text-[10px] text-muted">
+            {{ formatDate(repo.latestRelease.publishedAt) }}
+          </span>
+        </div>
+
+        <div v-if="repo.latestRelease" class="flex items-start gap-2.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/30 transition-all rounded-lg p-2.5 group/release">
+          <UIcon name="i-lucide-tag" class="text-primary text-sm shrink-0 mt-0.5" />
+          <div class="flex-1 min-w-0 flex flex-col">
+            <NuxtLink
+              :to="repo.latestRelease.htmlUrl"
+              target="_blank"
+              class="font-semibold text-xs text-primary group-hover/release:underline truncate flex items-center gap-1"
+            >
+              {{ repo.latestRelease.tagName }}
+              <UIcon name="i-lucide-external-link" class="text-[9px] shrink-0 opacity-0 group-hover/release:opacity-100 transition-opacity" />
+            </NuxtLink>
+            <span
+              v-if="repo.latestRelease.name && repo.latestRelease.name !== repo.latestRelease.tagName"
+              class="text-[11px] text-muted truncate mt-0.5"
+              :title="repo.latestRelease.name"
+            >
+              {{ repo.latestRelease.name }}
+            </span>
+          </div>
+        </div>
+        <div v-else class="text-xs text-muted/65 italic flex items-center gap-1.5 p-2 border border-dashed border-default/70 rounded-lg bg-default/5">
+          <UIcon name="i-lucide-tag" class="text-muted/50 text-sm" />
+          <span>Aucune release disponible</span>
+        </div>
+      </div>
     </div>
 
     <!-- Statistiques et Actions -->

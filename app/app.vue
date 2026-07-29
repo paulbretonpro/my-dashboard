@@ -1,6 +1,18 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
 
+// Restore primary and neutral colors from cookies on load
+const appConfig = useAppConfig()
+const primaryColorCookie = useCookie<string>('theme-primary')
+const neutralColorCookie = useCookie<string>('theme-neutral')
+
+if (primaryColorCookie.value) {
+  appConfig.ui.colors.primary = primaryColorCookie.value
+}
+if (neutralColorCookie.value) {
+  appConfig.ui.colors.neutral = neutralColorCookie.value
+}
+
 const color = computed(() => (colorMode.value === 'dark' ? '#1b1718' : 'white'))
 
 useHead({

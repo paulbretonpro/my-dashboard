@@ -9,6 +9,9 @@ const user = useSupabaseUser()
 const colorMode = useColorMode()
 const appConfig = useAppConfig()
 
+const primaryColorCookie = useCookie<string>('theme-primary')
+const neutralColorCookie = useCookie<string>('theme-neutral')
+
 const colors = [
   'red',
   'orange',
@@ -76,6 +79,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
               e.preventDefault()
 
               appConfig.ui.colors.primary = color
+              primaryColorCookie.value = color
             }
           }))
         },
@@ -98,6 +102,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
               e.preventDefault()
 
               appConfig.ui.colors.neutral = color
+              neutralColorCookie.value = color
             }
           }))
         }

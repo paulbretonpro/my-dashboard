@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
     .from(userGithubRepositories)
     .where(
       and(
-        eq(userGithubRepositories.userId, user.id),
+        eq(userGithubRepositories.userId, user.sub),
         eq(userGithubRepositories.owner, owner),
         eq(userGithubRepositories.repo, repo)
       )
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
   const [newRepo] = await db
     .insert(userGithubRepositories)
     .values({
-      userId: user.id,
+      userId: user.sub,
       owner,
       repo
     })
