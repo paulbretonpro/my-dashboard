@@ -7,10 +7,20 @@ setLayout({
 
 const user = useSupabaseUser()
 
-const { data: dashboard } = useLazyFetch('/api/dashboard', {
+const isCreating = ref(false)
+const formRef = ref<any>(null)
+const dashboardTableRef = ref<any>(null)
+
+const { data: dashboard, refresh: refreshDashboard } = useLazyFetch('/api/dashboard', {
   key: 'dashboard',
   headers: useRequestHeaders(['cookie'])
 })
+
+const onSave = () => {
+  isCreating.value = false
+  refreshDashboard()
+  dashboardTableRef.value?.refresh()
+}
 
 const staticsInLateTasks = computed(() => ({
   title: 'En retard',
@@ -33,12 +43,22 @@ const newArticles = computed(() => dashboard.value?.newArticles ?? 0)
       :title="`Bonjour, ${user?.displayName}`"
       description="Bienvenue sur votre dashboard. Vous pouvez commencer à organiser votre travail dès maintenant."
       variant="naked"
+      orientation="horizontal"
     >
       <template #title>
         <div class="text-2xl text-pretty font-bold text-highlighted">
           Bonjour, <span class="text-primary font-bold">{{ user?.displayName }}</span>
         </div>
       </template>
+
+      <div class="flex items-center gap-2 sm:ml-auto">
+        <UButton
+          label="Nouveau sujet"
+          icon="i-lucide-plus"
+          size="md"
+          @click="isCreating = true"
+        />
+      </div>
     </UPageCard>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -55,6 +75,31 @@ const newArticles = computed(() => dashboard.value?.newArticles ?? 0)
       <DashboardCardNewArticles :count="newArticles" />
     </div>
 
-    <DashboardTable />
+    <DashboardTable ref="dashboardTableRef" />
+
+    <!-- Tiroir latéral droit pour la création d'un sujet -->
+    <USlideover
+      v-model:open="isCreating"
+      title="Nouveau sujet"
+      description="Remplissez les détails ci-dessous pour créer un nouveau sujet."
+    >
+      <template #body>
+        <div class="p-1 h-full overflow-y-auto">
+          <TasksForm
+            ref="formRef"
+            hide-footer-buttons
+            @save="onSave"
+            @cancel="isCreating = false"
+          />
+        </div>
+      </template>
+
+      <template #footer>
+        <div class="flex justify-end gap-2 w-full">
+          <UButton label="Annuler" color="neutral" variant="ghost" @click="isCreating = false" />
+          <UButton label="Enregistrer" color="primary" @click="() => formRef?.onSave()" />
+        </div>
+      </template>
+    </USlideover>
   </div>
 </template>

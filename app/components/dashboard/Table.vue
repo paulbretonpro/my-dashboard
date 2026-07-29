@@ -6,12 +6,17 @@ const {
   timelineItems,
   progressStats,
   getRelativeDaysString,
-  changeTaskStatus
+  changeTaskStatus,
+  refresh
 } = useRoadmap()
+
+defineExpose({
+  refresh
+})
 
 provide('changeTaskStatus', changeTaskStatus)
 
-const currentView = ref<'timeline' | 'cards' | 'progress'>('timeline')
+const currentView = ref<'timeline' | 'cards' | 'progress'>('progress')
 
 // Trier les sujets de la semaine pour placer ceux terminés (done) à la fin
 const sortedWeeksTasks = computed(() => {
