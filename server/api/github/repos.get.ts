@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { db } from '~~/server/db'
-import { userGithubRepositories } from '~~/server/db/schema'
+import { userGithubRepositories, users } from '~~/server/db/schema'
 
 interface LatestRelease {
   name: string | null
@@ -26,10 +26,21 @@ interface GithubRepoResponse {
   avatarUrl: string | null
   status: 'success' | 'error'
   latestRelease: LatestRelease | null
+  isNewRelease: boolean
 }
 
 export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> => {
   const user = await requireUserAuth(event)
+
+  const [dbUser] = await db
+    .select({
+      previousConnection: users.previousConnection,
+      lastConnection: users.lastConnection
+    })
+    .from(users)
+    .where(eq(users.id, user.sub))
+
+  const previousConnectionDate = dbUser?.previousConnection ? new Date(dbUser.previousConnection) : null
 
   const trackedRepos = await db
     .select()
@@ -71,6 +82,10 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
             }
           : null
 
+        const isNewRelease = latestRelease && previousConnectionDate
+          ? new Date(latestRelease.publishedAt) > previousConnectionDate
+          : false
+
         return {
           id: item.id,
           owner: item.owner,
@@ -87,7 +102,8 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
           updatedAt: repoInfo.pushed_at || repoInfo.updated_at,
           avatarUrl: repoInfo.owner?.avatar_url,
           status: 'success',
-          latestRelease
+          latestRelease,
+          isNewRelease
         }
       } catch (error: any) {
         console.error(`Failed to fetch repo ${item.owner}/${item.repo}:`, error)
@@ -108,7 +124,8 @@ export default defineEventHandler(async (event): Promise<GithubRepoResponse[]> =
           updatedAt: null,
           avatarUrl: null,
           status: 'error',
-          latestRelease: null
+          latestRelease: null,
+          isNewRelease: false
         }
       }
     }

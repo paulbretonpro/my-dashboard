@@ -1,10 +1,22 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   repos?: any[] | null
   loading: boolean
 }>()
 
 defineEmits(['remove'])
+
+// Mettre en avant (trier au début) les dépôts avec une nouvelle release
+const sortedRepos = computed(() => {
+  if (!props.repos) return []
+  return [...props.repos].sort((a, b) => {
+    if (a.isNewRelease && !b.isNewRelease) return -1
+    if (!a.isNewRelease && b.isNewRelease) return 1
+    return 0
+  })
+})
 </script>
 
 <template>
@@ -45,7 +57,7 @@ defineEmits(['remove'])
   <!-- Liste des dépôts -->
   <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6" v-auto-animate>
     <WatchGithubCard
-      v-for="repo in repos"
+      v-for="repo in sortedRepos"
       :key="repo.id"
       :repo="repo"
       @remove="(id, fullName) => $emit('remove', id, fullName)"

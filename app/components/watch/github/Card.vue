@@ -17,7 +17,12 @@ const formatDate = (dateStr: string | null) => {
 
 <template>
   <div
-    class="p-5 border border-default bg-elevated/40 hover:bg-elevated/85 rounded-xl transition-all shadow-sm flex flex-col justify-between gap-4 h-full relative group"
+    class="p-5 border rounded-xl transition-all shadow-sm flex flex-col justify-between gap-4 h-full relative group"
+    :class="[
+      repo.isNewRelease
+        ? 'border-primary/45 bg-primary/5 hover:bg-primary/10 shadow-[0_0_15px_rgba(var(--color-primary-500),0.05)]'
+        : 'border-default bg-elevated/40 hover:bg-elevated/85'
+    ]"
   >
     <div class="space-y-3">
       <!-- En-tête : Avatar et Nom -->
@@ -28,18 +33,30 @@ const formatDate = (dateStr: string | null) => {
           size="md"
           class="border border-default bg-muted"
         />
-        <div class="flex flex-col min-w-0">
-          <NuxtLink
-            :to="repo.htmlUrl"
-            target="_blank"
-            class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate flex items-center gap-1.5"
-          >
-            {{ repo.fullName }}
-            <UIcon name="i-lucide-external-link" class="text-[10px] text-muted group-hover:text-primary transition-colors" />
-          </NuxtLink>
-          <span class="text-[10px] text-muted">
-            Ajouté le {{ formatDate(repo.createdAt) }}
-          </span>
+        <div class="flex flex-col min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-2">
+            <NuxtLink
+              :to="repo.htmlUrl"
+              target="_blank"
+              class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate flex items-center gap-1.5"
+            >
+              {{ repo.fullName }}
+              <UIcon
+                name="i-lucide-external-link"
+                class="text-[10px] text-muted group-hover:text-primary transition-colors"
+              />
+            </NuxtLink>
+            <UBadge
+              v-if="repo.isNewRelease"
+              color="primary"
+              variant="subtle"
+              size="sm"
+              class="text-[9px] px-1.5 py-0.5 animate-pulse shrink-0"
+            >
+              Nouveau !
+            </UBadge>
+          </div>
+          <span class="text-[10px] text-muted"> Ajouté le {{ formatDate(repo.createdAt) }} </span>
         </div>
       </div>
 
@@ -59,7 +76,10 @@ const formatDate = (dateStr: string | null) => {
           </span>
         </div>
 
-        <div v-if="repo.latestRelease" class="flex items-start gap-2.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/30 transition-all rounded-lg p-2.5 group/release">
+        <div
+          v-if="repo.latestRelease"
+          class="flex items-start gap-2.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 hover:border-primary/30 transition-all rounded-lg p-2.5 group/release"
+        >
           <UIcon name="i-lucide-tag" class="text-primary text-sm shrink-0 mt-0.5" />
           <div class="flex-1 min-w-0 flex flex-col">
             <NuxtLink
@@ -68,10 +88,15 @@ const formatDate = (dateStr: string | null) => {
               class="font-semibold text-xs text-primary group-hover/release:underline truncate flex items-center gap-1"
             >
               {{ repo.latestRelease.tagName }}
-              <UIcon name="i-lucide-external-link" class="text-[9px] shrink-0 opacity-0 group-hover/release:opacity-100 transition-opacity" />
+              <UIcon
+                name="i-lucide-external-link"
+                class="text-[9px] shrink-0 opacity-0 group-hover/release:opacity-100 transition-opacity"
+              />
             </NuxtLink>
             <span
-              v-if="repo.latestRelease.name && repo.latestRelease.name !== repo.latestRelease.tagName"
+              v-if="
+                repo.latestRelease.name && repo.latestRelease.name !== repo.latestRelease.tagName
+              "
               class="text-[11px] text-muted truncate mt-0.5"
               :title="repo.latestRelease.name"
             >
@@ -79,7 +104,10 @@ const formatDate = (dateStr: string | null) => {
             </span>
           </div>
         </div>
-        <div v-else class="text-xs text-muted/65 italic flex items-center gap-1.5 p-2 border border-dashed border-default/70 rounded-lg bg-default/5">
+        <div
+          v-else
+          class="text-xs text-muted/65 italic flex items-center gap-1.5 p-2 border border-dashed border-default/70 rounded-lg bg-default/5"
+        >
           <UIcon name="i-lucide-tag" class="text-muted/50 text-sm" />
           <span>Aucune release disponible</span>
         </div>

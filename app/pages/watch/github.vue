@@ -12,12 +12,13 @@ const {
   newRepoUrl,
   isSubmitting,
   handleAddRepo,
-  handleRemoveRepo
+  handleRemoveRepo,
+  followRepo
 } = useGithubRepos()
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full lg:max-w-4xl mx-auto">
+  <div class="flex flex-col gap-8 w-full lg:max-w-4xl mx-auto">
     <UPageCard
       title="Dépôts GitHub"
       description="Suivez vos dépôts GitHub favoris et visualisez leurs statistiques clés en un coup d'œil."
@@ -40,6 +41,14 @@ const {
       :repos="repos"
       :loading="loading"
       @remove="handleRemoveRepo"
+    />
+
+    <UDivider class="my-2" />
+
+    <!-- Découvrir / Explorer des dépôts populaires -->
+    <WatchGithubExplore
+      :tracked-repos="repos"
+      :follow-repo="followRepo"
     />
   </div>
 </template>

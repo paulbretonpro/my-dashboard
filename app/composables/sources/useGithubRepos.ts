@@ -68,6 +68,33 @@ export default function useGithubRepos() {
     }
   }
 
+  const followRepo = async (fullName: string) => {
+    isSubmitting.value = true
+
+    try {
+      await $fetch('/api/github/repos', {
+        method: 'POST',
+        body: { url: fullName }
+      })
+
+      toast.add({
+        title: 'Succès',
+        description: `Dépôt ${fullName} suivi avec succès.`,
+        color: 'success'
+      })
+
+      refresh()
+    } catch (err: any) {
+      toast.add({
+        title: 'Erreur',
+        description: err?.data?.statusMessage || 'Impossible de suivre ce dépôt.',
+        color: 'error'
+      })
+    } finally {
+      isSubmitting.value = false
+    }
+  }
+
   return {
     repos,
     loading,
@@ -75,6 +102,7 @@ export default function useGithubRepos() {
     newRepoUrl,
     isSubmitting,
     handleAddRepo,
-    handleRemoveRepo
+    handleRemoveRepo,
+    followRepo
   }
 }
