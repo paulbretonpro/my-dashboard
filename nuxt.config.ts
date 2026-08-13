@@ -12,6 +12,10 @@ export default defineNuxtConfig({
     '@nuxtjs/device'
   ],
 
+  experimental: {
+    ssrStreaming: true
+  },
+
   devtools: {
     enabled: true
   },
